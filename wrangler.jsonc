@@ -8,7 +8,7 @@
     {
       "binding": "DB",
       "database_name": "colonias",
-      "database_id": "00000000-0000-0000-0000-000000000000",
+      "database_id": "9465ffa3-4681-4014-9210-679745ce7c5d",
       "migrations_dir": "migrations"
     }
   ],
