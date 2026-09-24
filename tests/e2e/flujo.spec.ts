@@ -153,7 +153,7 @@ test("flujo completo: temas, examen final, carnet y revocación", async ({ brows
   await expect(page.locator(".carnet .c-side img")).toHaveCount(2);
   await page.getByRole("button", { name: "Ver reverso" }).click();
   await expect(page.locator("[data-carnet-flip]")).toHaveAttribute("data-flipped", "true");
-  await expect(page.locator(".carnet.back")).toContainText("Documento personal e intransferible");
+  await expect(page.locator(".carnet.back")).toContainText("Personal e intransferible");
 
   // Con carnet vigente: el carnet es la pantalla principal y el temario queda solo para consulta.
   const tabs = page.locator("nav.tabbar a");
@@ -474,7 +474,7 @@ test("alta de colonia, censo, fichas, carnet y baja validada con JEV", async ({ 
   await expect(admin.getByText(/sin personas cuidadoras/)).toBeVisible();
   await expect(admin.locator("article", { hasText: nombreColonia })).toContainText("Valoración JEV");
   // Limpieza: se da de baja la colonia de prueba.
-  await admin.getByRole("link", { name: /Gestionar colonia/ }).last().click();
+  await admin.locator("tr", { hasText: nombreColonia }).getByRole("link", { name: /Gestionar colonia/ }).click();
   await admin.getByLabel(/Dar de baja la colonia/).check();
   await admin.getByRole("button", { name: "Guardar", exact: true }).click();
   await expect(admin.getByText("Datos guardados.")).toBeVisible();
@@ -566,7 +566,7 @@ test("fotos y observaciones de los gatos, y relevo automático de la persona res
   await admin.goto("/admin/colonias");
   await expect(admin.locator("article", { hasText: nombreColonia })).toContainText(`Nueva persona responsable: Luis Foto ${stamp}`);
   // Limpieza.
-  await admin.getByRole("link", { name: /Gestionar colonia/ }).last().click();
+  await admin.locator("tr", { hasText: nombreColonia }).getByRole("link", { name: /Gestionar colonia/ }).click();
   await admin.getByLabel(/Dar de baja la colonia/).check();
   await admin.getByRole("button", { name: "Guardar", exact: true }).click();
 });

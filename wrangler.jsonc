@@ -9,6 +9,8 @@
       "binding": "DB",
       "database_name": "colonias",
       "database_id": "9465ffa3-4681-4014-9210-679745ce7c5d",
+      // Base de datos local de desarrollo (wrangler dev / astro dev / --local).
+      "preview_database_id": "00000000-0000-0000-0000-000000000000",
       "migrations_dir": "migrations"
     }
   ],

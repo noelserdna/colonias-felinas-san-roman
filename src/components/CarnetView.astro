@@ -34,17 +34,17 @@ const escudo = branding.escudo;
             <div class="c-head">{branding.ayuntamiento}</div>
             <div class="c-title">Cuidador/a acreditado/a de colonias felinas</div>
             <div class="c-name">{carnet.nombre} {carnet.apellidos}</div>
-            <span class="c-label">Nº de carnet</span>
-            <div class="c-number">{carnet.numero}</div>
-            <div class="c-dates">
-              <div><span class="c-label">Emisión</span>{formatDate(carnet.issuedAt)}</div>
-              <div><span class="c-label">Válido hasta</span>{formatDate(carnet.expiresAt)}</div>
-            </div>
+            <dl class="c-fields">
+              <div class="c-field-num"><dt class="c-label">Nº de carnet</dt><dd class="c-number">{carnet.numero}</dd></div>
+              <div><dt class="c-label">Emisión</dt><dd>{formatDate(carnet.issuedAt)}</dd></div>
+              <div><dt class="c-label">Válido hasta</dt><dd>{formatDate(carnet.expiresAt)}</dd></div>
+            </dl>
             {colonias.length > 0 && (
               <ul class="carnet-colonias" aria-label="Colonias que atiende">
-                {colonias.map((c) => (
-                  <li><span class="c-label">Colonia</span><strong>{c.colony.nombre}</strong> · {c.total} {c.total === 1 ? "gato" : "gatos"}</li>
+                {colonias.slice(0, 2).map((c) => (
+                  <li><span class="c-label">Colonia</span><span class="c-colonia"><strong>{c.colony.nombre}</strong> · {c.total} {c.total === 1 ? "gato" : "gatos"}</span></li>
                 ))}
+                {colonias.length > 2 && <li><span class="c-colonia">y {colonias.length - 2} más</span></li>}
               </ul>
             )}
           </div>
@@ -64,15 +64,13 @@ const escudo = branding.escudo;
             <div class="c-head">Programa de Gestión de Colonias Felinas</div>
             <p class="c-text">
               El {branding.ayuntamiento} ({branding.provincia}) acredita que <strong>{carnet.nombre} {carnet.apellidos}</strong> ha superado
-              la formación en buenas prácticas en la gestión de colonias felinas y está acreditado/a como persona cuidadora colaboradora del
-              programa municipal.
+              la formación en buenas prácticas y colabora como persona cuidadora en el programa municipal de colonias felinas.
             </p>
             <ul class="c-rules">
-              <li>Documento personal e intransferible.</li>
-              <li>Muéstralo junto a un documento de identidad cuando se solicite.</li>
+              <li>Personal e intransferible. Muéstralo con un documento de identidad si se solicita.</li>
               <li>Válido solo mientras aparezca como vigente en la aplicación.</li>
             </ul>
-            <div class="c-foot"><span class="c-label">Nº de carnet</span><span class="c-number small">{carnet.numero}</span></div>
+            <div class="c-foot"><span class="c-label">Nº de carnet</span> <span class="c-number small">{carnet.numero}</span></div>
           </div>
           <div class="c-side">
             <img src={escudo.src} srcset={escudo.srcset} alt="" width="78" height="100" loading="lazy" decoding="async" />
