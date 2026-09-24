@@ -1,0 +1,112 @@
+---
+import Layout from "../../../layouts/Layout.astro";
+import AdminNav from "../../../components/AdminNav.astro";
+import { eq } from "drizzle-orm";
+import { ZodError } from "zod";
+import { getDb, schema } from "../../../lib/db";
+import { activeMembers, addMember, ColonyError, listCaretakers, listCats, listCensuses, removeMemberByAdmin, setResponsable, updateColony, censusTotal } from "../../../lib/colonies";
+import { formatDate } from "../../../lib/util";
+
+const db = getDb();
+const id = Astro.params.id!;
+let msg: { ok: boolean; text: string } | null = null;
+if (Astro.request.method === "POST") {
+  const f = await Astro.request.formData();
+  const d = Object.fromEntries([...f.entries()].map(([k, v]) => [k, String(v)]));
+  try {
+    if (d.action === "datos") { await updateColony(db, id, d, d.estado === "baja" ? "baja" : undefined); msg = { ok: true, text: "Datos guardados." }; }
+    if (d.action === "reactivar") { await db.update(schema.colonies).set({ estado: "activa", updatedAt: new Date() }).where(eq(schema.colonies.id, id)); msg = { ok: true, text: "Colonia reactivada." }; }
+    if (d.action === "add") { await addMember(db, id, d.userId, d.rol === "responsable" ? "responsable" : "colaborador"); msg = { ok: true, text: "Persona añadida a la colonia." }; }
+    if (d.action === "responsable") { await setResponsable(db, id, d.memberId); msg = { ok: true, text: "Persona responsable actualizada." }; }
+    if (d.action === "remove") {
+      const promoted = await removeMemberByAdmin(db, id, d.memberId, d.motivo || null);
+      msg = { ok: true, text: `Persona dada de baja en la colonia.${promoted ? ` ${promoted.nombre} pasa a ser la persona responsable.` : ""}` };
+    }
+  } catch (e) {
+    msg = { ok: false, text: e instanceof ZodError ? e.issues.map((i) => i.message).join(". ") : e instanceof ColonyError ? e.message : "No se pudo guardar." };
+  }
+}
+const colony = await db.query.colonies.findFirst({ where: eq(schema.colonies.id, id) });
+if (!colony) return new Response("No encontrada", { status: 404 });
+const [members, censuses, cats, caretakers] = await Promise.all([activeMembers(db, id), listCensuses(db, id), listCats(db, id), listCaretakers(db)]);
+const candidates = caretakers.filter((c) => !members.some((m) => m.user.id === c.id));
+const nombre = (u: { nombre: string | null; apellidos: string | null; email: string }) => [u.nombre, u.apellidos].filter(Boolean).join(" ") || u.email;
+---
+<Layout title={`Colonia ${colony.numero} · Administración`} wide>
+  <p class="eyebrow">Administración · Colonias</p>
+  <h1>Colonia n.º {colony.numero} · {colony.nombre}</h1>
+  <AdminNav />
+  {msg && <div class:list={["alert", msg.ok ? "ok" : "bad"]} role={msg.ok ? "status" : "alert"} tabindex="-1" data-focus-on-load>{msg.text}</div>}
+  {colony.estado === "baja" && (
+    <form method="post" class="alert info"><span>Esta colonia está dada de baja y ya no aparece en ningún carnet.</span><input type="hidden" name="action" value="reactivar" /><button class="btn small" type="submit">Reactivar</button></form>
+  )}
+
+  <section class="card">
+    <h2 class="mt-0">Personas cuidadoras</h2>
+    {members.length === 0 && <p class="alert bad">La colonia no tiene personas cuidadoras.</p>}
+    <ul class="stack" style="list-style:none;padding:0">
+      {members.map((m) => (
+        <li class="card" style="box-shadow:none;margin:0">
+          <div class="spread">
+            <span><strong>{nombre(m.user)}</strong> <span class="muted">{m.user.email}</span></span>
+            <span class:list={["badge", m.member.rol === "responsable" ? "ok" : "todo"]}>{m.member.rol === "responsable" ? "Responsable" : "Colaborador/a"}</span>
+          </div>
+          <p class="muted text-sm">Desde el {formatDate(m.member.since)}</p>
+          <div class="row">
+            {m.member.rol !== "responsable" && (
+              <form method="post"><input type="hidden" name="action" value="responsable" /><input type="hidden" name="memberId" value={m.member.id} /><button class="btn small" type="submit">Hacer responsable</button></form>
+            )}
+            <form method="post" class="row" data-confirm>
+              <input type="hidden" name="action" value="remove" /><input type="hidden" name="memberId" value={m.member.id} />
+              <label class="sr-only" for={`motivo-${m.member.id}`}>Motivo de la baja de {nombre(m.user)}</label>
+              <input id={`motivo-${m.member.id}`} name="motivo" type="text" maxlength="500" placeholder="Motivo (opcional)" style="max-width:16rem" />
+              <button class="btn small ghost danger" type="submit">Dar de baja</button>
+            </form>
+          </div>
+        </li>
+      ))}
+    </ul>
+    {candidates.length > 0 && colony.estado !== "baja" && (
+      <form method="post" class="row" style="align-items:flex-end">
+        <input type="hidden" name="action" value="add" />
+        <div style="flex:2;min-width:min(220px,100%)"><label for="userId">Añadir persona con carnet vigente</label>
+          <select id="userId" name="userId">{candidates.map((c) => <option value={c.id}>{c.nombre} {c.apellidos} · {c.numero}</option>)}</select></div>
+        <div style="flex:1;min-width:min(160px,100%)"><label for="rol">Papel</label>
+          <select id="rol" name="rol"><option value="colaborador">Colaborador/a</option><option value="responsable">Responsable</option></select></div>
+        <button class="btn" type="submit">Añadir</button>
+      </form>
+    )}
+  </section>
+
+  <form method="post" class="card">
+    <h2 class="mt-0">Datos de la colonia</h2>
+    <input type="hidden" name="action" value="datos" />
+    <label for="nombre">Nombre</label><input id="nombre" name="nombre" type="text" required maxlength="120" value={colony.nombre} />
+    <label for="direccion">Dirección</label><input id="direccion" name="direccion" type="text" required maxlength="300" value={colony.direccion} />
+    <label for="coordenadas">Coordenadas</label><input id="coordenadas" name="coordenadas" type="text" maxlength="80" value={colony.coordenadas ?? ""} />
+    <label for="titularidad">Titularidad</label>
+    <select id="titularidad" name="titularidad"><option value="publico" selected={colony.titularidad === "publico"}>Público</option><option value="privado" selected={colony.titularidad === "privado"}>Privado</option></select>
+    <label for="notas">Notas internas</label><textarea id="notas" name="notas" maxlength="4000">{colony.notas ?? ""}</textarea>
+    <label class="check"><input type="checkbox" name="estado" value="baja" checked={colony.estado === "baja"} /> Dar de baja la colonia (deja de aparecer en los carnets)</label>
+    <button class="btn primary" type="submit" style="margin-top:.8rem">Guardar</button>
+  </form>
+
+  <section class="card">
+    <h2 class="mt-0">Censos</h2>
+    {censuses.length === 0 ? <p class="muted">Sin censos.</p> : (
+      <div class="table-scroll"><table class="data responsive">
+        <thead><tr><th>Fecha</th><th>Total</th><th>Hembras (est./sin)</th><th>Machos (cast./sin)</th><th>Adoptables</th><th>Enfermos</th></tr></thead>
+        <tbody>{censuses.map((c) => (
+          <tr><td class="primary-cell">{formatDate(c.fecha)}</td><td data-label="Total">{censusTotal(c)}</td><td data-label="Hembras">{c.hembrasEsterilizadas} / {c.hembrasSinEsterilizar}</td><td data-label="Machos">{c.machosCastrados} / {c.machosSinCastrar}</td><td data-label="Adoptables">{c.adoptables}</td><td data-label="Enfermos">{c.enfermos}</td></tr>
+        ))}</tbody>
+      </table></div>
+    )}
+  </section>
+
+  <section class="card">
+    <h2 class="mt-0">Fichas de gatos ({cats.length})</h2>
+    {cats.length === 0 ? <p class="muted">Las personas cuidadoras todavía no han registrado fichas.</p> : (
+      <ul class="stack" style="padding-left:1.1rem">{cats.map((c) => <li><a href={`/colonia/${id}/gatos/${c.id}`}>{c.nombre}</a> · {c.sexo} · {c.esterilizado ? "esterilizado" : "sin esterilizar"} · {c.interventions.length} intervenciones</li>)}</ul>
+    )}
+  </section>
+</Layout>

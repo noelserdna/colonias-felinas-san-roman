@@ -1,0 +1,28 @@
+---
+import Layout from "../../../layouts/Layout.astro";
+import AdminNav from "../../../components/AdminNav.astro";
+import { asc } from "drizzle-orm";
+import { getDb, schema } from "../../../lib/db";
+
+const units = await getDb().query.units.findMany({ orderBy: asc(schema.units.orden) });
+---
+<Layout title="Temas" wide>
+  <p class="eyebrow">Administración</p>
+  <h1>Temas</h1>
+  <AdminNav />
+  <div class="card table-scroll">
+    <table class="data responsive">
+      <thead><tr><th>Tema</th><th>Peso en examen final</th><th>Estado</th><th><span class="sr-only">Acciones</span></th></tr></thead>
+      <tbody>
+        {units.map((u) => (
+          <tr>
+            <td class="primary-cell">{u.orden}. {u.titulo}</td><td data-label="Peso">{u.peso}</td>
+            <td data-label="Estado">{u.activo ? <span class="badge ok">activo</span> : <span class="badge lock">inactivo</span>}</td>
+            <td class="actions"><a class="btn small" href={`/admin/temas/${u.id}`} aria-label={`Editar tema ${u.orden}`}>Editar</a></td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </div>
+  <a class="btn primary" href="/admin/temas/nuevo">Nuevo tema</a>
+</Layout>

@@ -1,0 +1,137 @@
+---
+import { ClientRouter } from "astro:transitions";
+import "@fontsource/atkinson-hyperlegible/400.css";
+import "@fontsource/atkinson-hyperlegible/700.css";
+import "@fontsource/atkinson-hyperlegible/400-italic.css";
+import "../styles/global.css";
+import Icon, { type IconName } from "../components/Icon.astro";
+
+interface Props {
+  title: string;
+  wide?: boolean;
+  /** Muestra una barra fina con el progreso de lectura de la página. */
+  readingProgress?: boolean;
+}
+const { title, wide = false, readingProgress = false } = Astro.props;
+const user = Astro.locals.user;
+const branding = Astro.locals.branding;
+const path = Astro.url.pathname;
+const hasCarnet = Astro.locals.hasCarnet;
+const adminLink = user?.role === "admin" ? [{ href: "/admin", label: "Admin", icon: "shield" as IconName }] : [];
+// Con carnet vigente: el carnet es la pantalla principal y el temario queda solo para consulta.
+const nav: { href: string; label: string; icon: IconName; match: (p: string) => boolean }[] = !user
+  ? []
+  : hasCarnet
+    ? [
+        { href: "/", label: "Carnet", icon: "card", match: (p) => p === "/" || p === "/carnet" },
+        { href: "/colonia", label: "Colonia", icon: "paw", match: (p) => p.startsWith("/colonia") },
+        { href: "/temario", label: "Consulta", icon: "book", match: (p) => p.startsWith("/temario") || p.startsWith("/documentos") },
+        { href: "/perfil", label: "Perfil", icon: "user", match: (p) => p.startsWith("/perfil") },
+        ...adminLink.map((l) => ({ ...l, match: (p: string) => p.startsWith("/admin") })),
+      ]
+    : [
+        { href: "/", label: "Temario", icon: "book", match: (p) => p === "/" || p.startsWith("/temario") },
+        { href: "/examen", label: "Examen", icon: "exam", match: (p) => p.startsWith("/examen") },
+        { href: "/carnet", label: "Carnet", icon: "card", match: (p) => p.startsWith("/carnet") },
+        { href: "/perfil", label: "Perfil", icon: "user", match: (p) => p.startsWith("/perfil") },
+        ...adminLink.map((l) => ({ ...l, match: (p: string) => p.startsWith("/admin") })),
+      ];
+// En las pantallas de acceso el botón «Entrar» de la cabecera competiría con el del formulario.
+const hideLoginButton = ["/login", "/auth/verify"].includes(path.replace(/\/$/, "") || "/");
+const active = (n: (typeof nav)[number]) => n.match(path);
+---
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, interactive-widget=resizes-content" />
+    <meta name="theme-color" content="#2f6b4f" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#1d2320" media="(prefers-color-scheme: dark)" />
+    <meta name="description" content={`Formación y acreditación de cuidadores de colonias felinas del ${branding.ayuntamiento}.`} />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <link rel="icon" href="/icons/icon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/icons/icon-192.png" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <title>{title} · Cuidadores de Colonias Felinas</title>
+    <ClientRouter />
+  </head>
+  <body class:list={{ "has-tabbar": nav.length > 0 }}>
+    <a class="skip" href="#main">Saltar al contenido</a>
+    <header class="topbar">
+      <a href="/" class="brand">
+        <img src="/icons/icon.svg" alt="" width="36" height="36" />
+        <span><strong>Colonias Felinas</strong><small>{branding.municipio}</small></span>
+      </a>
+      {nav.length > 0 && (
+        <nav class="topnav" aria-label="Navegación principal">
+          {nav.map((n) => (
+            <a href={n.href} aria-current={active(n) ? "page" : undefined}><Icon name={n.icon} size={18} />{n.label}</a>
+          ))}
+        </nav>
+      )}
+      {!user && !hideLoginButton && <a class="btn small primary" href="/login">Entrar</a>}
+      {readingProgress && <div class="reading-progress" aria-hidden="true"><span></span></div>}
+    </header>
+    <main id="main" class:list={["container", { wide }]}>
+      <slot />
+    </main>
+    <footer class="footer">
+      <a href="/privacidad">Privacidad</a> · <a href={path === "/accesibilidad" ? "/accesibilidad" : `/accesibilidad?desde=${encodeURIComponent(path)}`}>Accesibilidad</a> · <a href="/documentos">Documentos</a> · Contenido formativo: Colegio Oficial de Veterinarios de Toledo
+    </footer>
+    {nav.length > 0 && (
+      <nav class="tabbar" aria-label="Navegación principal (móvil)">
+        {nav.map((n) => (
+          <a href={n.href} aria-current={active(n) ? "page" : undefined}><Icon name={n.icon} size={22} /><span>{n.label}</span></a>
+        ))}
+      </nav>
+    )}
+    <script>
+      if ("serviceWorker" in navigator) navigator.serviceWorker.register("/sw.js").catch(() => {});
+      document.addEventListener("submit", (e) => {
+        const form = e.target as HTMLFormElement;
+        // Acciones destructivas del panel: pedir confirmación.
+        if (form.hasAttribute("data-confirm") && !confirm("¿Seguro que quieres eliminarlo? Esta acción no se puede deshacer.")) {
+          e.preventDefault();
+          return;
+        }
+        // getAttribute: un campo llamado «action» taparía form.action.
+        if ((form.getAttribute("action") ?? "").endsWith("/api/auth/logout")) navigator.serviceWorker?.controller?.postMessage("logout");
+      });
+      // Barra de progreso de lectura (solo en páginas que la muestran).
+      function trackReading() {
+        const bar = document.querySelector<HTMLElement>(".reading-progress > span");
+        if (!bar) return;
+        const update = () => {
+          const max = document.documentElement.scrollHeight - innerHeight;
+          bar.style.transform = `scaleX(${max > 0 ? Math.min(1, scrollY / max) : 1})`;
+        };
+        update();
+        addEventListener("scroll", update, { passive: true });
+        document.addEventListener("astro:before-swap", () => removeEventListener("scroll", update), { once: true });
+      }
+      document.addEventListener("astro:page-load", trackReading);
+      document.addEventListener("astro:page-load", () => {
+        document.querySelectorAll("table.responsive").forEach((t) => {
+          t.setAttribute("role", "table");
+          t.querySelectorAll("thead, tbody").forEach((g) => g.setAttribute("role", "rowgroup"));
+          t.querySelectorAll("tr").forEach((r) => r.setAttribute("role", "row"));
+          t.querySelectorAll("th").forEach((c) => c.setAttribute("role", "columnheader"));
+          t.querySelectorAll("td").forEach((c) => c.setAttribute("role", "cell"));
+        });
+      });
+      // Tras navegar con ClientRouter, llevar el foco al título de la página (sin desplazarla).
+      document.addEventListener("astro:after-swap", () => {
+        const h1 = document.querySelector<HTMLElement>("main h1");
+        if (!h1) return;
+        if (!h1.hasAttribute("tabindex")) h1.setAttribute("tabindex", "-1");
+        h1.focus({ preventScroll: true });
+      });
+      // Avisos que llegan tras enviar un formulario (role=status/alert): tras una recarga no siempre
+      // se anuncian, así que reciben el foco. Se ejecuta después de astro:after-swap.
+      document.addEventListener("astro:page-load", () => {
+        document.querySelector<HTMLElement>("main [data-focus-on-load]")?.focus();
+      });
+    </script>
+  </body>
+</html>

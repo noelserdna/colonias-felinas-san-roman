@@ -1,0 +1,41 @@
+---
+import Layout from "../../../layouts/Layout.astro";
+import AdminNav from "../../../components/AdminNav.astro";
+import { desc, eq } from "drizzle-orm";
+import { getDb, schema } from "../../../lib/db";
+import { getProgress } from "../../../lib/exam";
+import { formatDate } from "../../../lib/util";
+
+const db = getDb();
+const user = await db.query.users.findFirst({ where: eq(schema.users.id, Astro.params.id!) });
+if (!user) return new Response("No encontrado", { status: 404 });
+const { units } = await getProgress(db, user.id);
+const attempts = await db.query.attempts.findMany({ where: eq(schema.attempts.userId, user.id), orderBy: desc(schema.attempts.startedAt) });
+const unitTitle = new Map(units.map((u) => [u.id, `${u.orden}. ${u.titulo}`]));
+const statusLabel = { in_progress: "en curso", grading: "corrigiendo", passed: "aprobado", failed: "suspenso" } as const;
+---
+<Layout title={user.email} wide>
+  <p class="eyebrow">Administración</p>
+  <h1>{[user.nombre, user.apellidos].filter(Boolean).join(" ") || user.email}</h1>
+  <AdminNav />
+  <p class="muted">{user.email} · alta {formatDate(user.createdAt)} · consentimiento {user.consentAt ? formatDate(user.consentAt) : "no"}</p>
+  <h2>Progreso</h2>
+  <div class="row">{units.map((u) => <span class:list={["badge", u.passed ? "ok" : u.unlocked ? "todo" : "lock"]}>{u.orden}{u.bestPct != null ? ` · ${u.bestPct}%` : ""}</span>)}</div>
+  <h2>Intentos</h2>
+  <div class="card table-scroll">
+    <table class="data responsive">
+      <thead><tr><th>Fecha</th><th>Tipo</th><th>Estado</th><th>Nota</th><th><span class="sr-only">Acciones</span></th></tr></thead>
+      <tbody>
+        {attempts.map((a) => (
+          <tr>
+            <td data-label="Fecha">{formatDate(a.startedAt)}</td>
+            <td class="primary-cell">{a.kind === "final" ? "Examen final" : unitTitle.get(a.unitId!) ?? "Tema"}</td>
+            <td data-label="Estado"><span class:list={["badge", a.status === "passed" ? "ok" : a.status === "failed" ? "bad" : "todo"]}>{statusLabel[a.status]}</span></td>
+            <td data-label="Nota">{a.scorePct != null ? `${a.scorePct}% (${a.correctCount}/${a.totalCount})` : "—"}</td>
+            <td class="actions"><a class="btn small" href={`/admin/intentos/${a.id}`}>Detalle</a></td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </div>
+</Layout>

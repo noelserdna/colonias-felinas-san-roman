@@ -1,0 +1,7 @@
+---
+import Icon from "./Icon.astro";
+interface Props { colony: { id: string; numero: number; nombre: string }; back?: boolean }
+const { colony, back = true } = Astro.props;
+---
+{back && <a class="btn ghost small" href={`/colonia/${colony.id}`} style="margin-left:-.6rem"><Icon name="back" size={18} /> {colony.nombre}</a>}
+<p class="eyebrow" style={back ? "margin-top:.6rem" : undefined}>Colonia n.º {colony.numero}</p>

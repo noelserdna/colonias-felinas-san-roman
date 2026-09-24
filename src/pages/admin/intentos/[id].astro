@@ -1,0 +1,56 @@
+---
+import Layout from "../../../layouts/Layout.astro";
+import AdminNav from "../../../components/AdminNav.astro";
+import { asc, eq } from "drizzle-orm";
+import { getDb, schema } from "../../../lib/db";
+import { formatDate } from "../../../lib/util";
+
+const db = getDb();
+const attempt = await db.query.attempts.findFirst({ where: eq(schema.attempts.id, Astro.params.id!) });
+if (!attempt) return new Response("No encontrado", { status: 404 });
+const user = await db.query.users.findFirst({ where: eq(schema.users.id, attempt.userId) });
+const items = await db.query.attemptItems.findMany({ where: eq(schema.attemptItems.attemptId, attempt.id), orderBy: asc(schema.attemptItems.position) });
+const fmt = (n: number | null) => (n == null ? "—" : n.toFixed(2));
+---
+<Layout title="Detalle de intento" wide>
+  <p class="eyebrow">Administración</p>
+  <h1>{attempt.kind === "final" ? "Examen final" : "Test de tema"} · {attempt.scorePct != null ? `${attempt.scorePct}%` : attempt.status}</h1>
+  <AdminNav />
+  <p class="muted">
+    <a href={`/admin/usuarios/${attempt.userId}`}>{user?.email}</a> · {formatDate(attempt.startedAt)} · aprobado con {attempt.passPct}% · {attempt.correctCount ?? "—"}/{attempt.totalCount}
+  </p>
+  {items.map((it, n) => {
+    const s = it.snapshot;
+    return (
+      <div class="card question">
+        <div class="qhead">
+          {n + 1}. {s.type === "mc" ? "Test" : s.type === "multi" ? "Varias correctas" : "Escrita"} · dificultad {s.dificultad ?? "media"} · pregunta #{it.questionId} v{s.version} ·{" "}
+          <span class:list={["badge", it.isCorrect ? "ok" : it.isCorrect === false ? "bad" : "todo"]}>{it.isCorrect ? "correcta" : it.isCorrect === false ? "incorrecta" : "pendiente"}</span>
+        </div>
+        <div class="qtext">{s.enunciado}</div>
+        {s.type === "multi" ? (
+          (() => {
+            const chosen: number[] = it.answer ? JSON.parse(it.answer) : [];
+            const ok = new Set(s.correctIndexes ?? []);
+            return (
+              <ol>{s.options!.map((o, i) => (
+                <li>
+                  <span class:list={{ badge: ok.has(i) || chosen.includes(i), ok: ok.has(i) && chosen.includes(i), bad: chosen.includes(i) !== ok.has(i) }}>{o}</span>
+                  {ok.has(i) && <small class="muted"> · correcta</small>}{chosen.includes(i) && <small class="muted"> · marcada</small>}
+                </li>
+              ))}</ol>
+            );
+          })()
+        ) : s.type === "mc" ? (
+          <ol>{s.options!.map((o, i) => <li><span class:list={{ badge: i === s.correctIndex || String(i) === it.answer, ok: i === s.correctIndex, bad: i !== s.correctIndex && String(i) === it.answer }}>{o}</span></li>)}</ol>
+        ) : (
+          <div class="stack">
+            <div><strong>Respuesta:</strong> {it.answer || <em class="muted">(vacía)</em>}</div>
+            <div class="muted"><strong>Referencia:</strong> {s.referenceAnswer}</div>
+            <div class="muted">JEV · puntuación {fmt(it.jevScore)}/3 · confianza {fmt(it.jevConfidence)} · no válida/manipulación {fmt(it.jevFlag)}</div>
+          </div>
+        )}
+      </div>
+    );
+  })}
+</Layout>

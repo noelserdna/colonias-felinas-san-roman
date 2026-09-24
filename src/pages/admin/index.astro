@@ -1,0 +1,58 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import AdminNav from "../../components/AdminNav.astro";
+import { getDb, schema } from "../../lib/db";
+import { count, ne } from "drizzle-orm";
+import { bankCoverage, stats } from "../../lib/admin";
+
+const db = getDb();
+const st = await stats(db);
+const cov = await bankCoverage(db);
+const a11yPendientes = (await db.select({ n: count() }).from(schema.accessibilityReports).where(ne(schema.accessibilityReports.estado, "resuelta")))[0].n;
+---
+<Layout title="Administración" wide>
+  <p class="eyebrow">Administración</p>
+  <h1>Resumen</h1>
+  <AdminNav />
+  {a11yPendientes > 0 && (
+    <div class="alert info" role="status">
+      <span>Hay <strong>{a11yPendientes}</strong> {a11yPendientes === 1 ? "comunicación" : "comunicaciones"} de accesibilidad sin resolver. <a href="/admin/accesibilidad">Revisarlas</a></span>
+    </div>
+  )}
+  <div class="stats">
+    {[["Usuarios", st.users], ["Carnets vigentes", st.carnets], ["Exámenes finales", st.finals], ["Corrigiéndose", st.grading]].map(([l, n]) => (
+      <div class="card"><div class="stat-num">{n}</div><small class="muted">{l}</small></div>
+    ))}
+  </div>
+  {!cov.comp.jevAvailable && (
+    <div class="alert bad" role="alert">
+      <span>
+        <strong>No hay clave de JEV configurada.</strong> El examen final no incluye preguntas escritas: se sustituyen por {cov.settings.final_written_count} preguntas tipo test más.{" "}
+        <a href="/admin/ajustes#jev">Configurar la clave</a>
+      </span>
+    </div>
+  )}
+  <h2>Banco de preguntas</h2>
+  {cov.global.map((g) => <div class="alert bad">{g}</div>)}
+  <div class="card table-scroll">
+    <table class="data responsive">
+      <thead><tr><th>Tema</th><th>Peso</th><th>Test</th><th>Test por dificultad (B/M/A)</th><th>Escritas</th><th>Avisos</th></tr></thead>
+      <tbody>
+        {cov.rows.map((r) => (
+          <tr>
+            <td class="primary-cell"><span>{r.unit.orden}. <a href={`/admin/preguntas?tema=${r.unit.id}`}>{r.unit.titulo}</a>{!r.unit.activo && <> <span class="badge lock">inactivo</span></>}</span></td>
+            <td data-label="Peso">{r.unit.peso}</td>
+            <td data-label="Test"><span>{r.mc} <small class="muted">({r.multi} de varias correctas)</small></span></td>
+            <td data-label="Por dificultad (B/M/A)">{r.porDificultad.baja} / {r.porDificultad.media} / {r.porDificultad.alta}</td>
+            <td data-label="Escritas">{r.written}</td>
+            <td data-label="Avisos">{r.warnings.length ? <div class="stack">{r.warnings.map((w) => <span class="badge bad">{w}</span>)}</div> : <span class="badge ok">OK</span>}</td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </div>
+  <p class="muted">
+    Test de tema: {cov.settings.unit_quiz_size} preguntas, aprobado {cov.settings.unit_pass_pct}%. Examen final: {cov.comp.objective} test + {cov.comp.written} escritas, aprobado {cov.settings.final_pass_pct}%. Dificultad: {cov.settings.mix_baja}% baja · {cov.settings.mix_media}% media · {cov.settings.mix_alta}% alta.
+    <a href="/admin/ajustes">Cambiar los ajustes</a>
+  </p>
+</Layout>

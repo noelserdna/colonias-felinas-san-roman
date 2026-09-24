@@ -1,0 +1,74 @@
+---
+import Layout from "../layouts/Layout.astro";
+import Icon from "../components/Icon.astro";
+import { getDb } from "../lib/db";
+import { getColoniaGuide, splitSteps } from "../lib/colonia";
+import { renderMarkdown } from "../lib/markdown";
+import { getUserColonies } from "../lib/colonies";
+
+const db = getDb();
+// Con una colonia asignada, «Mi colonia» pasa a ser la gestión de la colonia (censo y fichas).
+const mine = await getUserColonies(db, Astro.locals.user!.id);
+const bajaOk = Astro.url.searchParams.has("baja");
+if (mine.length === 1 && !bajaOk) return Astro.redirect(`/colonia/${mine[0].colony.id}`);
+const { markdown } = await getColoniaGuide(db);
+const { intro, steps } = splitSteps(markdown);
+const hasCarnet = Astro.locals.hasCarnet;
+---
+<Layout title="Mi colonia" readingProgress>
+  {bajaOk && (
+    <div class="alert ok" role="status" tabindex="-1" data-focus-on-load>
+      Has dejado de colaborar en la colonia. El Ayuntamiento ha recibido tu explicación. Gracias por tu ayuda.
+    </div>
+  )}
+  {mine.length > 0 && (
+    <section aria-labelledby="mis-colonias">
+      <p class="eyebrow">Mi colonia</p>
+      <h1 id="mis-colonias">Mis colonias</h1>
+      <ul class="consult-list">
+        {mine.map((m) => (
+          <li>
+            <a href={`/colonia/${m.colony.id}`}>
+              <span class="node">{m.colony.numero}</span>
+              <span class="step-body">
+                <span class="step-title">{m.colony.nombre}</span>
+                <span class="step-sub">{m.total} gatos · {m.member.rol === "responsable" ? "persona responsable" : "colaborador/a"}</span>
+              </span>
+              <Icon name="arrow" size={18} />
+            </a>
+          </li>
+        ))}
+      </ul>
+      <h2>Registrar otra colonia</h2>
+    </section>
+  )}
+  <p class="eyebrow" hidden={mine.length > 0}>Mi colonia</p>
+  {mine.length > 0 ? <h2>Cómo solicitar el alta de una colonia</h2> : <h1>Cómo solicitar el alta de una colonia</h1>}
+  {intro && <div class="prose colonia-intro" set:html={renderMarkdown(intro)} />}
+  <ol class="colonia-steps">
+    {steps.map((s, i) => {
+      const done = i === 0 && hasCarnet;
+      return (
+        <li class:list={["card", "colonia-step", { done }]}>
+          <div class="colonia-step-head">
+            <span class="node" aria-hidden="true">{done ? <Icon name="check" size={20} /> : i + 1}</span>
+            <h2>
+              <span class="sr-only">Paso {i + 1}{done ? " (completado)" : ""}: </span>
+              {s.title}
+            </h2>
+          </div>
+          {done && <p class="badge ok">Ya tienes tu carnet de cuidador/a</p>}
+          <div class="prose" set:html={renderMarkdown(s.body)} />
+        </li>
+      );
+    })}
+  </ol>
+  <a class="card end-cta" href="/documentos">
+    <span class="step-icon"><Icon name="book" size={26} /></span>
+    <span class="grow">
+      <strong>Ordenanzas y formularios</strong>
+      <span class="muted text-sm" style="display:block">Consulta la ordenanza de colonias felinas y sus anexos.</span>
+    </span>
+    <Icon name="arrow" />
+  </a>
+</Layout>

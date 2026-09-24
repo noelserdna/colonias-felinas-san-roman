@@ -1,0 +1,44 @@
+---
+// Lista de documentos del ayuntamiento agrupada por categoría (enlaces externos).
+import Icon from "./Icon.astro";
+import { groupByCategory, hostOf } from "../lib/documents";
+import type { schema } from "../lib/db";
+
+interface Props {
+  docs: (typeof schema.documents.$inferSelect)[];
+  /** Nivel del encabezado de cada categoría. */
+  level?: 2 | 3;
+}
+const { docs, level = 2 } = Astro.props;
+const groups = groupByCategory(docs);
+const H = level === 2 ? "h2" : "h3";
+const fmt = (iso: string) => new Intl.DateTimeFormat("es-ES", { day: "numeric", month: "long", year: "numeric", timeZone: "UTC" }).format(new Date(iso));
+---
+{groups.length === 0 ? (
+  <div class="card">El Ayuntamiento todavía no ha publicado documentos en esta sección.</div>
+) : (
+  groups.map((g) => (
+    <section class="doc-group" id={g.categoria} aria-labelledby={`cat-${g.categoria}`}>
+      <H id={`cat-${g.categoria}`}>{g.titulo}</H>
+      <ul class="doc-list">
+        {g.docs.map((d) => (
+          <li>
+            <a href={d.url} target="_blank" rel="noopener noreferrer" class="card doc-item">
+              <span class="step-icon"><Icon name="book" size={22} /></span>
+              <span class="doc-body">
+                <span class="doc-title">{d.titulo}</span>
+                {d.descripcion && <span class="doc-desc">{d.descripcion}</span>}
+                <span class="doc-meta">
+                  {d.fecha && <span>{fmt(d.fecha)}</span>}
+                  <span>{hostOf(d.url)}</span>
+                </span>
+              </span>
+              <Icon name="arrow" size={18} />
+              <span class="sr-only"> (se abre en una ventana nueva)</span>
+            </a>
+          </li>
+        ))}
+      </ul>
+    </section>
+  ))
+)}

@@ -1,0 +1,58 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import AdminNav from "../../components/AdminNav.astro";
+import { getDb } from "../../lib/db";
+import { ESTADOS, listReports, TIPOS, updateReport } from "../../lib/accessibility";
+import { formatDate } from "../../lib/util";
+
+const db = getDb();
+let saved = false;
+if (Astro.request.method === "POST") {
+  const f = await Astro.request.formData();
+  const estado = String(f.get("estado"));
+  if (estado in ESTADOS) {
+    await updateReport(db, String(f.get("id")), estado as keyof typeof ESTADOS, String(f.get("respuesta") ?? "").trim() || null);
+    saved = true;
+  }
+}
+const reports = await listReports(db);
+const pendientes = reports.filter((r) => r.estado !== "resuelta").length;
+// Plazo de respuesta: 20 días hábiles (aprox. 28 naturales) desde la recepción.
+const vencida = (d: Date) => Date.now() - d.getTime() > 28 * 86_400_000;
+---
+<Layout title="Accesibilidad · Administración" wide>
+  <p class="eyebrow">Administración</p>
+  <h1>Comunicaciones de accesibilidad</h1>
+  <AdminNav />
+  {saved && <div class="alert ok" role="status" tabindex="-1" data-focus-on-load>Comunicación actualizada.</div>}
+  <p class="muted">
+    Quejas, solicitudes de información accesible y sugerencias recibidas desde la <a href="/accesibilidad">declaración de accesibilidad</a>.
+    Hay que responder en un plazo máximo de 20 días hábiles. {pendientes > 0 ? `${pendientes} sin resolver.` : "No hay comunicaciones pendientes."}
+  </p>
+  {reports.length === 0 && <div class="card">Todavía no se ha recibido ninguna comunicación.</div>}
+  {reports.map((r) => (
+    <article class="card stack" aria-labelledby={`r-${r.id}`}>
+      <div class="spread">
+        <h2 id={`r-${r.id}`} class="mt-0 mb-0" style="font-size:1.05rem">{TIPOS[r.tipo]}</h2>
+        <span class:list={["badge", r.estado === "resuelta" ? "ok" : r.estado === "en_tramite" ? "todo" : "bad"]}>{ESTADOS[r.estado]}</span>
+      </div>
+      <p class="muted text-sm mb-0">
+        Recibida el {formatDate(r.createdAt)}
+        {r.estado !== "resuelta" && vencida(r.createdAt) && <strong> · plazo de respuesta probablemente vencido</strong>}
+        {r.pagina && <> · Página: {r.pagina}</>}
+        {(r.nombre || r.email) && <> · {r.nombre ?? ""}{r.email && <> {"<"}<a href={`mailto:${r.email}`}>{r.email}</a>{">"}</>}</>}
+      </p>
+      <p style="white-space:pre-wrap">{r.descripcion}</p>
+      <form method="post" class="stack">
+        <input type="hidden" name="id" value={r.id} />
+        <label for={`estado-${r.id}`} class="mb-0">Estado</label>
+        <select id={`estado-${r.id}`} name="estado">
+          {Object.entries(ESTADOS).map(([k, label]) => <option value={k} selected={r.estado === k}>{label}</option>)}
+        </select>
+        <label for={`respuesta-${r.id}`} class="mb-0">Notas internas / respuesta enviada</label>
+        <textarea id={`respuesta-${r.id}`} name="respuesta">{r.respuesta ?? ""}</textarea>
+        <button class="btn" type="submit">Guardar</button>
+      </form>
+    </article>
+  ))}
+</Layout>

@@ -1,0 +1,231 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import AdminNav from "../../components/AdminNav.astro";
+import { ZodError } from "zod";
+import { env } from "cloudflare:workers";
+import { getDb } from "../../lib/db";
+import { DEFAULT_SETTINGS, getSettings, saveSettings, SETTINGS_LABELS, type Settings } from "../../lib/settings";
+import { brandingSchema, deleteEscudo, getBranding, readEscudo, saveBranding, saveEscudo, ESCUDO_MAX_BYTES } from "../../lib/branding";
+import { canStoreSecrets, deleteSecret, getJevApiKey, secretStatus, setSecret } from "../../lib/secrets";
+import { gradeWritten } from "../../lib/jev";
+import { formatDate } from "../../lib/util";
+
+const db = getDb();
+type Msg = { section: string; ok: boolean; text: string };
+let msg: Msg | null = null;
+
+if (Astro.request.method === "POST") {
+  const f = await Astro.request.formData();
+  const section = String(f.get("section") ?? "params");
+  try {
+    if (section === "params") {
+      const input: Record<string, unknown> = {};
+      for (const [k, def] of Object.entries(DEFAULT_SETTINGS)) {
+        const v = f.get(k);
+        input[k] = typeof def === "number" ? Number(v) : String(v ?? "");
+      }
+      await saveSettings(db, input);
+      msg = { section, ok: true, text: "Ajustes guardados. Se aplican a los intentos que empiecen a partir de ahora." };
+    } else if (section === "ayuntamiento") {
+      // Primero se valida todo; así un escudo inválido no deja guardado a medias el resto.
+      const file = f.get("escudo");
+      const hasFile = file instanceof File && file.size > 0;
+      if (hasFile) await readEscudo(file);
+      const brandingInput = {
+        municipio: f.get("municipio"),
+        provincia: f.get("provincia"),
+        accesibilidad_email: f.get("accesibilidad_email") ?? "",
+        accesibilidad_telefono: f.get("accesibilidad_telefono") ?? "",
+      };
+      brandingSchema.parse(brandingInput);
+      await saveBranding(db, brandingInput);
+      if (hasFile) await saveEscudo(db, file);
+      msg = { section, ok: true, text: "Datos del ayuntamiento guardados." };
+    } else if (section === "escudo-reset") {
+      await deleteEscudo(db);
+      msg = { section: "ayuntamiento", ok: true, text: "Se ha restaurado el escudo por defecto." };
+    } else if (section === "jev-save") {
+      const key = String(f.get("jev_key") ?? "").trim();
+      if (key.length < 20 || /\s/.test(key)) throw new Error("La clave no tiene un formato válido.");
+      await setSecret(db, "typesafe_api_key", key);
+      msg = { section: "jev", ok: true, text: "Clave de JEV guardada (cifrada)." };
+    } else if (section === "jev-delete") {
+      await deleteSecret(db, "typesafe_api_key");
+      msg = { section: "jev", ok: true, text: "Clave del panel eliminada. Se usará la del servidor si existe." };
+    } else if (section === "jev-test") {
+      const { key } = await getJevApiKey(db);
+      if (!key) throw new Error("No hay ninguna clave configurada.");
+      const t = Date.now();
+      const r = await gradeWritten(
+        {
+          pregunta: "¿Qué tres actuaciones obligatorias establece la Ley 7/2023 para los gatos comunitarios?",
+          respuesta_referencia: "Identificarlos con microchip, registrarlos a nombre del ayuntamiento y esterilizarlos.",
+          puntos_clave: ["microchip", "registro a nombre del ayuntamiento", "esterilización"],
+          respuesta_alumno: "Ponerles microchip, registrarlos a nombre del ayuntamiento y esterilizarlos.",
+        },
+        { apiKey: key, maxRetries: 1 },
+      );
+      msg = { section: "jev", ok: true, text: `Conexión correcta con JEV (${Date.now() - t} ms). Respuesta de prueba puntuada con ${r.score.toFixed(2)}/3.` };
+    }
+  } catch (e) {
+    const text =
+      e instanceof ZodError
+        ? e.issues.map((i) => `${SETTINGS_LABELS[i.path[0] as keyof Settings] ?? String(i.path[0] ?? "")}: ${i.message}`).join(". ")
+        : e instanceof Error
+          ? e.message.replace(/apikey_[\w]+/g, "apikey_…")
+          : "No se pudo guardar.";
+    msg = { section: section.startsWith("jev") ? "jev" : section === "escudo-reset" ? "ayuntamiento" : section, ok: false, text };
+  }
+}
+
+const s = await getSettings(db);
+const branding = await getBranding(db);
+// El middleware cargó la identidad antes de guardar: se refresca para que la cabecera ya muestre el cambio.
+Astro.locals.branding = branding;
+const jevStatus = await secretStatus(db, "typesafe_api_key");
+const jevSource = (await getJevApiKey(db)).source;
+const secretsEnabled = canStoreSecrets();
+const serverKey = Boolean(env.TYPESAFE_API_KEY);
+
+const groups: [string, (keyof Settings)[]][] = [
+  ["Tests de tema", ["unit_quiz_size", "unit_pass_pct"]],
+  ["Examen final", ["final_mc_count", "final_written_count", "final_pass_pct", "final_min_per_unit"]],
+  ["Dificultad de las preguntas", ["mix_baja", "mix_media", "mix_alta"]],
+  ["Corrección con JEV", ["jev_pass_score", "jev_flag_threshold"]],
+  ["Carnet y acceso", ["carnet_validity_months", "carnet_prefix", "magic_link_ttl_min"]],
+];
+const step: Partial<Record<keyof Settings, string>> = { unit_pass_pct: "0.5", final_pass_pct: "0.5", jev_pass_score: "0.05", jev_flag_threshold: "0.05" };
+const note = (section: string) => (msg && msg.section === section ? msg : null);
+// Avisos tras guardar: role=status si todo fue bien, role=alert si hay error.
+const noteRole = (section: string) => (note(section)?.ok ? "status" : "alert");
+---
+<Layout title="Ajustes" wide>
+  <p class="eyebrow">Administración</p>
+  <h1>Ajustes</h1>
+  <AdminNav />
+
+  <!-- ---------- Ayuntamiento ---------- -->
+  <section class="card" id="ayuntamiento">
+    <h2 class="mt-0">Ayuntamiento</h2>
+    {note("ayuntamiento") && <div class:list={["alert", note("ayuntamiento")!.ok ? "ok" : "bad"]} role={noteRole("ayuntamiento")} id="ayuntamiento-msg" tabindex="-1" data-focus-on-load>{note("ayuntamiento")!.text}</div>}
+    <p class="muted">Aparece en la cabecera, la portada, el carnet, la política de privacidad, el correo de acceso y el nombre de la app instalada.</p>
+    <form method="post" enctype="multipart/form-data" data-astro-reload>
+      <input type="hidden" name="section" value="ayuntamiento" />
+      <div class="row" style="align-items:flex-start">
+        <div style="flex:2;min-width:min(220px,100%)">
+          <label for="municipio">Municipio</label>
+          <input id="municipio" name="municipio" type="text" required maxlength="80" autocapitalize="words" value={branding.municipio} aria-describedby="municipio-help" />
+          <small class="muted" id="municipio-help">Se mostrará como «Ayuntamiento de {branding.municipio}».</small>
+        </div>
+        <div style="flex:1;min-width:min(160px,100%)">
+          <label for="provincia">Provincia</label>
+          <input id="provincia" name="provincia" type="text" required maxlength="60" autocapitalize="words" value={branding.provincia} />
+        </div>
+      </div>
+      <div class="row" style="align-items:flex-start">
+        <div style="flex:2;min-width:min(220px,100%)">
+          <label for="accesibilidad_email">Correo de contacto de accesibilidad</label>
+          <input id="accesibilidad_email" name="accesibilidad_email" type="email" maxlength="254" autocomplete="off" value={branding.accesibilidad_email ?? ""} aria-describedby="accesibilidad-help" />
+        </div>
+        <div style="flex:1;min-width:min(160px,100%)">
+          <label for="accesibilidad_telefono">Teléfono de contacto</label>
+          <input id="accesibilidad_telefono" name="accesibilidad_telefono" type="tel" maxlength="40" autocomplete="off" value={branding.accesibilidad_telefono ?? ""} aria-describedby="accesibilidad-help" />
+        </div>
+      </div>
+      <small class="muted" id="accesibilidad-help">Se publican en la <a href="/accesibilidad">declaración de accesibilidad</a>. Al correo también se envía un aviso con cada comunicación nueva. Opcionales.</small>
+      <div class="row" style="align-items:center;margin-top:1rem;gap:1.25rem">
+        <div class="escudo-preview">
+          <img src={branding.escudo.src} alt={`Escudo actual del ${branding.ayuntamiento}`} />
+        </div>
+        <div style="flex:1;min-width:min(220px,100%)">
+          <label for="escudo" class="mt-0">Escudo {branding.escudo.custom ? "(personalizado)" : "(por defecto)"}</label>
+          <input id="escudo" name="escudo" type="file" accept="image/png,image/jpeg,image/webp" aria-describedby="escudo-help" />
+          <small class="muted" id="escudo-help">PNG, JPG o WebP de hasta {Math.round(ESCUDO_MAX_BYTES / 1000)} KB. Mejor PNG con fondo transparente y unos 400 px de alto.</small>
+        </div>
+      </div>
+      <div class="row" style="margin-top:1rem">
+        <button class="btn primary" type="submit">Guardar ayuntamiento</button>
+      </div>
+    </form>
+    {branding.escudo.custom && (
+      <form method="post" style="margin-top:.6rem">
+        <input type="hidden" name="section" value="escudo-reset" />
+        <button class="btn small ghost" type="submit">Restaurar el escudo por defecto</button>
+      </form>
+    )}
+  </section>
+
+  <!-- ---------- Clave de JEV ---------- -->
+  <section class="card" id="jev">
+    <h2 class="mt-0">Clave de la API de JEV (corrección de respuestas escritas)</h2>
+    {note("jev") && <div class:list={["alert", note("jev")!.ok ? "ok" : "bad"]} role={noteRole("jev")} id="jev-msg" tabindex="-1" data-focus-on-load>{note("jev")!.text}</div>}
+    <p class="mt-0">
+      Estado:{" "}
+      {jevSource === "panel" && jevStatus.stored && (
+        <span class="badge ok">Configurada en el panel · termina en …{jevStatus.last4} · {formatDate(jevStatus.updatedAt)}</span>
+      )}
+      {jevSource === "servidor" && <span class="badge todo">Usando la clave del servidor (TYPESAFE_API_KEY)</span>}
+      {jevSource === null && <span class="badge bad">Sin configurar</span>}
+    </p>
+    {jevSource === null && (
+      <div class="alert bad">
+        Sin clave, el examen final no incluye preguntas escritas: se sustituyen por preguntas tipo test para mantener el mismo número de preguntas.
+      </div>
+    )}
+    {!secretsEnabled ? (
+      <div class="alert info">
+        Para guardar la clave desde el panel hay que definir el secreto <code>APP_SECRET</code> en el servidor
+        (<code>npx wrangler secret put APP_SECRET</code>). Mientras tanto se usa la variable <code>TYPESAFE_API_KEY</code>.
+      </div>
+    ) : (
+      <form method="post" class="row" style="align-items:flex-end">
+        <input type="hidden" name="section" value="jev-save" />
+        <div style="flex:1;min-width:min(240px,100%)">
+          <label for="jev_key">{jevStatus.stored ? "Sustituir la clave" : "Nueva clave"}</label>
+          <input id="jev_key" name="jev_key" type="password" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="apikey_…" required aria-describedby="jev-help" />
+        </div>
+        <button class="btn primary" type="submit">Guardar clave</button>
+      </form>
+    )}
+    <div class="row" style="margin-top:.8rem">
+      <form method="post">
+        <input type="hidden" name="section" value="jev-test" />
+        <button class="btn" type="submit" disabled={jevSource === null}>Probar conexión</button>
+      </form>
+      {jevStatus.stored && (
+        <form method="post">
+          <input type="hidden" name="section" value="jev-delete" />
+          <button class="btn ghost danger" type="submit">Quitar la clave del panel{serverKey ? " (usar la del servidor)" : ""}</button>
+        </form>
+      )}
+    </div>
+    <p class="muted text-sm mb-0" id="jev-help">
+      La clave se guarda cifrada y nunca se vuelve a mostrar; solo sus últimos 4 caracteres. Tiene prioridad sobre la del servidor.
+    </p>
+  </section>
+
+  <!-- ---------- Parámetros ---------- -->
+  <h2>Parámetros de los tests y el examen</h2>
+  {note("params") && <div class:list={["alert", note("params")!.ok ? "ok" : "bad"]} role={noteRole("params")} id="params-msg" tabindex="-1" data-focus-on-load>{note("params")!.text}</div>}
+  <form method="post">
+    <input type="hidden" name="section" value="params" />
+    {groups.map(([title, keys]) => (
+      <fieldset class="card">
+        <legend><strong>{title}</strong></legend>
+        {keys.map((k) => (
+          <div>
+            <label for={k}>{SETTINGS_LABELS[k]}</label>
+            <input id={k} name={k} type={typeof s[k] === "number" ? "number" : "text"} step={step[k] ?? "1"} value={String(s[k])} required style="max-width:14rem" />
+          </div>
+        ))}
+        {title === "Dificultad de las preguntas" && (
+          <p class="muted">Proporción de preguntas de cada nivel en cada test de tema y en el examen final (tipo test y escritas por separado). Deben sumar 100. Si un tema no tiene suficientes preguntas de un nivel, se completa con el nivel más cercano.</p>
+        )}
+        {title === "Corrección con JEV" && (
+          <p class="muted">JEV puntúa cada respuesta escrita de 0 a 3: 0 incorrecta, 1 parcial, 2 mayormente correcta, 3 completa. Con 2 se exige al menos «mayormente correcta».</p>
+        )}
+      </fieldset>
+    ))}
+    <button class="btn primary" type="submit">Guardar ajustes</button>
+  </form>
+</Layout>

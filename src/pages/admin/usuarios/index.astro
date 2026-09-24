@@ -1,0 +1,32 @@
+---
+import Layout from "../../../layouts/Layout.astro";
+import AdminNav from "../../../components/AdminNav.astro";
+import { getDb } from "../../../lib/db";
+import { listUsers } from "../../../lib/admin";
+import { carnetStatus } from "../../../lib/carnet";
+import { formatDate } from "../../../lib/util";
+
+const users = await listUsers(getDb());
+---
+<Layout title="Usuarios" wide>
+  <p class="eyebrow">Administración</p>
+  <h1>Usuarios</h1>
+  <AdminNav />
+  <div class="card table-scroll">
+    <table class="data responsive">
+      <thead><tr><th>Correo</th><th>Nombre</th><th>Alta</th><th>Temas aprobados</th><th>Carnet</th><th><span class="sr-only">Acciones</span></th></tr></thead>
+      <tbody>
+        {users.map((u) => (
+          <tr>
+            <td class="primary-cell"><span>{u.email} {u.role === "admin" && <span class="badge todo">admin</span>}</span></td>
+            <td data-label="Nombre">{[u.nombre, u.apellidos].filter(Boolean).join(" ") || <span class="muted">—</span>}</td>
+            <td data-label="Alta">{formatDate(u.createdAt)}</td>
+            <td data-label="Temas aprobados">{u.unitsPassed}</td>
+            <td data-label="Carnet">{u.carnet ? <span>{u.carnet.numero} <span class:list={["badge", carnetStatus(u.carnet) === "vigente" ? "ok" : "bad"]}>{carnetStatus(u.carnet)}</span></span> : "—"}</td>
+            <td class="actions"><a class="btn small" href={`/admin/usuarios/${u.id}`}>Ver</a></td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </div>
+</Layout>

@@ -1,0 +1,81 @@
+---
+import Layout from "../../../layouts/Layout.astro";
+import AdminNav from "../../../components/AdminNav.astro";
+import { ZodError } from "zod";
+import { getDb } from "../../../lib/db";
+import { ColonyError, createColony, listCaretakers } from "../../../lib/colonies";
+
+const db = getDb();
+let error: string | null = null;
+let form: Record<string, string> = {};
+let colaboradores: string[] = [];
+if (Astro.request.method === "POST") {
+  const f = await Astro.request.formData();
+  form = Object.fromEntries([...f.entries()].filter(([k]) => k !== "colaboradores").map(([k, v]) => [k, String(v)]));
+  colaboradores = f.getAll("colaboradores").map(String);
+  try {
+    const { numero } = await createColony(db, { colony: form, responsableId: form.responsable ?? "", colaboradores, census: form });
+    return Astro.redirect(`/admin/colonias?creada=${numero}`, 303);
+  } catch (e) {
+    error = e instanceof ZodError ? e.issues.map((i) => i.message).join(". ") : e instanceof ColonyError ? e.message : "No se pudo registrar la colonia.";
+  }
+}
+const caretakers = await listCaretakers(db);
+const label = (c: (typeof caretakers)[number]) => `${c.nombre} ${c.apellidos} · ${c.numero}`;
+const num = (k: string) => form[k] ?? "0";
+---
+<Layout title="Registrar colonia" wide>
+  <p class="eyebrow">Administración · Colonias</p>
+  <h1>Registrar colonia</h1>
+  <AdminNav />
+  {error && <div class="alert bad" role="alert" tabindex="-1" data-focus-on-load>{error}</div>}
+  {caretakers.length === 0 ? (
+    <div class="card">No hay ninguna persona con el carnet de cuidador/a vigente. Solo se pueden registrar colonias con personas acreditadas.</div>
+  ) : (
+    <form method="post" class="stack">
+      <fieldset class="card">
+        <legend>Datos de la colonia (Anexo I)</legend>
+        <label for="nombre">Nombre de la colonia</label>
+        <input id="nombre" name="nombre" type="text" required maxlength="120" value={form.nombre ?? ""} />
+        <label for="direccion">Dirección exacta</label>
+        <input id="direccion" name="direccion" type="text" required maxlength="300" value={form.direccion ?? ""} />
+        <label for="coordenadas">Coordenadas <span class="muted">(opcional)</span></label>
+        <input id="coordenadas" name="coordenadas" type="text" maxlength="80" placeholder="40.0000, -4.0000" value={form.coordenadas ?? ""} />
+        <label for="titularidad">Titularidad del terreno</label>
+        <select id="titularidad" name="titularidad">
+          <option value="publico" selected={form.titularidad !== "privado"}>Público</option>
+          <option value="privado" selected={form.titularidad === "privado"}>Privado (con autorización de la persona propietaria)</option>
+        </select>
+      </fieldset>
+      <fieldset class="card">
+        <legend>Personas cuidadoras</legend>
+        <p class="muted text-sm mt-0">Solo aparecen las personas con el carnet de cuidador/a vigente.</p>
+        <label for="responsable">Persona cuidadora responsable</label>
+        <select id="responsable" name="responsable" required>
+          <option value="">Elige una persona…</option>
+          {caretakers.map((c) => <option value={c.id} selected={form.responsable === c.id}>{label(c)}</option>)}
+        </select>
+        <p class="mb-0"><strong>Otras personas colaboradoras</strong> <span class="muted">(opcional)</span></p>
+        <div class="stack" style="margin-top:.4rem">
+          {caretakers.map((c) => (
+            <label class="check"><input type="checkbox" name="colaboradores" value={c.id} checked={colaboradores.includes(c.id)} /> {label(c)}</label>
+          ))}
+        </div>
+      </fieldset>
+      <fieldset class="card">
+        <legend>Número de gatos declarado en la solicitud</legend>
+        <div class="census-grid" style="margin:0">
+          {[["hembrasEsterilizadas", "Hembras esterilizadas"], ["hembrasSinEsterilizar", "Hembras sin esterilizar"], ["machosCastrados", "Machos castrados"], ["machosSinCastrar", "Machos sin castrar"], ["adoptables", "Adoptables"], ["enfermos", "Enfermos"]].map(([k, l]) => (
+            <div><label for={k} class="mt-0">{l}</label><input id={k} name={k} type="number" inputmode="numeric" min="0" max="999" required value={num(k)} /></div>
+          ))}
+        </div>
+      </fieldset>
+      <fieldset class="card">
+        <legend>Notas internas</legend>
+        <label for="notas" class="sr-only">Notas internas</label>
+        <textarea id="notas" name="notas" maxlength="4000" placeholder="Informe técnico, fecha de la visita, observaciones…">{form.notas ?? ""}</textarea>
+      </fieldset>
+      <button class="btn primary" type="submit">Registrar colonia</button>
+    </form>
+  )}
+</Layout>

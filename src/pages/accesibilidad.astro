@@ -1,0 +1,173 @@
+---
+import Layout from "../layouts/Layout.astro";
+import { env } from "cloudflare:workers";
+import { ZodError } from "zod";
+import { getDb } from "../lib/db";
+import { createReport, TIPOS } from "../lib/accessibility";
+import { sendEmail } from "../lib/email";
+
+// Fechas de la declaración: actualizarlas en cada revisión.
+const PREPARADA = "24 de septiembre de 2026";
+const REVISADA = "24 de septiembre de 2026";
+
+const b = Astro.locals.branding;
+const origin = Astro.url.origin;
+let ok = false;
+let error: string | null = null;
+let form: Record<string, string> = { tipo: "queja", pagina: Astro.url.searchParams.get("desde") ?? "" };
+
+if (Astro.request.method === "POST") {
+  const f = await Astro.request.formData();
+  form = Object.fromEntries([...f.entries()].map(([k, v]) => [k, String(v)]));
+  // Campo trampa para bots: las personas no lo ven ni lo rellenan.
+  if (form.web) {
+    ok = true;
+  } else {
+    const { success } = (await env.LOGIN_LIMITER?.limit({ key: `accesibilidad:${Astro.clientAddress}` })) ?? { success: true };
+    if (!success) {
+      error = "Has enviado varias comunicaciones seguidas. Espera un minuto e inténtalo de nuevo.";
+    } else {
+      try {
+        const r = await createReport(getDb(), form);
+        ok = true;
+        form = { tipo: "queja", pagina: "" };
+        if (b.accesibilidad_email) {
+          await sendEmail(
+            b.accesibilidad_email,
+            `Nueva comunicación de accesibilidad (${TIPOS[r.tipo]})`,
+            `${TIPOS[r.tipo]}\nPágina: ${r.pagina ?? "—"}\nNombre: ${r.nombre ?? "—"} · Correo: ${r.email ?? "—"}\n\n${r.descripcion}\n\nGestiónala en ${origin}/admin/accesibilidad`,
+          ).catch((e) => console.error("Aviso de accesibilidad no enviado", e));
+        }
+      } catch (e) {
+        error = e instanceof ZodError ? e.issues.map((i) => i.message).join(". ") : "No se ha podido enviar la comunicación. Inténtalo más tarde.";
+      }
+    }
+  }
+}
+const contacto = [
+  b.accesibilidad_email && `el correo electrónico ${b.accesibilidad_email}`,
+  b.accesibilidad_telefono && `el teléfono ${b.accesibilidad_telefono}`,
+].filter(Boolean) as string[];
+---
+<Layout title="Declaración de accesibilidad">
+  <p class="eyebrow">Accesibilidad</p>
+  <h1>Declaración de accesibilidad</h1>
+
+  <article class="card prose">
+    <p>
+      El {b.ayuntamiento} se ha comprometido a hacer accesible su aplicación web «Cuidadores de Colonias Felinas», de conformidad con el
+      Real Decreto 1112/2018, de 7 de septiembre, sobre accesibilidad de los sitios web y aplicaciones para dispositivos móviles del sector público.
+    </p>
+    <p>La presente declaración de accesibilidad se aplica a la aplicación web <strong>{origin}</strong>.</p>
+
+    <h2>Situación de cumplimiento</h2>
+    <p>
+      Esta aplicación web es <strong>parcialmente conforme</strong> con el RD 1112/2018 debido a la falta de conformidad de los aspectos que se
+      indican a continuación.
+    </p>
+
+    <h2>Contenido no accesible</h2>
+    <p>El contenido que se recoge a continuación no es accesible por lo siguiente:</p>
+    <h3>a) Falta de conformidad con el RD 1112/2018</h3>
+    <ul>
+      <li>
+        El carnet digital muestra de forma continua un brillo en movimiento y un indicador «Vigente» que parpadea, sin un control para
+        pausarlos (requisito 9.2.2.2 de la norma UNE-EN 301549:2022). Son medidas de seguridad para distinguir el carnet real de una captura
+        de pantalla. Las animaciones se detienen si el dispositivo tiene activada la opción de reducir el movimiento, y la hora en directo sigue
+        permitiendo comprobar el carnet.
+      </li>
+      <li>
+        Algunas imágenes del temario, procedentes del manual del Colegio Oficial de Veterinarios de Toledo, son esquemas que contienen texto
+        dentro de la imagen (requisito 9.1.4.5). Todas cuentan con una descripción textual alternativa que recoge su contenido.
+      </li>
+    </ul>
+    <h3>b) Carga desproporcionada</h3>
+    <p>No aplica.</p>
+    <h3>c) El contenido no entra dentro del ámbito de la legislación aplicable</h3>
+    <p>No se ha identificado contenido excluido.</p>
+
+    <h2>Preparación de la presente declaración de accesibilidad</h2>
+    <p>La presente declaración fue preparada el {PREPARADA}.</p>
+    <p>El método empleado para preparar la declaración ha sido una autoevaluación llevada a cabo por el propio organismo, que incluye:</p>
+    <ul>
+      <li>Pruebas automáticas con axe-core respecto a las pautas WCAG 2.1 nivel AA, en modo claro y oscuro, en todas las pantallas principales.</li>
+      <li>
+        Revisión manual en tamaños de móvil desde 320 píxeles de ancho: navegación con teclado, orden y visibilidad del foco, contraste de
+        color, texto ampliado al 200 %, reducción del movimiento, tamaño de las zonas táctiles y comportamiento con el teclado en pantalla.
+      </li>
+    </ul>
+    <p>Queda pendiente completar la evaluación con lectores de pantalla en dispositivos reales (TalkBack en Android y VoiceOver en iOS).</p>
+    <p>Última revisión de la declaración: {REVISADA}.</p>
+
+    <h2>Observaciones y datos de contacto</h2>
+    <p>Puede realizar comunicaciones sobre requisitos de accesibilidad (artículo 10.2.a del RD 1112/2018), como por ejemplo:</p>
+    <ul>
+      <li>informar sobre cualquier posible incumplimiento por parte de esta aplicación web;</li>
+      <li>transmitir otras dificultades de acceso al contenido;</li>
+      <li>formular cualquier otra consulta o sugerencia de mejora relativa a la accesibilidad de la aplicación.</li>
+    </ul>
+    <p>
+      Puede hacerlo mediante el <a href="#comunicacion">formulario de esta página</a>{contacto.length > 0 ? <>, a través de {contacto.join(" o de ")}</> : null}
+      o presentando un escrito en el registro del {b.ayuntamiento}.
+    </p>
+    <p>
+      También puede presentar una queja relativa al cumplimiento de los requisitos del RD 1112/2018 o una solicitud de información accesible
+      (artículo 10.2.b). Las comunicaciones serán recibidas y tratadas por la unidad responsable de accesibilidad del {b.ayuntamiento}, que
+      responderá en el plazo máximo de veinte días hábiles.
+    </p>
+
+    <h2>Procedimiento de aplicación</h2>
+    <p>
+      El procedimiento de reclamación está recogido en el artículo 13 del RD 1112/2018. Si una vez realizada una solicitud de información
+      accesible o queja, esta hubiera sido desestimada, no se estuviera de acuerdo con la decisión adoptada, o la respuesta no cumpliera los
+      requisitos contemplados en el artículo 12.5, la persona interesada podrá iniciar una reclamación. Igualmente, se podrá iniciar una
+      reclamación en el caso de que haya transcurrido el plazo de veinte días hábiles sin haber obtenido respuesta.
+    </p>
+    <p>La reclamación puede presentarse en el registro del {b.ayuntamiento}.</p>
+
+    <h2>Contenido opcional</h2>
+    <p>La aplicación incorpora, entre otras, estas características de accesibilidad:</p>
+    <ul>
+      <li>Diseño pensado primero para el móvil, sin desplazamiento horizontal desde 320 píxeles de ancho.</li>
+      <li>Tipografía Atkinson Hyperlegible, diseñada para personas con baja visión, y texto que se adapta al tamaño de letra del dispositivo.</li>
+      <li>Contraste de color de al menos 4,5:1 en el texto, en modo claro y oscuro.</li>
+      <li>Uso completo con teclado, foco siempre visible y enlace para saltar al contenido.</li>
+      <li>Zonas táctiles de al menos 44 × 44 píxeles.</li>
+      <li>Descripciones alternativas en todas las imágenes del temario, que pueden ampliarse a pantalla completa.</li>
+      <li>Preguntas y resultados de los tests anunciados a los lectores de pantalla; la corrección no depende solo del color.</li>
+      <li>Respeto de la preferencia del dispositivo para reducir el movimiento.</li>
+    </ul>
+    <p>La aplicación funciona en las versiones actuales de Chrome, Safari, Firefox y Edge, en móvil y en ordenador, y puede instalarse en el móvil.</p>
+  </article>
+
+  <section class="card" id="comunicacion" aria-labelledby="comunicacion-titulo">
+    <h2 id="comunicacion-titulo" class="mt-0">Enviar una comunicación de accesibilidad</h2>
+    {ok && (
+      <div class="alert ok" role="status" tabindex="-1" data-focus-on-load>
+        Hemos recibido tu comunicación. La unidad responsable de accesibilidad la tramitará y, si nos has dejado un correo, te responderá en un
+        plazo máximo de veinte días hábiles.
+      </div>
+    )}
+    {error && <div class="alert bad" role="alert" id="comunicacion-error" tabindex="-1" data-focus-on-load>{error}</div>}
+    <form method="post" action="/accesibilidad#comunicacion">
+      <label for="tipo">Tipo de comunicación</label>
+      <select id="tipo" name="tipo" required>
+        {Object.entries(TIPOS).map(([k, label]) => <option value={k} selected={form.tipo === k}>{label}</option>)}
+      </select>
+      <label for="descripcion">Describe el problema o la consulta</label>
+      <textarea id="descripcion" name="descripcion" required minlength="10" maxlength="4000" aria-describedby={error ? "comunicacion-error" : undefined}>{form.descripcion ?? ""}</textarea>
+      <label for="pagina">Página o pantalla afectada <span class="muted">(opcional)</span></label>
+      <input id="pagina" name="pagina" type="text" maxlength="300" value={form.pagina ?? ""} placeholder="Por ejemplo: el test del tema 3" />
+      <label for="nombre">Nombre <span class="muted">(opcional)</span></label>
+      <input id="nombre" name="nombre" type="text" maxlength="120" autocomplete="name" autocapitalize="words" value={form.nombre ?? ""} />
+      <label for="email">Correo electrónico <span class="muted">(opcional, para poder responderte)</span></label>
+      <input id="email" name="email" type="email" maxlength="254" autocomplete="email" inputmode="email" value={form.email ?? ""} />
+      <div class="hp" aria-hidden="true">
+        <label for="web">No rellenes este campo</label>
+        <input id="web" name="web" type="text" tabindex="-1" autocomplete="off" />
+      </div>
+      <p class="muted text-sm">Los datos que nos facilites solo se usarán para tramitar esta comunicación. Consulta la <a href="/privacidad">política de privacidad</a>.</p>
+      <button class="btn primary block" type="submit">Enviar comunicación</button>
+    </form>
+  </section>
+</Layout>

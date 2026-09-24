@@ -1,0 +1,21 @@
+---
+const path = Astro.url.pathname;
+const links = [
+  ["/admin", "Resumen"],
+  ["/admin/temas", "Temas"],
+  ["/admin/preguntas", "Preguntas"],
+  ["/admin/ajustes", "Ajustes"],
+  ["/admin/colonias", "Colonias"],
+  ["/admin/usuarios", "Usuarios"],
+  ["/admin/carnets", "Carnets"],
+  ["/admin/documentos", "Documentos"],
+  ["/admin/colonia", "Mi colonia"],
+  ["/admin/accesibilidad", "Accesibilidad"],
+];
+const isActive = (href: string) => (href === "/admin" ? path.replace(/\/$/, "") === "/admin" : path.startsWith(href));
+---
+<nav class="admin-nav" aria-label="Administración">
+  {links.map(([href, label]) => (
+    <a href={href} aria-current={isActive(href) ? "page" : undefined}>{label}</a>
+  ))}
+</nav>

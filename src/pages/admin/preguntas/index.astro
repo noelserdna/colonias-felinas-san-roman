@@ -1,0 +1,109 @@
+---
+import Layout from "../../../layouts/Layout.astro";
+import AdminNav from "../../../components/AdminNav.astro";
+import { and, asc, eq, like, type SQL } from "drizzle-orm";
+import { getDb, schema } from "../../../lib/db";
+
+const db = getDb();
+if (Astro.request.method === "POST") {
+  const f = await Astro.request.formData();
+  const id = Number(f.get("id"));
+  await db.update(schema.questions).set({ activo: f.get("activo") === "1" }).where(eq(schema.questions.id, id));
+  return Astro.redirect(Astro.url.pathname + Astro.url.search, 303);
+}
+const sp = Astro.url.searchParams;
+const tema = sp.get("tema") ?? "";
+const tipo = sp.get("tipo") ?? "";
+const estado = sp.get("estado") ?? "";
+const dificultad = sp.get("dificultad") ?? "";
+const texto = sp.get("q") ?? "";
+const conds: SQL[] = [];
+if (tema) conds.push(eq(schema.questions.unitId, Number(tema)));
+if (tipo === "mc" || tipo === "multi" || tipo === "written") conds.push(eq(schema.questions.type, tipo));
+if (dificultad === "baja" || dificultad === "media" || dificultad === "alta") conds.push(eq(schema.questions.dificultad, dificultad));
+if (estado) conds.push(eq(schema.questions.activo, estado === "activas"));
+if (texto) conds.push(like(schema.questions.enunciado, `%${texto}%`));
+const units = await db.query.units.findMany({ orderBy: asc(schema.units.orden) });
+const qs = await db.query.questions.findMany({
+  where: conds.length ? and(...conds) : undefined,
+  orderBy: [asc(schema.questions.unitId), asc(schema.questions.id)],
+});
+const hasFilters = Boolean(tema || tipo || estado || dificultad || texto);
+// Paginación: 50 por página para no pintar cientos de fichas a la vez en el móvil.
+const PAGE_SIZE = 50;
+const pages = Math.max(1, Math.ceil(qs.length / PAGE_SIZE));
+const page = Math.min(pages, Math.max(1, Number(sp.get("page")) || 1));
+const shown = qs.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
+const pageHref = (n: number) => {
+  const q = new URLSearchParams(sp);
+  if (n === 1) q.delete("page");
+  else q.set("page", String(n));
+  const qs2 = q.toString();
+  return `/admin/preguntas${qs2 ? `?${qs2}` : ""}`;
+};
+const unitName = new Map(units.map((u) => [u.id, `${u.orden}. ${u.titulo}`]));
+---
+<Layout title="Preguntas" wide>
+  <p class="eyebrow">Administración</p>
+  <h1>Banco de preguntas</h1>
+  <AdminNav />
+  <div class="row" style="margin-bottom:1rem;align-items:flex-start">
+    <a class="btn primary" href="/admin/preguntas/nueva">Nueva pregunta</a>
+    <a class="btn" href="/admin/preguntas/importar">Importar</a>
+    <details class="export-menu">
+      <summary class="btn">Exportar <span aria-hidden="true">▾</span></summary>
+      <div class="row" style="margin-top:.6rem">
+        <a class="btn" href="/api/admin/questions/export?format=csv" data-astro-reload>Exportar CSV</a>
+        <a class="btn" href="/api/admin/questions/export?format=json" data-astro-reload>Exportar JSON</a>
+      </div>
+    </details>
+  </div>
+  <details class="card filters" open={hasFilters}>
+    <summary style="cursor:pointer;padding-block:.6rem;font-weight:700">Filtros{hasFilters && <span class="badge todo" style="margin-left:.5rem">activos</span>}</summary>
+  <form method="get" class="row" style="align-items:flex-end;margin-top:.6rem">
+    <div style="flex:2;min-width:min(180px,100%)"><label for="f-tema">Tema</label>
+      <select id="f-tema" name="tema"><option value="">Todos</option>{units.map((u) => <option value={u.id} selected={String(u.id) === tema}>{u.orden}. {u.titulo}</option>)}</select></div>
+    <div style="flex:1;min-width:min(120px,100%)"><label for="f-tipo">Tipo</label>
+      <select id="f-tipo" name="tipo"><option value="">Todos</option><option value="mc" selected={tipo === "mc"}>Test</option><option value="multi" selected={tipo === "multi"}>Varias correctas</option><option value="written" selected={tipo === "written"}>Escrita</option></select></div>
+    <div style="flex:1;min-width:min(120px,100%)"><label for="f-dif">Dificultad</label>
+      <select id="f-dif" name="dificultad"><option value="">Todas</option>{["baja", "media", "alta"].map((d) => <option value={d} selected={dificultad === d}>{d[0].toUpperCase() + d.slice(1)}</option>)}</select></div>
+    <div style="flex:1;min-width:min(120px,100%)"><label for="f-estado">Estado</label>
+      <select id="f-estado" name="estado"><option value="">Todas</option><option value="activas" selected={estado === "activas"}>Activas</option><option value="inactivas" selected={estado === "inactivas"}>Inactivas</option></select></div>
+    <div style="flex:2;min-width:min(180px,100%)"><label for="f-q">Texto</label><input id="f-q" name="q" type="text" value={texto} /></div>
+    <button class="btn" type="submit">Filtrar</button>
+    {hasFilters && <a class="btn ghost" href="/admin/preguntas">Quitar filtros</a>}
+  </form>
+  </details>
+  <p class="muted">{qs.length} preguntas{hasFilters ? " con estos filtros" : ""}{pages > 1 ? ` · página ${page} de ${pages}` : ""}</p>
+  <div class="card table-scroll">
+    <table class="data responsive">
+      <thead><tr><th>ID</th><th>Tema</th><th>Tipo</th><th>Dificultad</th><th>Enunciado</th><th>Estado</th><th><span class="sr-only">Acciones</span></th></tr></thead>
+      <tbody>
+        {shown.map((q) => (
+          <tr>
+            <td data-label="ID">{q.id}</td>
+            <td data-label="Tema">{unitName.get(q.unitId)?.slice(0, 28)}</td>
+            <td data-label="Tipo">{q.type === "mc" ? "Test" : q.type === "multi" ? "Varias" : "Escrita"}</td>
+            <td data-label="Dificultad"><span class:list={["badge", q.dificultad === "alta" ? "bad" : q.dificultad === "baja" ? "ok" : "todo"]}>{q.dificultad}</span></td>
+            <td class="primary-cell">{q.enunciado}</td>
+            <td data-label="Estado">{q.activo ? <span class="badge ok">activa</span> : <span class="badge lock">inactiva</span>}</td>
+            <td class="actions">
+              <a class="btn small" href={`/admin/preguntas/${q.id}`} aria-label={`Editar pregunta ${q.id}`}>Editar</a>
+              <form method="post" style="display:inline">
+                <input type="hidden" name="id" value={q.id} /><input type="hidden" name="activo" value={q.activo ? "0" : "1"} />
+                <button class="btn small ghost" type="submit" aria-label={`${q.activo ? "Desactivar" : "Activar"} pregunta ${q.id}`}>{q.activo ? "Desactivar" : "Activar"}</button>
+              </form>
+            </td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </div>
+  {pages > 1 && (
+    <nav class="pager" aria-label="Páginas del banco de preguntas">
+      {page > 1 ? <a class="btn" href={pageHref(page - 1)}>← Anteriores</a> : <span></span>}
+      <span class="muted">Página {page} de {pages}</span>
+      {page < pages ? <a class="btn" href={pageHref(page + 1)}>Siguientes →</a> : <span></span>}
+    </nav>
+  )}
+</Layout>

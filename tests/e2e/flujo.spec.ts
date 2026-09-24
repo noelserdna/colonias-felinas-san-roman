@@ -1,0 +1,572 @@
+import { expect, test, type Page, type BrowserContext } from "@playwright/test";
+import { execSync } from "node:child_process";
+
+import { existsSync, readFileSync } from "node:fs";
+
+// Correo de administración para las pruebas: E2E_ADMIN_EMAIL o el primero de ADMIN_EMAILS en .dev.vars.
+const devVarsAdmin = existsSync(".dev.vars") ? readFileSync(".dev.vars", "utf8").match(/^ADMIN_EMAILS=([^,\s]+)/m)?.[1] : undefined;
+const ADMIN = process.env.E2E_ADMIN_EMAIL ?? devVarsAdmin ?? "admin@example.org";
+
+// La sesión del administrador se reutiliza entre pruebas: el acceso tiene un límite de
+// 5 enlaces por minuto y correo, y varias pruebas entran como administrador.
+let adminCookies: Awaited<ReturnType<BrowserContext["cookies"]>> | null = null;
+
+async function login(page: Page, email: string) {
+  if (email === ADMIN && adminCookies) {
+    await page.context().addCookies(adminCookies);
+    await page.goto("/");
+    return;
+  }
+  await page.goto("/login");
+  await page.getByLabel("Correo electrónico").fill(email);
+  await page.getByRole("button", { name: "Enviarme el enlace" }).click();
+  await page.getByTestId("dev-link").click();
+  await page.getByRole("button", { name: "Entrar" }).click();
+  await expect(page).toHaveURL(/\/$/);
+  if (email === ADMIN) adminCookies = await page.context().cookies();
+}
+
+type Bank = { enunciado: string; tipo: "mc" | "multi" | "written"; opciones?: string[]; correcta?: number; correctas?: number[]; respuesta_referencia?: string }[];
+
+async function exportBank(admin: BrowserContext): Promise<Map<string, Bank[number]>> {
+  const res = await admin.request.get("/api/admin/questions/export?format=json");
+  expect(res.ok()).toBeTruthy();
+  const bank = (await res.json()) as Bank;
+  return new Map(bank.map((q) => [q.enunciado, q]));
+}
+
+/** Responde todas las preguntas visibles: bien (usando el banco exportado) o mal. */
+async function answerAll(page: Page, bank: Map<string, Bank[number]>, correct: boolean) {
+  const questions = page.locator("fieldset.question");
+  await expect(questions.first()).toBeVisible();
+  const n = await questions.count();
+  for (let i = 0; i < n; i++) {
+    const fs = questions.nth(i);
+    const text = (await fs.locator(".qtext").innerText()).trim();
+    const q = bank.get(text);
+    expect(q, `Pregunta no encontrada en el banco: ${text}`).toBeTruthy();
+    if (q!.tipo === "multi") {
+      const right = new Set(q!.correctas!.map((i) => q!.opciones![i]));
+      const labels = fs.locator("label.option");
+      const count = await labels.count();
+      for (let j = 0; j < count; j++) {
+        const t = (await labels.nth(j).innerText()).trim();
+        // Bien: marcar exactamente las correctas. Mal: marcar solo una incorrecta.
+        if (correct ? right.has(t) : !right.has(t)) {
+          await labels.nth(j).click();
+          if (!correct) break;
+        }
+      }
+    } else if (q!.tipo === "mc") {
+      const right = q!.opciones![q!.correcta!];
+      const labels = fs.locator("label.option");
+      const count = await labels.count();
+      for (let j = 0; j < count; j++) {
+        const t = (await labels.nth(j).innerText()).trim();
+        if ((t === right) === correct) {
+          await labels.nth(j).click();
+          break;
+        }
+      }
+    } else {
+      await fs.locator("textarea").fill(correct ? q!.respuesta_referencia! : "No lo sé.");
+    }
+  }
+}
+
+test("flujo completo: temas, examen final, carnet y revocación", async ({ browser }) => {
+  const adminCtx = await browser.newContext();
+  const admin = await adminCtx.newPage();
+  await login(admin, ADMIN);
+  const bank = await exportBank(adminCtx);
+  expect(bank.size).toBeGreaterThan(0);
+
+  const ctx = await browser.newContext();
+  const page = await ctx.newPage();
+  const email = `e2e-${Date.now()}@example.org`;
+  await login(page, email);
+
+  // Un usuario normal no puede entrar al panel.
+  await page.goto("/admin");
+  await expect(page).toHaveURL(/\/$/);
+  expect((await ctx.request.get("/api/admin/questions/export")).status()).toBe(403);
+
+  // Perfil.
+  await page.goto("/perfil");
+  await page.getByLabel("Nombre").fill("Lucía");
+  await page.getByLabel("Apellidos").fill("Prueba García");
+  await page.locator('input[name="consent"]').check();
+  await page.getByRole("button", { name: "Guardar" }).click();
+  await expect(page.getByText("Datos guardados.")).toBeVisible();
+
+  // El tema 2 está bloqueado al principio y el examen final también.
+  await page.goto("/examen");
+  await expect(page.getByText("Aprueba todos los temas")).toBeVisible();
+
+  await page.goto("/");
+  const unitItems = page.locator("ol.path > li:not(.final)");
+  const units = await unitItems.count();
+  expect(units).toBe(8);
+  await expect(unitItems.nth(1)).toHaveClass(/locked/);
+  await expect(unitItems.nth(1).locator("a")).toHaveCount(0);
+
+  for (let u = 0; u < units; u++) {
+    await page.goto("/");
+    await page.locator("ol.path > li:not(.final)").nth(u).locator("a").click();
+    await page.getByRole("link", { name: "Hacer el test" }).click();
+
+    if (u === 0) {
+      // Primer intento del tema 1: suspender y comprobar el repaso.
+      await page.getByRole("button", { name: "Empezar el test" }).click();
+      await answerAll(page, bank, false);
+      await page.getByRole("button", { name: "Enviar respuestas" }).click();
+      await expect(page.getByText("No aprobado")).toBeVisible();
+      await expect(page.getByRole("heading", { name: "Repaso" })).toBeVisible();
+      await page.getByRole("button", { name: "Repetir con otras preguntas" }).click();
+    } else {
+      await page.getByRole("button", { name: "Empezar el test" }).click();
+    }
+    await answerAll(page, bank, true);
+    await page.getByRole("button", { name: "Enviar respuestas" }).click();
+    await expect(page.getByText("Aprobado", { exact: true })).toBeVisible();
+    await expect(page.locator(".big-score")).toHaveText("100%");
+  }
+
+  // Examen final (las respuestas escritas las corrige JEV).
+  await page.goto("/examen");
+  await page.getByRole("button", { name: "Empezar el examen final" }).click();
+  await expect(page.locator("fieldset.question")).toHaveCount(20);
+  await expect(page.locator("fieldset.question textarea")).toHaveCount(5);
+  await answerAll(page, bank, true);
+  await page.getByRole("button", { name: "Enviar respuestas" }).click();
+  await expect(page.getByText("Aprobado", { exact: true })).toBeVisible({ timeout: 60_000 });
+  await expect(page.getByText(/Se ha emitido tu carnet/)).toBeVisible();
+
+  await page.goto("/carnet");
+  await expect(page.locator(".carnet.front")).toContainText("Lucía");
+  await expect(page.locator(".carnet.front")).toContainText("Prueba García");
+  const numero = (await page.locator(".carnet.front .c-number").innerText()).trim();
+  expect(numero).toMatch(/^SRM-CF-\d{4}-\d{4}$/);
+  await expect(page.locator(".front .c-live")).toContainText("Vigente");
+  await expect(page.locator(".front [data-live-clock]")).not.toBeEmpty();
+  // Escudo en las dos caras y giro al reverso.
+  await expect(page.locator(".carnet .c-side img")).toHaveCount(2);
+  await page.getByRole("button", { name: "Ver reverso" }).click();
+  await expect(page.locator("[data-carnet-flip]")).toHaveAttribute("data-flipped", "true");
+  await expect(page.locator(".carnet.back")).toContainText("Documento personal e intransferible");
+
+  // Con carnet vigente: el carnet es la pantalla principal y el temario queda solo para consulta.
+  const tabs = page.locator("nav.tabbar a");
+  await page.goto("/");
+  await expect(page.locator(".carnet.front")).toContainText(numero);
+  await expect(tabs).toHaveText(["Carnet", "Colonia", "Consulta", "Perfil"]);
+  await page.goto("/examen");
+  await expect(page).toHaveURL(/\/$/);
+  await page.goto("/temario");
+  await expect(page.locator(".consult-list li")).toHaveCount(8);
+  await expect(page.getByRole("heading", { name: "Documentos del Ayuntamiento" })).toBeVisible();
+  await page.locator(".consult-list a").nth(2).click();
+  await expect(page.locator("article.prose")).toBeVisible();
+  await expect(page.getByRole("link", { name: "Hacer el test" })).toHaveCount(0);
+  await page.goto("/temario/legislacion/test");
+  await expect(page).toHaveURL(/\/temario\/legislacion$/);
+  // En «Mi colonia», el primer paso (acreditación) aparece completado.
+  await page.goto("/colonia");
+  await expect(page.locator(".colonia-step").first()).toHaveClass(/done/);
+
+  // El admin revoca el carnet.
+  await admin.goto("/admin/carnets");
+  const row = admin.locator("tr", { hasText: numero });
+  await row.getByRole("button", { name: "Revocar" }).click();
+  await expect(admin.locator("tr", { hasText: numero }).getByText("revocado")).toBeVisible();
+
+  await page.goto("/carnet");
+  await expect(page.locator(".front .c-stamp")).toHaveText("REVOCADO");
+  // Sin carnet vigente vuelve la navegación normal (para poder renovarlo).
+  await page.goto("/");
+  await expect(tabs).toHaveText(["Temario", "Examen", "Carnet", "Perfil"]);
+
+  // El admin ve el detalle del examen con las puntuaciones de JEV.
+  await admin.goto("/admin/usuarios");
+  await admin.locator("tr", { hasText: email }).getByRole("link", { name: "Ver" }).click();
+  await admin.locator("tr", { hasText: "Examen final" }).getByRole("link", { name: "Detalle" }).click();
+  await expect(admin.getByText(/JEV · puntuación/).first()).toBeVisible();
+});
+
+test("los ajustes del panel se aplican al siguiente test", async ({ browser }) => {
+  const adminCtx = await browser.newContext();
+  const admin = await adminCtx.newPage();
+  await login(admin, ADMIN);
+  await admin.goto("/admin/ajustes");
+  const field = admin.getByLabel("Preguntas por test de tema");
+  const original = await field.inputValue();
+  await field.fill("4");
+  await admin.getByRole("button", { name: "Guardar ajustes" }).click();
+  await expect(admin.getByText("Ajustes guardados")).toBeVisible();
+
+  try {
+    const ctx = await browser.newContext();
+    const page = await ctx.newPage();
+    await login(page, `e2e-ajustes-${Date.now()}@example.org`);
+    await page.locator("ol.path > li:not(.final) a").first().click();
+    await page.getByRole("link", { name: "Hacer el test" }).click();
+    await page.getByRole("button", { name: "Empezar el test" }).click();
+    await expect(page.locator("fieldset.question")).toHaveCount(4);
+  } finally {
+    await admin.goto("/admin/ajustes");
+    await admin.getByLabel("Preguntas por test de tema").fill(original);
+    await admin.getByRole("button", { name: "Guardar ajustes" }).click();
+  }
+});
+
+test("ajustes del ayuntamiento, escudo y clave de JEV", async ({ browser }) => {
+  const ctx = await browser.newContext();
+  const admin = await ctx.newPage();
+  await login(admin, ADMIN);
+  await admin.goto("/admin/ajustes");
+  const ayto = admin.locator("#ayuntamiento");
+
+  try {
+    // Un fichero que no es imagen se rechaza.
+    await ayto.getByLabel("Municipio").fill("Villaprueba del Monte");
+    await ayto.getByLabel("Provincia").fill("Madrid");
+    await ayto.locator('input[type="file"]').setInputFiles({ name: "falso.png", mimeType: "image/png", buffer: Buffer.from("no soy una imagen") });
+    await ayto.getByRole("button", { name: "Guardar ayuntamiento" }).click();
+    await expect(admin.locator("#ayuntamiento .alert.bad")).toContainText("PNG, JPG o WebP");
+
+    // Municipio y escudo válidos.
+    await admin.locator("#ayuntamiento").getByLabel("Municipio").fill("Villaprueba del Monte");
+    await admin.locator("#ayuntamiento").getByLabel("Provincia").fill("Madrid");
+    await admin.locator('#ayuntamiento input[type="file"]').setInputFiles("public/icons/icon-192.png");
+    await admin.locator("#ayuntamiento").getByRole("button", { name: "Guardar ayuntamiento" }).click();
+    await expect(admin.locator("#ayuntamiento .alert.ok")).toBeVisible();
+    await expect(admin.locator(".brand small")).toHaveText("Villaprueba del Monte");
+    const src = await admin.locator(".escudo-preview img").getAttribute("src");
+    expect(src).toMatch(/^\/branding\/escudo\?v=\w+/);
+    const img = await ctx.request.get(src!);
+    expect(img.headers()["content-type"]).toBe("image/png");
+    expect(img.headers()["cache-control"]).toContain("immutable");
+    expect(await (await ctx.request.get("/manifest.webmanifest")).text()).toContain("Villaprueba del Monte");
+
+    // Clave de JEV: se guarda cifrada, no se muestra y una clave falsa no conecta.
+    const jev = admin.locator("#jev");
+    await jev.getByLabel(/clave/i).fill("apikey_clave_falsa_para_pruebas_e2e_9876");
+    await jev.getByRole("button", { name: "Guardar clave" }).click();
+    await expect(admin.locator("#jev")).toContainText("termina en …9876");
+    expect(await admin.content()).not.toContain("apikey_clave_falsa_para_pruebas_e2e_9876");
+    await admin.locator("#jev").getByRole("button", { name: "Probar conexión" }).click();
+    await expect(admin.locator("#jev .alert.bad")).toContainText("JEV");
+    await admin.locator("#jev").getByRole("button", { name: /Quitar la clave del panel/ }).click();
+    await expect(admin.locator("#jev")).toContainText("Usando la clave del servidor");
+    await admin.locator("#jev").getByRole("button", { name: "Probar conexión" }).click();
+    await expect(admin.locator("#jev .alert.ok")).toContainText("Conexión correcta", { timeout: 30_000 });
+  } finally {
+    await admin.goto("/admin/ajustes");
+    await admin.locator("#ayuntamiento").getByLabel("Municipio").fill("San Román de los Montes");
+    await admin.locator("#ayuntamiento").getByLabel("Provincia").fill("Toledo");
+    await admin.locator("#ayuntamiento").getByRole("button", { name: "Guardar ayuntamiento" }).click();
+    await expect(admin.locator(".brand small")).toHaveText("San Román de los Montes");
+    const reset = admin.getByRole("button", { name: "Restaurar el escudo por defecto" });
+    if (await reset.count()) {
+      await reset.click();
+      await expect(admin.locator("#ayuntamiento")).toContainText("Escudo (por defecto)");
+    }
+  }
+});
+
+test("accesibilidad (axe-core WCAG 2.1 AA) en las pantallas principales, claro y oscuro", async ({ browser }) => {
+  const { default: AxeBuilder } = await import("@axe-core/playwright");
+  for (const colorScheme of ["light", "dark"] as const) {
+    const ctx = await browser.newContext({ colorScheme });
+    const page = await ctx.newPage();
+    const check = async (url: string) => {
+      await page.goto(url);
+      const r = await new AxeBuilder({ page }).withTags(["wcag2a", "wcag2aa", "wcag21a", "wcag21aa"]).analyze();
+      expect(r.violations.map((v) => `${url} [${colorScheme}]: ${v.id} (${v.nodes.length})`)).toEqual([]);
+    };
+    await check("/");
+    await check("/login");
+    await check("/accesibilidad");
+    await login(page, ADMIN);
+    await check("/documentos");
+    await check("/privacidad");
+    for (const url of ["/", "/carnet", "/colonia", "/temario", "/temario/sanidad-y-salud", "/perfil", "/admin", "/admin/preguntas", "/admin/ajustes"]) await check(url);
+    await ctx.close();
+  }
+});
+
+test("declaración de accesibilidad y comunicaciones", async ({ browser }) => {
+  // Sin sesión: la declaración es pública, enlazada desde el pie, y el formulario envía la comunicación.
+  const ctx = await browser.newContext();
+  const page = await ctx.newPage();
+  await page.goto("/login");
+  await page.locator("footer").getByRole("link", { name: "Accesibilidad" }).click();
+  await expect(page).toHaveURL(/\/accesibilidad\?desde=%2Flogin/);
+  await expect(page.getByRole("heading", { level: 1 })).toHaveText("Declaración de accesibilidad");
+  for (const h of ["Situación de cumplimiento", "Contenido no accesible", "Preparación de la presente declaración de accesibilidad", "Observaciones y datos de contacto", "Procedimiento de aplicación"]) {
+    await expect(page.getByRole("heading", { name: h })).toBeVisible();
+  }
+  await expect(page.getByLabel("Página o pantalla afectada (opcional)")).toHaveValue("/login");
+  const texto = `Prueba E2E ${Date.now()}: el botón no se lee bien con el lector de pantalla.`;
+  await page.getByLabel("Describe el problema o la consulta").fill(texto);
+  await page.getByLabel("Correo electrónico (opcional, para poder responderte)").fill("vecina@example.org");
+  await page.getByRole("button", { name: "Enviar comunicación" }).click();
+  await expect(page.getByText("Hemos recibido tu comunicación")).toBeVisible();
+
+  // El admin la ve en el panel y la marca como resuelta.
+  const adminCtx = await browser.newContext();
+  const admin = await adminCtx.newPage();
+  await login(admin, ADMIN);
+  await admin.goto("/admin");
+  await expect(admin.getByText(/de accesibilidad sin resolver/)).toBeVisible();
+  await admin.goto("/admin/accesibilidad");
+  const card = admin.locator("article.card", { hasText: texto });
+  await expect(card).toContainText("Nueva");
+  await card.getByLabel("Estado").selectOption("resuelta");
+  await card.getByLabel("Notas internas / respuesta enviada").fill("Respondido por correo.");
+  await card.getByRole("button", { name: "Guardar" }).click();
+  await expect(admin.locator("article.card", { hasText: texto })).toContainText("Resuelta");
+});
+
+test("Mi colonia y documentos del Ayuntamiento", async ({ browser }) => {
+  // Documentos: públicos, agrupados, con las ordenanzas municipales y enlaces externos seguros.
+  const pub = await (await browser.newContext()).newPage();
+  await pub.goto("/documentos");
+  await expect(pub.getByRole("heading", { name: "Ordenanzas" })).toBeVisible();
+  const ord = pub.locator("a.doc-item", { hasText: "colonias felinas urbanas" });
+  await expect(ord).toHaveAttribute("target", "_blank");
+  await expect(ord).toHaveAttribute("rel", /noopener/);
+  await expect(ord).toHaveAttribute("href", /bop\.diputoledo\.es/);
+
+  // Alumno sin carnet: la guía se ofrece desde el inicio y el primer paso no está completado.
+  const ctx = await browser.newContext();
+  const page = await ctx.newPage();
+  await login(page, `colonia-${Date.now()}@example.org`);
+  await page.getByRole("link", { name: /Después: Mi colonia/ }).click();
+  await expect(page).toHaveURL(/\/colonia$/);
+  await expect(page.locator(".colonia-step")).toHaveCount(6);
+  await expect(page.locator(".colonia-step").first()).not.toHaveClass(/done/);
+  await expect(page.getByText("no se registran colonias en viviendas particulares")).toBeVisible();
+
+  // Admin: añade un documento, aparece publicado y se elimina; edita y restaura la guía.
+  const admin = await (await browser.newContext()).newPage();
+  await login(admin, ADMIN);
+  await admin.goto("/admin/documentos/nuevo");
+  const titulo = `Formulario de prueba E2E ${Date.now()}`;
+  await admin.getByLabel("Título").fill(titulo);
+  await admin.getByLabel("Categoría", { exact: true }).selectOption("formulario");
+  await admin.getByLabel("Enlace").fill("javascript:alert(1)");
+  await admin.getByRole("button", { name: "Guardar documento" }).click();
+  await expect(admin.locator(".alert.bad")).toContainText("https://");
+  await admin.getByLabel("Enlace").fill("https://sanromandelosmontes.sedelectronica.es/dossier");
+  await admin.getByRole("button", { name: "Guardar documento" }).click();
+  await expect(admin.getByText("Documento guardado.")).toBeVisible();
+  await pub.goto("/documentos");
+  await expect(pub.getByRole("heading", { name: "Formularios y solicitudes" })).toBeVisible();
+  await expect(pub.locator("a.doc-item", { hasText: titulo })).toBeVisible();
+  admin.on("dialog", (d) => d.accept());
+  await admin.goto("/admin/documentos");
+  await admin.getByRole("button", { name: `Eliminar ${titulo}` }).click();
+  await expect(admin.getByText("Documento eliminado.")).toBeVisible();
+
+  await admin.goto("/admin/colonia");
+  const guia = admin.getByLabel("Contenido de la guía");
+  await guia.fill("Introducción de prueba.\n\n## Primer paso de prueba\nTexto.\n\n## Segundo paso\nMás texto.");
+  await admin.getByRole("button", { name: "Guardar guía" }).click();
+  await page.goto("/colonia");
+  await expect(page.locator(".colonia-step")).toHaveCount(2);
+  await admin.goto("/admin/colonia");
+  await admin.getByRole("button", { name: "Restaurar la guía por defecto" }).click();
+  await page.goto("/colonia");
+  await expect(page.locator(".colonia-step")).toHaveCount(6);
+});
+
+/** Da a un usuario un carnet vigente directamente en la base local (para no repetir todo el curso). */
+function darCarnet(email: string, nombre: string, apellidos: string) {
+  const sql = `UPDATE users SET nombre='${nombre}', apellidos='${apellidos}', consent_at=unixepoch()*1000 WHERE email='${email}';
+INSERT INTO carnets (id, numero, user_id, nombre, apellidos, issued_at, expires_at) SELECT lower(hex(randomblob(16))), 'E2E-' || lower(hex(randomblob(4))), id, nombre, apellidos, unixepoch()*1000, unixepoch('now','+1 year')*1000 FROM users WHERE email='${email}';`;
+  execSync(`npx wrangler d1 execute colonias --local --command "${sql.replace(/\n/g, " ")}"`, { stdio: "ignore" });
+}
+
+test("alta de colonia, censo, fichas, carnet y baja validada con JEV", async ({ browser }) => {
+  test.setTimeout(240_000);
+  const stamp = Date.now();
+  const email = `cuidadora-${stamp}@example.org`;
+  const ctx = await browser.newContext();
+  const page = await ctx.newPage();
+  await login(page, email);
+  darCarnet(email, "Rosa", `Prueba ${stamp}`);
+
+  // El ayuntamiento registra la colonia con la persona como responsable.
+  const admin = await (await browser.newContext()).newPage();
+  await login(admin, ADMIN);
+  await admin.goto("/admin/colonias/nueva");
+  const nombreColonia = `Colonia E2E ${stamp}`;
+  await admin.getByLabel("Nombre de la colonia").fill(nombreColonia);
+  await admin.getByLabel("Dirección exacta").fill("Calle de las Pruebas, 1");
+  const opt = admin.locator("#responsable option", { hasText: `Rosa Prueba ${stamp}` });
+  await admin.getByLabel("Persona cuidadora responsable").selectOption((await opt.getAttribute("value"))!);
+  await admin.getByLabel("Hembras esterilizadas").fill("3");
+  await admin.getByLabel("Hembras sin esterilizar").fill("2");
+  await admin.getByLabel("Machos castrados").fill("1");
+  await admin.getByLabel("Machos sin castrar").fill("1");
+  await admin.getByRole("button", { name: "Registrar colonia" }).click();
+  await expect(admin.getByText(/Colonia n\.º \d+ registrada/)).toBeVisible();
+
+  // Aparece en su carnet: solo nombre y gatos declarados.
+  await page.goto("/");
+  await expect(page.locator(".carnet.front .carnet-colonias")).toContainText(`${nombreColonia} · 7 gatos`);
+
+  // «Mi colonia» pasa a ser la gestión de la colonia.
+  await page.getByRole("link", { name: "Colonia", exact: true }).filter({ visible: true }).click();
+  await expect(page.getByRole("heading", { level: 1 })).toHaveText(nombreColonia);
+  const { default: AxeBuilder } = await import("@axe-core/playwright");
+  const axe = async () => {
+    const r = await new AxeBuilder({ page }).withTags(["wcag2a", "wcag2aa", "wcag21a", "wcag21aa"]).analyze();
+    expect(r.violations.map((v) => `${page.url()}: ${v.id}`)).toEqual([]);
+  };
+  await axe();
+  await page.getByRole("link", { name: "Añadir ficha de un gato" }).click();
+  await page.getByLabel("Nombre o apodo").fill("Misi");
+  await page.getByLabel("Sexo").selectOption("hembra");
+  await page.getByRole("button", { name: "Guardar ficha" }).click();
+  await expect(page.getByText("Ficha guardada.")).toBeVisible();
+  await page.getByRole("link", { name: /Misi/ }).click();
+  await page.locator("summary", { hasText: "Añadir intervención" }).click();
+  await page.getByLabel("Motivo").selectOption("esterilizacion");
+  await page.getByLabel("Clínica veterinaria").fill("Clínica de prueba");
+  await page.getByRole("button", { name: "Añadir intervención" }).click();
+  await expect(page.getByText("Intervención añadida.")).toBeVisible();
+  await expect(page.getByLabel("Esterilizado")).toBeChecked();
+
+  // Nuevo censo: el carnet refleja el nuevo total.
+  await page.goto("/colonia");
+  await page.getByRole("link", { name: "Actualizar el censo" }).click();
+  await axe();
+  await page.getByLabel("Hembras esterilizadas").fill("5");
+  await page.getByRole("button", { name: "Guardar censo" }).click();
+  await expect(page.getByText("Tu carnet ya muestra 9 gatos.")).toBeVisible();
+  await page.goto("/carnet");
+  await expect(page.locator(".carnet.front .carnet-colonias")).toContainText(`${nombreColonia} · 9 gatos`);
+
+  // Baja: explicación vaga → botón deshabilitado con el motivo; motivo + relevo → habilitado.
+  await page.goto("/colonia");
+  await page.getByRole("link", { name: "Dejar de colaborar en esta colonia" }).click();
+  await axe();
+  const texto = page.getByLabel("¿Por qué dejas de colaborar en esta colonia?");
+  const boton = page.getByRole("button", { name: "Dejar de colaborar en esta colonia" });
+  await texto.fill("No puedo seguir por motivos personales, lo siento mucho de verdad.");
+  await expect(page.locator("#baja-status")).toContainText("revisa lo que falta", { timeout: 30_000 });
+  await expect(boton).toBeDisabled();
+  await expect(page.locator(".baja-checks")).toContainText("quién se hará cargo");
+  await texto.fill("Me mudo a Talavera en octubre por un cambio de trabajo y no podré venir cada día. Mi vecina Carmen López, que ya me ayudaba, se hará cargo de la colonia.");
+  await expect(page.locator("#baja-status")).toContainText("Ya puedes comunicar la baja", { timeout: 30_000 });
+  await expect(boton).toBeEnabled();
+  await boton.click();
+  await page.getByRole("button", { name: "Confirmar la baja" }).click();
+  await expect(page).toHaveURL(/\/colonia\?baja=1/);
+  await expect(page.getByText("Has dejado de colaborar en la colonia")).toBeVisible();
+  await page.goto("/carnet");
+  await expect(page.locator(".carnet-colonias")).toHaveCount(0);
+
+  // El ayuntamiento ve la colonia sin cuidadores y la explicación con su valoración.
+  await admin.goto("/admin/colonias");
+  await expect(admin.getByText(/sin personas cuidadoras/)).toBeVisible();
+  await expect(admin.locator("article", { hasText: nombreColonia })).toContainText("Valoración JEV");
+  // Limpieza: se da de baja la colonia de prueba.
+  await admin.getByRole("link", { name: /Gestionar colonia/ }).last().click();
+  await admin.getByLabel(/Dar de baja la colonia/).check();
+  await admin.getByRole("button", { name: "Guardar", exact: true }).click();
+  await expect(admin.getByText("Datos guardados.")).toBeVisible();
+});
+
+test("fotos y observaciones de los gatos, y relevo automático de la persona responsable", async ({ browser }) => {
+  test.setTimeout(240_000);
+  const stamp = Date.now();
+  const mk = async (tag: string, nombre: string) => {
+    const email = `${tag}-${stamp}@example.org`;
+    const page = await (await browser.newContext()).newPage();
+    await login(page, email);
+    darCarnet(email, nombre, `Foto ${stamp}`);
+    return page;
+  };
+  const rosa = await mk("rosa", "Rosa");
+  const luis = await mk("luis", "Luis");
+  const extraña = await (await browser.newContext()).newPage();
+  await login(extraña, `sin-colonia-${stamp}@example.org`);
+
+  // Colonia con Rosa responsable y Luis colaborador.
+  const admin = await (await browser.newContext()).newPage();
+  await login(admin, ADMIN);
+  await admin.goto("/admin/colonias/nueva");
+  const nombreColonia = `Colonia fotos ${stamp}`;
+  await admin.getByLabel("Nombre de la colonia").fill(nombreColonia);
+  await admin.getByLabel("Dirección exacta").fill("Plaza de las Pruebas, 2");
+  const optRosa = admin.locator("#responsable option", { hasText: `Rosa Foto ${stamp}` });
+  await admin.getByLabel("Persona cuidadora responsable").selectOption((await optRosa.getAttribute("value"))!);
+  await admin.locator("label.check", { hasText: `Luis Foto ${stamp}` }).locator("input").check();
+  await admin.getByLabel("Hembras esterilizadas").fill("2");
+  await admin.getByRole("button", { name: "Registrar colonia" }).click();
+  await expect(admin.getByText(/Colonia n\.º \d+ registrada/)).toBeVisible();
+
+  // Ficha con foto principal y una observación con dos fotos.
+  await rosa.goto("/colonia");
+  await rosa.getByRole("link", { name: "Añadir ficha de un gato" }).click();
+  await rosa.getByLabel("Nombre o apodo").fill("Tigre");
+  await rosa.getByRole("button", { name: "Guardar ficha" }).click();
+  await rosa.getByRole("link", { name: /Tigre/ }).click();
+  await rosa.getByLabel("Añadir una foto").setInputFiles("public/img/hero.jpg");
+  await rosa.getByRole("button", { name: "Guardar foto" }).click();
+  await expect(rosa.getByText("Foto guardada.")).toBeVisible();
+  const foto = rosa.locator("img.cat-photo");
+  await expect(foto).toHaveAttribute("alt", /Foto de Tigre/);
+  const src = (await foto.getAttribute("src"))!;
+  const res = await rosa.request.get(src);
+  expect(res.status()).toBe(200);
+  expect(res.headers()["content-type"]).toBe("image/jpeg");
+  expect(res.headers()["cache-control"]).toContain("private");
+
+  await rosa.getByLabel("Nueva observación").fill("Cojea un poco de la pata trasera izquierda. Come bien.");
+  await rosa.getByLabel(/^Fotos/).setInputFiles(["public/img/hero-640.jpg", "public/img/temario/p34-1.jpg"]);
+  await expect(rosa.locator("#fotos-status")).toContainText("2 fotos listas");
+  await rosa.getByRole("button", { name: "Añadir observación" }).click();
+  await expect(rosa.getByText("Observación añadida.")).toBeVisible();
+  await expect(rosa.locator(".notes li").first()).toContainText("Cojea un poco");
+  await expect(rosa.locator(".notes li").first().locator(".note-photos img")).toHaveCount(2);
+
+  // Una persona que no cuida la colonia no puede ver las fotos.
+  expect((await extraña.request.get(src)).status()).toBe(403);
+  // Luis, colaborador de la misma colonia, sí.
+  expect((await luis.request.get(src)).status()).toBe(200);
+
+  // Al borrar la observación y quitar la foto, los ficheros desaparecen de R2.
+  const notaFotos = await rosa.locator(".notes li").first().locator(".note-photos img").evaluateAll((els) => els.map((e) => e.getAttribute("src")!));
+  rosa.on("dialog", (d) => d.accept());
+  await rosa.locator(".notes li").first().getByRole("button", { name: /Borrar la observación/ }).click();
+  await expect(rosa.getByText("Observación eliminada.")).toBeVisible();
+  for (const f of notaFotos) expect((await rosa.request.get(f)).status()).toBe(404);
+  await rosa.getByRole("button", { name: "Quitar la foto" }).click();
+  await expect(rosa.getByText("Foto eliminada.")).toBeVisible();
+  expect((await rosa.request.get(src)).status()).toBe(404);
+
+  // Rosa se va: no se le pide relevo (queda Luis) y se le avisa de que Luis será responsable.
+  await rosa.goto("/colonia");
+  await rosa.getByRole("link", { name: "Dejar de colaborar en esta colonia" }).click();
+  await expect(rosa.locator("#baja-sucesor")).toContainText(`Luis Foto ${stamp}`);
+  await rosa.getByLabel("¿Por qué dejas de colaborar en esta colonia?").fill("Me mudo a Madrid el mes que viene por un cambio de trabajo y no podré seguir viniendo a la colonia.");
+  const boton = rosa.getByRole("button", { name: "Dejar de colaborar en esta colonia" });
+  await expect(boton).toBeEnabled({ timeout: 30_000 });
+  await boton.click();
+  await rosa.getByRole("button", { name: "Confirmar la baja" }).click();
+  await expect(rosa).toHaveURL(/\/colonia\?baja=1/);
+
+  // Luis pasa a ser la persona responsable y el ayuntamiento lo ve.
+  await luis.goto("/colonia");
+  await expect(luis.getByText("Eres la persona cuidadora responsable.")).toBeVisible();
+  await admin.goto("/admin/colonias");
+  await expect(admin.locator("article", { hasText: nombreColonia })).toContainText(`Nueva persona responsable: Luis Foto ${stamp}`);
+  // Limpieza.
+  await admin.getByRole("link", { name: /Gestionar colonia/ }).last().click();
+  await admin.getByLabel(/Dar de baja la colonia/).check();
+  await admin.getByRole("button", { name: "Guardar", exact: true }).click();
+});

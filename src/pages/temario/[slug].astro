@@ -1,0 +1,84 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import Icon from "../../components/Icon.astro";
+import { eq } from "drizzle-orm";
+import { getDb, schema } from "../../lib/db";
+import { getProgress } from "../../lib/exam";
+import { renderMarkdown } from "../../lib/markdown";
+
+const db = getDb();
+const unit = await db.query.units.findFirst({ where: eq(schema.units.slug, Astro.params.slug!) });
+if (!unit || !unit.activo) return new Response("No encontrado", { status: 404 });
+const { units } = await getProgress(db, Astro.locals.user!.id);
+const p = units.find((u) => u.id === unit.id)!;
+// Los administradores pueden revisar cualquier tema aunque no lo tengan desbloqueado.
+const consulta = Astro.locals.hasCarnet;
+if (!p.unlocked && !consulta && Astro.locals.user!.role !== "admin") return Astro.redirect("/");
+const idx = units.findIndex((u) => u.id === unit.id);
+const prev = units[idx - 1];
+const next = units[idx + 1];
+const html = renderMarkdown(unit.contenido);
+---
+<Layout title={unit.titulo} readingProgress>
+  <a class="btn ghost small" href={consulta ? "/temario" : "/"} style="margin-left:-.6rem"><Icon name="back" size={18} /> {consulta ? "Consulta" : "Temario"}</a>
+  <p class="eyebrow" style="margin-top:.6rem">Tema {unit.orden} de {units.length}</p>
+  <h1>{unit.titulo}</h1>
+  <div class="meta">
+    <span><Icon name="clock" size={16} /> {p.minutos} min de lectura</span>
+    {consulta ? null : p.passed ? <span class="badge ok"><Icon name="check" size={14} /> Aprobado{p.bestPct != null ? ` · ${p.bestPct}%` : ""}</span> : <a class="btn small ghost" href={`/temario/${unit.slug}/test`}>Ir directamente al test</a>}
+  </div>
+  <article class="card prose" set:html={html} />
+  {consulta ? (
+    <div class="row" style="justify-content:space-between">
+      {prev ? <a class="btn ghost" href={`/temario/${prev.slug}`}><Icon name="back" size={18} /> {prev.titulo}</a> : <span></span>}
+      {next && <a class="btn" href={`/temario/${next.slug}`}>{next.titulo} <Icon name="arrow" size={18} /></a>}
+    </div>
+  ) : (
+  <div class="card end-cta">
+    <span class="step-icon"><Icon name="exam" size={26} /></span>
+    <div style="flex:1">
+      <strong>{p.passed ? "Puedes repetir el test cuando quieras" : "¿Has terminado de estudiar el tema?"}</strong>
+      <p class="muted" style="margin:.2rem 0 .8rem">{p.passed ? "Las preguntas cambian en cada intento." : "Aprueba el test para desbloquear el siguiente tema."}</p>
+      <div class="row">
+        <a class="btn primary" href={`/temario/${unit.slug}/test`}>Hacer el test <Icon name="arrow" /></a>
+        {prev && <a class="btn ghost" href={`/temario/${prev.slug}`}><Icon name="back" size={18} /> Tema anterior</a>}
+      </div>
+    </div>
+  </div>
+  )}
+  <dialog class="lightbox" aria-label="Imagen ampliada">
+    <form method="dialog"><button class="btn small"><span aria-hidden="true">✕</span> Cerrar</button></form>
+    <img alt="" />
+    <p class="muted"></p>
+  </dialog>
+  <script>
+    // Al tocar una imagen del temario se muestra ampliada.
+    document.addEventListener("astro:page-load", () => {
+      const dlg = document.querySelector<HTMLDialogElement>("dialog.lightbox");
+      if (!dlg) return;
+      const big = dlg.querySelector("img")!;
+      const cap = dlg.querySelector("p")!;
+      let opener: HTMLButtonElement | null = null;
+      // Cada imagen va dentro de un botón para poder ampliarla también con el teclado.
+      document.querySelectorAll<HTMLImageElement>(".prose img").forEach((img) => {
+        if (img.parentElement?.classList.contains("zoom")) return;
+        const b = document.createElement("button");
+        b.type = "button";
+        b.className = "zoom";
+        b.setAttribute("aria-label", img.alt ? `Ampliar imagen: ${img.alt}` : "Ampliar imagen");
+        img.replaceWith(b);
+        b.appendChild(img);
+        b.addEventListener("click", () => {
+          opener = b;
+          big.src = img.currentSrc || img.src;
+          big.alt = img.alt;
+          cap.textContent = img.closest("figure")?.querySelector("figcaption")?.textContent ?? "";
+          dlg.showModal();
+        });
+      });
+      dlg.addEventListener("click", (e) => { if (e.target === dlg) dlg.close(); });
+      // Devolver el foco al botón que abrió la imagen.
+      dlg.addEventListener("close", () => { opener?.focus(); opener = null; });
+    });
+  </script>
+</Layout>

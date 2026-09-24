@@ -1,0 +1,158 @@
+---
+import Layout from "../layouts/Layout.astro";
+import Icon from "../components/Icon.astro";
+import CarnetView from "../components/CarnetView.astro";
+import { getDb } from "../lib/db";
+import { getProgress } from "../lib/exam";
+import { getActiveCarnet } from "../lib/carnet";
+import { profileComplete } from "../lib/auth";
+
+const user = Astro.locals.user;
+let data: Awaited<ReturnType<typeof getProgress>> | null = null;
+let carnet = null;
+if (user) {
+  const db = getDb();
+  data = await getProgress(db, user.id);
+  carnet = await getActiveCarnet(db, user.id);
+}
+const passedCount = data?.units.filter((u) => u.passed).length ?? 0;
+const total = data?.units.length ?? 0;
+const next = data?.units.find((u) => u.unlocked && !u.passed);
+const pct = total ? Math.round((passedCount / total) * 100) : 0;
+const steps = [
+  { icon: "book", title: "Estudia el temario", text: "8 temas, a tu ritmo y desde el móvil." },
+  { icon: "check", title: "Aprueba cada tema", text: "Un test corto desbloquea el siguiente." },
+  { icon: "exam", title: "Haz el examen final", text: "Preguntas tipo test y de respuesta breve." },
+  { icon: "card", title: "Recibe tu carnet", text: "Tu acreditación digital, siempre contigo." },
+] as const;
+---
+<Layout title={Astro.locals.hasCarnet ? "Mi carnet" : "Inicio"}>
+  {user && Astro.locals.hasCarnet ? (
+    <section class="carnet-home">
+      <h1>{user.nombre ? `Hola, ${user.nombre}` : "Mi carnet"}</h1>
+      <CarnetView />
+      <a class="card end-cta" href="/temario">
+        <span class="step-icon"><Icon name="book" size={26} /></span>
+        <span style="flex:1">
+          <strong>Consulta el temario</strong>
+          <span class="muted text-sm" style="display:block">Los {data?.units.length ?? 8} temas del curso, siempre disponibles para repasar.</span>
+        </span>
+        <Icon name="arrow" />
+      </a>
+    </section>
+  ) : !user ? (
+    <section>
+      <div class="hero">
+        <img src="/img/hero.jpg" srcset="/img/hero-640.jpg 640w, /img/hero.jpg 1010w" sizes="(min-width: 760px) 728px, 100vw" alt="Gato atigrado y blanco mirando con atención" width="1010" height="565" fetchpriority="high" decoding="async" />
+        <div class="hero-text">
+          <h1>Cuidadores de colonias felinas</h1>
+          <p>Formación y acreditación oficial del {Astro.locals.branding.ayuntamiento}.</p>
+        </div>
+      </div>
+      <ol class="steps">
+        {steps.map((s) => (
+          <li>
+            <span class="step-icon"><Icon name={s.icon} /></span>
+            <span><strong>{s.title}</strong><small>{s.text}</small></span>
+          </li>
+        ))}
+      </ol>
+      <a class="btn primary block" href="/login"><Icon name="mail" /> Entrar con mi correo</a>
+      <p class="muted center text-sm">Sin contraseñas: te enviamos un enlace de acceso.</p>
+    </section>
+  ) : (
+    <section>
+      <p class="eyebrow">Tu formación</p>
+      <h1>{user.nombre ? `Hola, ${user.nombre}` : "Te damos la bienvenida"}</h1>
+
+      {carnet ? (
+        <a class="next-card" href="/carnet">
+          <Icon name="card" class="ring" size={120} />
+          <p class="eyebrow">Curso completado</p>
+          <h2>Tienes tu carnet de cuidador/a</h2>
+          <div class="meta"><span>Nº {carnet.numero}</span></div>
+          <span class="btn">Ver mi carnet <Icon name="arrow" /></span>
+        </a>
+      ) : data!.allPassed ? (
+        <div class="next-card">
+          <Icon name="star" class="ring" size={120} />
+          <p class="eyebrow">Último paso</p>
+          <h2>Ya puedes hacer el examen final</h2>
+          <div class="meta"><span>Has aprobado los {total} temas</span></div>
+          <a class="btn" href="/examen">Ir al examen <Icon name="arrow" /></a>
+        </div>
+      ) : next ? (
+        <div class="next-card">
+          <Icon name="paw" class="ring" size={120} />
+          <p class="eyebrow">{passedCount === 0 ? "Empieza por aquí" : "Continúa donde lo dejaste"}</p>
+          <h2>Tema {next.orden}: {next.titulo}</h2>
+          {passedCount > 0 && (
+            <div class="progress-line">
+              <div class="progress" role="progressbar" aria-label="Temas aprobados" aria-valuemin="0" aria-valuemax={total} aria-valuenow={passedCount} aria-valuetext={`${passedCount} de ${total} temas aprobados`}>
+                <span style={`width:${pct}%`}></span>
+              </div>
+              <small aria-hidden="true">{passedCount}/{total}</small>
+            </div>
+          )}
+          <div class="meta">
+            <span><Icon name="clock" size={16} /> {next.minutos} min de lectura</span>
+            {next.bestPct != null && <span>Mejor nota: {next.bestPct}%</span>}
+          </div>
+          <a class="btn" href={`/temario/${next.slug}`}>{next.bestPct != null ? "Repasar y repetir el test" : "Empezar a estudiar"} <Icon name="arrow" /></a>
+        </div>
+      ) : null}
+
+      {!profileComplete(user) && (
+        <div class="alert info"><Icon name="user" /><span>Completa tu <a href="/perfil">perfil</a> con tu nombre y apellidos: aparecerán en tu carnet.</span></div>
+      )}
+
+      <h2>Temario</h2>
+      <ol class="path">
+        {data!.units.map((u) => {
+          const state = u.passed ? "done" : u.unlocked ? "current" : "locked";
+          const inner = (
+            <>
+              <span class="node">{u.passed ? <Icon name="check" size={20} /> : u.unlocked ? u.orden : <Icon name="lock" size={18} />}</span>
+              <span class="step-body">
+                {state === "locked" && <span class="sr-only">Bloqueado. </span>}
+                <span class="step-title">{u.titulo}</span>
+                {state === "current" && <span class="sr-only"> (tema actual)</span>}
+                <span class="step-sub">
+                  {u.passed ? `Aprobado · ${u.bestPct}%` : u.unlocked ? <><Icon name="clock" size={14} /> {u.minutos} min · {u.bestPct != null ? `mejor nota ${u.bestPct}%` : "disponible"}</> : `Tema ${u.orden}`}
+                </span>
+              </span>
+            </>
+          );
+          return (
+            <li class={state}>
+              {u.unlocked ? <a href={`/temario/${u.slug}`}>{inner}</a> : <span class="step">{inner}</span>}
+            </li>
+          );
+        })}
+        <li class:list={["final", carnet ? "done" : data!.allPassed ? "current" : "locked"]}>
+          {(() => {
+            const inner = (
+              <>
+                <span class="node"><Icon name="star" size={20} /></span>
+                <span class="step-body">
+                  {!carnet && !data!.allPassed && <span class="sr-only">Bloqueado. </span>}
+                  <span class="step-title">Examen final</span>
+                  <span class="step-sub">{carnet ? "Superado" : data!.allPassed ? "Disponible" : "Se desbloquea al aprobar todos los temas"}</span>
+                </span>
+              </>
+            );
+            return data!.allPassed || carnet ? <a href={carnet ? "/carnet" : "/examen"}>{inner}</a> : <span class="step">{inner}</span>;
+          })()}
+        </li>
+      </ol>
+      <a class="card end-cta" href="/colonia" style="margin-top:1rem">
+        <span class="step-icon"><Icon name="paw" size={26} /></span>
+        <span class="grow">
+          <strong>Después: Mi colonia</strong>
+          <span class="muted text-sm" style="display:block">Los pasos para solicitar al Ayuntamiento el alta de una colonia felina.</span>
+        </span>
+        <Icon name="arrow" />
+      </a>
+    </section>
+  )}
+</Layout>

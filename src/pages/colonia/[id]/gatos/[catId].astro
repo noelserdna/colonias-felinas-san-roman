@@ -1,0 +1,210 @@
+---
+import Layout from "../../../../layouts/Layout.astro";
+import ColonyHeader from "../../../../components/ColonyHeader.astro";
+import { ZodError } from "zod";
+import { loadColony } from "../../../../lib/colony-page";
+import { addIntervention, CAT_ESTADOS, ColonyError, listCatNotes, listCats, MOTIVOS, saveCat, SEXOS } from "../../../../lib/colonies";
+import { addCatNote, deleteCatNote, MAX_NOTE_PHOTOS, removeCatPhoto, setCatPhoto } from "../../../../lib/photos";
+import PhotoResize from "../../../../components/PhotoResize.astro";
+
+const { db, colony, error: notFound } = await loadColony(Astro);
+if (notFound) return notFound;
+const isNew = Astro.params.catId === "nuevo";
+let error: string | null = null;
+let intError: string | null = null;
+let form: Record<string, string> | null = null;
+let saved = false;
+let fotoMsg: { ok: boolean; text: string } | null = null;
+let notaMsg: { ok: boolean; text: string } | null = null;
+
+if (Astro.request.method === "POST") {
+  const f = await Astro.request.formData();
+  const data = Object.fromEntries([...f.entries()].filter(([, v]) => typeof v === "string").map(([k, v]) => [k, String(v)]));
+  const errMsg = (e: unknown) => (e instanceof ZodError ? e.issues.map((i) => i.message).join(". ") : e instanceof ColonyError ? e.message : "No se pudo guardar.");
+  const catId = Astro.params.catId!;
+  const user = Astro.locals.user!;
+  try {
+    if (data.accion === "foto") {
+      const file = f.get("foto");
+      if (!(file instanceof File) || file.size === 0) throw new ColonyError("Elige una foto.");
+      await setCatPhoto(db, colony!.id, catId, file, user.id);
+      fotoMsg = { ok: true, text: "Foto guardada." };
+    } else if (data.accion === "quitar-foto") {
+      await removeCatPhoto(db, colony!.id, catId);
+      fotoMsg = { ok: true, text: "Foto eliminada." };
+    } else if (data.accion === "nota") {
+      await addCatNote(db, colony!.id, catId, user.id, data.texto ?? "", f.getAll("fotos").filter((x): x is File => x instanceof File));
+      notaMsg = { ok: true, text: "Observación añadida." };
+    } else if (data.accion === "borrar-nota") {
+      await deleteCatNote(db, colony!.id, data.noteId, user);
+      notaMsg = { ok: true, text: "Observación eliminada." };
+    } else if (data.accion === "intervencion") {
+      await addIntervention(db, colony!.id, Astro.params.catId!, Astro.locals.user!.id, data);
+      saved = true;
+    } else {
+      form = data;
+      await saveCat(db, colony!.id, isNew ? null : Astro.params.catId!, { ...data, esterilizado: data.esterilizado === "on", marcaOreja: data.marcaOreja === "on" });
+      return Astro.redirect(`/colonia/${colony!.id}?gato=1`, 303);
+    }
+  } catch (e) {
+    const msg = e instanceof ZodError ? e.issues.map((i) => i.message).join(". ") : e instanceof ColonyError ? e.message : "No se pudo guardar.";
+    if (data.accion === "intervencion") intError = msg;
+    else if (data.accion === "foto" || data.accion === "quitar-foto") fotoMsg = { ok: false, text: errMsg(e) };
+    else if (data.accion === "nota" || data.accion === "borrar-nota") notaMsg = { ok: false, text: errMsg(e) };
+    else error = msg;
+  }
+}
+const cat = isNew ? null : (await listCats(db, colony!.id)).find((c) => c.id === Astro.params.catId);
+if (!isNew && !cat) return new Response("No encontrado", { status: 404 });
+const notas = cat ? await listCatNotes(db, cat.id) : [];
+const autor = (a: { nombre: string | null; apellidos: string | null; email: string } | null) => (a ? [a.nombre, a.apellidos].filter(Boolean).join(" ") || a.email : "Persona dada de baja");
+const fmtDT = (d: Date) => new Intl.DateTimeFormat("es-ES", { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit", timeZone: "Europe/Madrid" }).format(d);
+const v = {
+  nombre: form?.nombre ?? cat?.nombre ?? "",
+  sexo: form?.sexo ?? cat?.sexo ?? "desconocido",
+  edad: form?.edad ?? cat?.edad ?? "",
+  descripcion: form?.descripcion ?? cat?.descripcion ?? "",
+  esterilizado: form ? form.esterilizado === "on" : (cat?.esterilizado ?? false),
+  marcaOreja: form ? form.marcaOreja === "on" : (cat?.marcaOreja ?? false),
+  microchip: form?.microchip ?? cat?.microchip ?? "",
+  estado: form?.estado ?? cat?.estado ?? "en_colonia",
+  observaciones: form?.observaciones ?? cat?.observaciones ?? "",
+};
+const today = new Date().toISOString().slice(0, 10);
+const fmt = (iso: string) => new Intl.DateTimeFormat("es-ES", { day: "2-digit", month: "2-digit", year: "numeric", timeZone: "UTC" }).format(new Date(iso));
+---
+<Layout title={isNew ? "Nueva ficha" : `Ficha de ${cat!.nombre}`}>
+  <ColonyHeader colony={colony!} />
+  <h1>{isNew ? "Nueva ficha de gato" : cat!.nombre}</h1>
+  {error && <div class="alert bad" role="alert" tabindex="-1" data-focus-on-load>{error}</div>}
+  <PhotoResize />
+  {cat && (
+    <section class="card" aria-labelledby="foto-h">
+      <h2 id="foto-h" class="mt-0">Foto</h2>
+      {fotoMsg && <div class:list={["alert", fotoMsg.ok ? "ok" : "bad"]} role={fotoMsg.ok ? "status" : "alert"} tabindex="-1" data-focus-on-load>{fotoMsg.text}</div>}
+      {cat.photoId ? (
+        <a href={`/api/fotos/${cat.photoId}`} target="_blank"><img class="cat-photo" src={`/api/fotos/${cat.photoId}`} alt={`Foto de ${cat.nombre}${cat.descripcion ? `: ${cat.descripcion}` : ""}`} /><span class="sr-only"> (abrir la foto en grande en una ventana nueva)</span></a>
+      ) : <p class="muted">Todavía no hay foto. Una foto ayuda a reconocerlo en la colonia y en la clínica.</p>}
+      <form method="post" enctype="multipart/form-data" data-astro-reload>
+        <input type="hidden" name="accion" value="foto" />
+        <label for="foto">{cat.photoId ? "Cambiar la foto" : "Añadir una foto"}</label>
+        <input id="foto" name="foto" type="file" accept="image/*" required data-resize data-preview="foto-preview" data-status="foto-status" aria-describedby="foto-status" />
+        <div class="photo-preview" id="foto-preview"></div>
+        <p class="muted text-sm" id="foto-status" role="status"></p>
+        <button class="btn" type="submit">Guardar foto</button>
+      </form>
+      {cat.photoId && (
+        <form method="post" data-confirm style="margin-top:.6rem">
+          <input type="hidden" name="accion" value="quitar-foto" />
+          <button class="btn small ghost danger" type="submit">Quitar la foto</button>
+        </form>
+      )}
+    </section>
+  )}
+  <form method="post" class="card">
+    <input type="hidden" name="accion" value="ficha" />
+    <label for="nombre">Nombre o apodo</label>
+    <input id="nombre" name="nombre" type="text" required maxlength="80" autocapitalize="sentences" value={v.nombre} />
+    <div class="row" style="align-items:flex-start">
+      <div style="flex:1;min-width:min(160px,100%)">
+        <label for="sexo">Sexo</label>
+        <select id="sexo" name="sexo">{Object.entries(SEXOS).map(([k, l]) => <option value={k} selected={v.sexo === k}>{l}</option>)}</select>
+      </div>
+      <div style="flex:1;min-width:min(160px,100%)">
+        <label for="edad">Edad aproximada</label>
+        <input id="edad" name="edad" type="text" maxlength="60" placeholder="Ej.: 2 años, cachorro" value={v.edad} />
+      </div>
+    </div>
+    <label for="descripcion">Descripción <span class="muted">(color, rasgos para reconocerlo)</span></label>
+    <input id="descripcion" name="descripcion" type="text" maxlength="500" value={v.descripcion} />
+    <label class="check"><input type="checkbox" name="esterilizado" checked={v.esterilizado} /> Esterilizado</label>
+    <label class="check"><input type="checkbox" name="marcaOreja" checked={v.marcaOreja} /> Marca en la oreja</label>
+    <label for="microchip">Microchip <span class="muted">(si lo tiene)</span></label>
+    <input id="microchip" name="microchip" type="text" inputmode="numeric" maxlength="40" value={v.microchip} />
+    <label for="estado">Situación</label>
+    <select id="estado" name="estado">{Object.entries(CAT_ESTADOS).map(([k, l]) => <option value={k} selected={v.estado === k}>{l}</option>)}</select>
+    <label for="observaciones">Otros datos de la ficha <span class="muted">(carácter, dieta especial…; el seguimiento va en «Observaciones»)</span></label>
+    <textarea id="observaciones" name="observaciones" maxlength="2000">{v.observaciones}</textarea>
+    <button class="btn primary block" type="submit" style="margin-top:1rem">Guardar ficha</button>
+  </form>
+
+  {cat && (
+    <section class="card" aria-labelledby="notas-h">
+      <h2 id="notas-h" class="mt-0">Observaciones</h2>
+      <p class="muted text-sm mt-0">Anota lo que sea de interés (comportamiento, heridas, peso, con quién se relaciona…) y, si quieres, añade fotos.</p>
+      {notaMsg && <div class:list={["alert", notaMsg.ok ? "ok" : "bad"]} role={notaMsg.ok ? "status" : "alert"} tabindex="-1" data-focus-on-load>{notaMsg.text}</div>}
+      <form method="post" enctype="multipart/form-data" data-astro-reload class="stack">
+        <input type="hidden" name="accion" value="nota" />
+        <label for="texto" class="mt-0">Nueva observación</label>
+        <textarea id="texto" name="texto" maxlength="4000"></textarea>
+        <label for="fotos" class="mt-0">Fotos <span class="muted">(opcional, hasta {MAX_NOTE_PHOTOS})</span></label>
+        <input id="fotos" name="fotos" type="file" accept="image/*" multiple data-resize data-max={MAX_NOTE_PHOTOS} data-preview="fotos-preview" data-status="fotos-status" aria-describedby="fotos-status" />
+        <div class="photo-preview" id="fotos-preview"></div>
+        <p class="muted text-sm mb-0" id="fotos-status" role="status"></p>
+        <button class="btn" type="submit">Añadir observación</button>
+      </form>
+      {notas.length > 0 && (
+        <ul class="notes" style="margin-top:1rem" aria-label="Observaciones anteriores">
+          {notas.map((n) => (
+            <li>
+              <div class="note-meta">
+                <span>{fmtDT(n.note.createdAt)} · {autor(n.autor?.email ? n.autor : null)}</span>
+                {(n.note.userId === Astro.locals.user!.id || Astro.locals.user!.role === "admin") && (
+                  <form method="post" data-confirm>
+                    <input type="hidden" name="accion" value="borrar-nota" /><input type="hidden" name="noteId" value={n.note.id} />
+                    <button class="btn small ghost danger" type="submit" aria-label={`Borrar la observación del ${fmtDT(n.note.createdAt)}`}>Borrar</button>
+                  </form>
+                )}
+              </div>
+              {n.note.texto && <p>{n.note.texto}</p>}
+              {n.fotos.length > 0 && (
+                <ul class="note-photos">
+                  {n.fotos.map((id, i) => (
+                    <li><a href={`/api/fotos/${id}`} target="_blank"><img src={`/api/fotos/${id}`} alt={`Foto ${i + 1} de la observación`} loading="lazy" /><span class="sr-only"> (abrir en grande en una ventana nueva)</span></a></li>
+                  ))}
+                </ul>
+              )}
+            </li>
+          ))}
+        </ul>
+      )}
+    </section>
+  )}
+  {cat && (
+    <section class="card" aria-labelledby="int-h">
+      <h2 id="int-h" class="mt-0">Intervenciones</h2>
+      {saved && <div class="alert ok" role="status" tabindex="-1" data-focus-on-load>Intervención añadida.</div>}
+      {cat.interventions.length === 0 ? (
+        <p class="muted">Todavía no hay intervenciones registradas.</p>
+      ) : (
+        <ul class="stack" style="padding-left:1.1rem">
+          {cat.interventions.map((i) => (
+            <li><strong>{fmt(i.fecha)}</strong> · {MOTIVOS[i.motivo]}{i.clinica ? ` · ${i.clinica}` : ""}{i.notas && <><br /><span class="muted">{i.notas}</span></>}</li>
+          ))}
+        </ul>
+      )}
+      <details open={Boolean(intError)}>
+        <summary class="admin-summary" style="padding:0">Añadir intervención</summary>
+        {intError && <div class="alert bad" role="alert">{intError}</div>}
+        <form method="post">
+          <input type="hidden" name="accion" value="intervencion" />
+          <div class="row" style="align-items:flex-start">
+            <div style="flex:1;min-width:min(160px,100%)">
+              <label for="fecha">Fecha de captura o atención</label>
+              <input id="fecha" name="fecha" type="date" required max={today} value={today} />
+            </div>
+            <div style="flex:1;min-width:min(180px,100%)">
+              <label for="motivo">Motivo</label>
+              <select id="motivo" name="motivo">{Object.entries(MOTIVOS).map(([k, l]) => <option value={k}>{l}</option>)}</select>
+            </div>
+          </div>
+          <label for="clinica">Clínica veterinaria</label>
+          <input id="clinica" name="clinica" type="text" maxlength="160" />
+          <label for="notas">Notas <span class="muted">(vacunas, tratamiento, resultado…)</span></label>
+          <textarea id="notas" name="notas" maxlength="2000"></textarea>
+          <button class="btn" type="submit" style="margin-top:.8rem">Añadir intervención</button>
+        </form>
+      </details>
+    </section>
+  )}
+</Layout>

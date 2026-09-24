@@ -1,0 +1,58 @@
+---
+import Layout from "../layouts/Layout.astro";
+import Quiz from "../components/Quiz";
+import Icon from "../components/Icon.astro";
+import { getDb } from "../lib/db";
+import { finalEligibility } from "../lib/exam";
+import { finalComposition, getSettings } from "../lib/settings";
+import { jevAvailable } from "../lib/secrets";
+
+const db = getDb();
+if (Astro.locals.hasCarnet) return Astro.redirect("/");
+const user = Astro.locals.user!;
+const elig = await finalEligibility(db, user);
+const s = await getSettings(db);
+const comp = finalComposition(s, await jevAvailable(db));
+---
+<Layout title="Examen final">
+  <p class="eyebrow">Último paso</p>
+  <h1>Examen final</h1>
+  {elig.ok ? (
+    <>
+      <div class="card">
+        <p class="mt-0">
+          El examen tiene <strong>{comp.objective + comp.written} preguntas</strong>:{" "}
+          {comp.written > 0 ? <>{comp.objective} tipo test y {comp.written} de respuesta escrita breve</> : <>todas de tipo test</>}. Necesitas acertar al menos el
+          <strong> {s.final_pass_pct}%</strong>.
+        </p>
+        <ul class="muted">
+          {comp.written > 0 && <li>Las respuestas escritas se corrigen automáticamente por su contenido: responde con tus palabras en 1–3 frases.</li>}
+          <li>En las preguntas de varias respuestas tienes que marcar todas las correctas.</li>
+          <li>Si no apruebas, puedes repetirlo; las preguntas cambiarán.</li>
+          <li>Tus respuestas se guardan en este dispositivo mientras haces el examen.</li>
+        </ul>
+      </div>
+      <Quiz client:only="react" kind="final" backHref="/" nextHref="/carnet" nextLabel="Ver mi carnet" />
+    </>
+  ) : (
+    "gradingId" in elig && elig.gradingId ? (
+      <div class="card">
+        <p class="mt-0">{elig.reason}</p>
+        <Quiz client:only="react" kind="final" attemptId={elig.gradingId} backHref="/" nextHref="/carnet" nextLabel="Ver mi carnet" />
+      </div>
+    ) : (
+      <div class="card end-cta">
+        <span class="step-icon"><Icon name="lock" size={26} /></span>
+        <div>
+          <h2 class="mt-0 mb-0" style="font-size:inherit">El examen aún no está disponible</h2>
+          <p class="muted" style="margin:.2rem 0 .8rem">{elig.reason}</p>
+          {elig.reason.startsWith("Completa tu perfil") ? (
+            <a class="btn primary" href="/perfil">Completar mi perfil <Icon name="arrow" /></a>
+          ) : (
+            <a class="btn primary" href="/">Seguir con el temario <Icon name="arrow" /></a>
+          )}
+        </div>
+      </div>
+    )
+  )}
+</Layout>

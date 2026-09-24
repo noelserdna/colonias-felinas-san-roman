@@ -1,0 +1,65 @@
+---
+import Layout from "../../../layouts/Layout.astro";
+import AdminNav from "../../../components/AdminNav.astro";
+import { eq } from "drizzle-orm";
+import { z } from "zod";
+import { getDb, schema } from "../../../lib/db";
+
+const db = getDb();
+const isNew = Astro.params.id === "nuevo";
+let error: string | null = null;
+let saved = false;
+
+const input = z.object({
+  titulo: z.string().trim().min(1).max(200),
+  slug: z.string().trim().regex(/^[a-z0-9-]+$/, "El identificador solo admite minúsculas, números y guiones"),
+  orden: z.coerce.number().int().min(1),
+  peso: z.coerce.number().min(0).max(100),
+  contenido: z.string().min(1),
+  activo: z.string().optional(),
+});
+
+if (Astro.request.method === "POST") {
+  const parsed = input.safeParse(Object.fromEntries(await Astro.request.formData()));
+  if (!parsed.success) error = parsed.error.issues.map((i) => i.message).join(". ");
+  else {
+    const v = { ...parsed.data, activo: parsed.data.activo === "on" };
+    try {
+      if (isNew) {
+        const [row] = await db.insert(schema.units).values(v).returning({ id: schema.units.id });
+        return Astro.redirect(`/admin/temas/${row.id}?ok=1`, 303);
+      }
+      await db.update(schema.units).set(v).where(eq(schema.units.id, Number(Astro.params.id)));
+      saved = true;
+    } catch (e: any) {
+      error = /UNIQUE/.test(String(e?.message ?? e)) ? "Ya existe un tema con ese identificador." : "No se pudo guardar.";
+    }
+  }
+}
+const unit = isNew ? null : await db.query.units.findFirst({ where: eq(schema.units.id, Number(Astro.params.id)) });
+if (!isNew && !unit) return new Response("No encontrado", { status: 404 });
+saved ||= Astro.url.searchParams.has("ok");
+---
+<Layout title={unit?.titulo ?? "Nuevo tema"} wide>
+  <p class="eyebrow">Administración</p>
+  <h1>{unit ? `Editar: ${unit.titulo}` : "Nuevo tema"}</h1>
+  <AdminNav />
+  {saved && <div class="alert ok" role="status" tabindex="-1" data-focus-on-load>Guardado.</div>}
+  {error && <div class="alert bad" role="alert" id="tema-error" tabindex="-1" data-focus-on-load>{error}</div>}
+  <form method="post" class="card">
+    <div class="row" style="align-items:flex-start">
+      <div style="flex:3;min-width:min(220px,100%)"><label for="titulo">Título</label><input id="titulo" name="titulo" type="text" required value={unit?.titulo ?? ""} /></div>
+      <div style="flex:2;min-width:min(160px,100%)"><label for="slug">Identificador (URL)</label><input id="slug" name="slug" type="text" required pattern="[a-z0-9-]+" value={unit?.slug ?? ""} /></div>
+      <div style="flex:1;min-width:min(90px,100%)"><label for="orden">Orden</label><input id="orden" name="orden" type="number" min="1" required value={unit?.orden ?? 1} /></div>
+      <div style="flex:1;min-width:min(90px,100%)"><label for="peso">Peso</label><input id="peso" name="peso" type="number" inputmode="decimal" min="0" step="0.1" required value={unit?.peso ?? 1} aria-describedby="peso-help" /></div>
+    </div>
+    <label class="check"><input type="checkbox" name="activo" checked={unit?.activo ?? true} /> <span>Tema activo (visible y requerido para el examen final)</span></label>
+    <label for="contenido">Contenido (Markdown)</label>
+    <textarea id="contenido" name="contenido" style="min-height:60vh;font-family:ui-monospace,monospace" required>{unit?.contenido ?? ""}</textarea>
+    <div class="row" style="margin-top:1rem">
+      <button class="btn primary" type="submit">Guardar</button>
+      {unit && <a class="btn ghost" href={`/temario/${unit.slug}`} target="_blank">Ver como alumno</a>}
+    </div>
+  </form>
+  <p class="muted" id="peso-help">El peso indica qué proporción de preguntas del examen final sale de este tema respecto al resto (peso 0 = no entra en el examen final).</p>
+</Layout>

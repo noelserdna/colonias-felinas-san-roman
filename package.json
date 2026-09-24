@@ -1,0 +1,41 @@
+{
+  "name": "cuidadores-colonias-felinas",
+  "private": true,
+  "type": "module",
+  "version": "0.1.0",
+  "scripts": {
+    "dev": "rm -rf node_modules/.vite && astro dev",
+    "build": "astro build",
+    "preview": "wrangler dev",
+    "test": "vitest run",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate:local": "wrangler d1 migrations apply colonias --local",
+    "db:migrate:remote": "wrangler d1 migrations apply colonias --remote",
+    "db:seed:local": "node scripts/build-seed.mjs && wrangler d1 execute colonias --local --file=seed/seed.sql",
+    "db:seed:remote": "node scripts/build-seed.mjs && wrangler d1 execute colonias --remote --file=seed/seed.sql",
+    "deploy": "astro build && wrangler deploy"
+  },
+  "dependencies": {
+    "@astrojs/cloudflare": "^14.3.3",
+    "@astrojs/react": "^7.0.0",
+    "@fontsource/atkinson-hyperlegible": "^5.3.0",
+    "astro": "^7.3.4",
+    "drizzle-orm": "^0.45.3",
+    "marked": "^18.0.14",
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0",
+    "zod": "^4.6.5"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.10",
+    "@axe-core/playwright": "^4.13.0",
+    "@cloudflare/workers-types": "^5.20260924.1",
+    "@playwright/test": "^1.63.0",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "drizzle-kit": "^0.31.11",
+    "typescript": "^6.0.3",
+    "vitest": "^5.0.1",
+    "wrangler": "^4.137.0"
+  }
+}

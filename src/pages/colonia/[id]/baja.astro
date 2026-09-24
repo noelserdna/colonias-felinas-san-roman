@@ -1,0 +1,26 @@
+---
+import Layout from "../../../layouts/Layout.astro";
+import ColonyHeader from "../../../components/ColonyHeader.astro";
+import BajaColonia from "../../../components/BajaColonia";
+import { loadColony } from "../../../lib/colony-page";
+import { censusTotal, listCensuses, relevoRequerido, sucesorSiSeVa } from "../../../lib/colonies";
+import { MIN_BAJA_CHARS } from "../../../lib/baja";
+
+const { db, colony, error } = await loadColony(Astro);
+if (error) return error;
+const { requerido: unica } = await relevoRequerido(db, colony!.id, Astro.locals.user!.id);
+const last = (await listCensuses(db, colony!.id))[0];
+const requerido = unica && !(last && censusTotal(last) === 0);
+const sucesor = await sucesorSiSeVa(db, colony!.id, Astro.locals.user!.id);
+---
+<Layout title={`Dejar de colaborar · ${colony!.nombre}`}>
+  <ColonyHeader colony={colony!} />
+  <h1>Dejar de colaborar</h1>
+  <p>
+    Según la ordenanza, si dejas de colaborar tienes que comunicarlo al Ayuntamiento para darte de baja. Tu explicación se valora
+    automáticamente y el botón se habilita cuando cumple los requisitos.
+  </p>
+  <section class="card">
+    <BajaColonia client:only="react" colonyId={colony!.id} colonyName={colony!.nombre} requiereRelevo={requerido} minChars={MIN_BAJA_CHARS} sucesor={sucesor} />
+  </section>
+</Layout>

@@ -1,0 +1,75 @@
+---
+import Layout from "../../../layouts/Layout.astro";
+import AdminNav from "../../../components/AdminNav.astro";
+import { getDb } from "../../../lib/db";
+import { censusDue, listColoniesAdmin, recentBajas } from "../../../lib/colonies";
+import { formatDate } from "../../../lib/util";
+
+const db = getDb();
+const cols = await listColoniesAdmin(db);
+const bajas = await recentBajas(db, 10);
+const sinCuidadores = cols.filter((c) => c.estado === "sin_cuidadores");
+const q = Astro.url.searchParams;
+const nombre = (u: { nombre: string | null; apellidos: string | null; email: string }) => [u.nombre, u.apellidos].filter(Boolean).join(" ") || u.email;
+const ESTADO = { activa: "Activa", sin_cuidadores: "Sin cuidadores", baja: "De baja" } as const;
+---
+<Layout title="Colonias · Administración" wide>
+  <p class="eyebrow">Administración</p>
+  <h1>Colonias</h1>
+  <AdminNav />
+  {q.has("creada") && <div class="alert ok" role="status" tabindex="-1" data-focus-on-load>Colonia n.º {q.get("creada")} registrada. Ya aparece en el carnet de sus cuidadores.</div>}
+  {sinCuidadores.length > 0 && (
+    <div class="alert bad" role="status">
+      <span><strong>{sinCuidadores.length}</strong> {sinCuidadores.length === 1 ? "colonia se ha quedado" : "colonias se han quedado"} sin personas cuidadoras: {sinCuidadores.map((c) => `n.º ${c.numero} ${c.nombre}`).join(", ")}.</span>
+    </div>
+  )}
+  <p class="muted">Registra aquí las colonias cuya solicitud (Anexo I de la ordenanza) haya aprobado el Ayuntamiento tras la visita e informe técnico.</p>
+  <a class="btn primary" href="/admin/colonias/nueva">Registrar colonia</a>
+  <div class="card table-scroll" style="margin-top:1rem">
+    <table class="data responsive">
+      <thead><tr><th>Colonia</th><th>Cuidadores</th><th>Gatos</th><th>Último censo</th><th>Estado</th><th><span class="sr-only">Acciones</span></th></tr></thead>
+      <tbody>
+        {cols.length === 0 && <tr><td colspan="6">Todavía no hay colonias registradas.</td></tr>}
+        {cols.map((c) => (
+          <tr>
+            <td class="primary-cell">n.º {c.numero} · {c.nombre}</td>
+            <td data-label="Cuidadores"><span>{c.members.length ? c.members.map((m) => `${nombre(m)}${m.rol === "responsable" ? " (resp.)" : ""}`).join(", ") : "—"}{c.sinResponsable && <span class="badge bad"> sin responsable</span>}</span></td>
+            <td data-label="Gatos">{c.total}</td>
+            <td data-label="Último censo"><span>{c.lastCensus ? formatDate(c.lastCensus.fecha) : "—"}{censusDue(c.lastCensus?.fecha ?? null) && c.estado !== "baja" && <span class="badge bad"> pendiente</span>}</span></td>
+            <td data-label="Estado"><span class:list={["badge", c.estado === "activa" ? "ok" : c.estado === "baja" ? "lock" : "bad"]}>{ESTADO[c.estado]}</span></td>
+            <td class="actions"><a class="btn small" href={`/admin/colonias/${c.id}`} aria-label={`Gestionar colonia ${c.numero}`}>Gestionar</a></td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </div>
+
+  <h2>Bajas recientes de personas cuidadoras</h2>
+  {bajas.length === 0 ? <p class="muted">No hay bajas recientes.</p> : bajas.map((b) => {
+    const ev = b.member.bajaJev as { scores?: { motivo: number; relevo: number; sinGatos?: number; invalida: number; simulado?: boolean } | null; requiereRelevo?: boolean; jevDisponible?: boolean; gatosCenso?: number | null; nuevaResponsable?: string } | null;
+    const declaraSinGatos = (ev?.scores?.sinGatos ?? 0) >= 0.6;
+    return (
+      <article class="card stack">
+        <div class="spread">
+          <strong>{nombre(b.user)} · colonia n.º {b.colony.numero} {b.colony.nombre}</strong>
+          <span class="badge todo">{b.member.bajaPor === "ayuntamiento" ? "Baja por el Ayuntamiento" : "Baja voluntaria"}</span>
+        </div>
+        <p class="muted text-sm mb-0">{formatDate(b.member.until!)}{ev?.requiereRelevo ? " · era la única persona cuidadora" : ""}</p>
+        {b.member.bajaMotivo && <p style="white-space:pre-wrap" class="mb-0">{b.member.bajaMotivo}</p>}
+        {ev?.scores && (
+          <p class="muted text-sm mb-0">
+            Valoración JEV{ev.scores.simulado ? " (simulada)" : ""}: motivo {ev.scores.motivo.toFixed(2)}/3 · relevo {Math.round(ev.scores.relevo * 100)} %{ev.scores.sinGatos != null ? ` · sin gatos ${Math.round(ev.scores.sinGatos * 100)} %` : ""} · no válida {Math.round(ev.scores.invalida * 100)} %
+          </p>
+        )}
+        {ev && ev.jevDisponible === false && <p class="muted text-sm mb-0">Sin valoración automática (JEV no disponible): revisar a mano.</p>}
+        {ev?.nuevaResponsable && <p class="mb-0"><span class="badge ok">Nueva persona responsable: {ev.nuevaResponsable}</span></p>}
+        {declaraSinGatos && (
+          <p class="mb-0">
+            <span class="badge todo">Declara que no quedan gatos</span>
+            {(ev?.gatosCenso ?? 0) > 0 && <span class="badge bad"> El último censo aún declaraba {ev!.gatosCenso} gatos: conviene comprobarlo</span>}
+          </p>
+        )}
+      </article>
+    );
+  })}
+</Layout>

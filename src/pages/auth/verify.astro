@@ -1,0 +1,17 @@
+---
+// Paso intermedio con botón: evita que los escáneres de enlaces del correo consuman el token.
+import Layout from "../../layouts/Layout.astro";
+const token = Astro.url.searchParams.get("token") ?? "";
+const next = Astro.url.searchParams.get("next") ?? "/";
+---
+<Layout title="Entrar">
+  <section class="card narrow">
+    <h1>Confirmar acceso</h1>
+    <p>Pulsa el botón para terminar de entrar. Por seguridad, te lo pedimos una vez: así los programas que revisan el correo no pueden usar tu enlace.</p>
+    <form method="post" action="/api/auth/verify">
+      <input type="hidden" name="token" value={token} />
+      <input type="hidden" name="next" value={next} />
+      <button class="btn primary block" type="submit">Entrar</button>
+    </form>
+  </section>
+</Layout>

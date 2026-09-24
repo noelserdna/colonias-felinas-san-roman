@@ -1,0 +1,58 @@
+---
+// Reduce en el móvil las fotos de los <input type="file" data-resize> antes de enviarlas
+// (lado mayor 1600 px, JPEG al 82 %) y muestra una vista previa. Si algo falla, se envía el original.
+---
+<script>
+  const MAX = 1600;
+  async function shrink(file: File): Promise<File> {
+    if (!file.type.startsWith("image/") || file.size < 350_000) return file;
+    try {
+      const bmp = await createImageBitmap(file, { imageOrientation: "from-image" } as ImageBitmapOptions);
+      const scale = Math.min(1, MAX / Math.max(bmp.width, bmp.height));
+      const canvas = document.createElement("canvas");
+      canvas.width = Math.round(bmp.width * scale);
+      canvas.height = Math.round(bmp.height * scale);
+      canvas.getContext("2d")!.drawImage(bmp, 0, 0, canvas.width, canvas.height);
+      const blob = await new Promise<Blob | null>((r) => canvas.toBlob(r, "image/jpeg", 0.82));
+      if (!blob || blob.size >= file.size) return file;
+      return new File([blob], file.name.replace(/\.\w+$/, "") + ".jpg", { type: "image/jpeg" });
+    } catch {
+      return file;
+    }
+  }
+  function setup() {
+    document.querySelectorAll<HTMLInputElement>("input[type=file][data-resize]").forEach((input) => {
+      if (input.dataset.ready) return;
+      input.dataset.ready = "1";
+      const preview = document.getElementById(input.dataset.preview ?? "");
+      const max = Number(input.dataset.max ?? 0);
+      input.addEventListener("change", async () => {
+        const files = [...(input.files ?? [])];
+        const msg = document.getElementById(input.dataset.status ?? "");
+        if (max && files.length > max) {
+          if (msg) msg.textContent = `Puedes añadir como máximo ${max} fotos. Elige menos.`;
+          input.value = "";
+          if (preview) preview.replaceChildren();
+          return;
+        }
+        if (msg) msg.textContent = files.length ? "Preparando las fotos…" : "";
+        const small = await Promise.all(files.map(shrink));
+        const dt = new DataTransfer();
+        small.forEach((f) => dt.items.add(f));
+        input.files = dt.files;
+        if (preview) {
+          preview.replaceChildren(
+            ...small.map((f) => {
+              const img = document.createElement("img");
+              img.src = URL.createObjectURL(f);
+              img.alt = "";
+              return img;
+            }),
+          );
+        }
+        if (msg) msg.textContent = files.length ? `${files.length === 1 ? "1 foto lista" : `${files.length} fotos listas`} para guardar.` : "";
+      });
+    });
+  }
+  document.addEventListener("astro:page-load", setup);
+</script>

@@ -1,0 +1,53 @@
+---
+import Layout from "../layouts/Layout.astro";
+import Icon from "../components/Icon.astro";
+if (Astro.locals.user) return Astro.redirect("/");
+const q = Astro.url.searchParams;
+const errors: Record<string, string> = {
+  email: "Introduce un correo electrónico válido.",
+  rate: "Has pedido demasiados enlaces. Espera un minuto e inténtalo de nuevo.",
+  send: "No hemos podido enviar el correo. Inténtalo más tarde.",
+  token: "El enlace no es válido, ya se usó o ha caducado. Pide uno nuevo.",
+};
+const errorKey = q.get("error") ?? "";
+const error = errors[errorKey];
+// Solo el error de formato se refiere al campo; los demás son del envío.
+const fieldError = errorKey === "email";
+const sent = Boolean(q.get("sent"));
+const devLink = import.meta.env.DEV ? q.get("dev_link") : null;
+---
+<Layout title="Entrar">
+  <section class="card narrow">
+    <div class="row" style="gap:.75rem;align-items:center;flex-wrap:nowrap">
+      <span class="icon-tile" aria-hidden="true"><Icon name="mail" size={28} /></span>
+      <h1 class="mt-0 mb-0">Entrar</h1>
+    </div>
+    {sent ? (
+      <div class="alert ok" role="status" id="login-sent" tabindex="-1" data-focus-on-load>
+        Te hemos enviado un enlace de acceso. Revisa tu correo (también la carpeta de spam) y ábrelo en este dispositivo.
+      </div>
+    ) : (
+      <p class="muted">Escribe tu correo y te enviaremos un enlace para entrar. No necesitas contraseña.</p>
+    )}
+    {devLink && <div class="alert info">Modo desarrollo: <a href={devLink} data-testid="dev-link">abrir enlace de acceso</a></div>}
+    {error && <div class="alert bad" role="alert" id="email-error" tabindex="-1" data-focus-on-load>{error}</div>}
+    <form method="post" action="/api/auth/request" data-astro-reload>
+      <input type="hidden" name="next" value={q.get("next") ?? "/"} />
+      <label for="email">Correo electrónico</label>
+      <input
+        id="email"
+        name="email"
+        type="email"
+        autocomplete="email"
+        inputmode="email"
+        enterkeyhint="send"
+        autocapitalize="off"
+        spellcheck="false"
+        required
+        aria-invalid={fieldError ? "true" : undefined}
+        aria-describedby={error ? "email-error" : undefined}
+      />
+      <button class="btn primary block" style="margin-top:1rem" type="submit">Enviarme el enlace <Icon name="arrow" /></button>
+    </form>
+  </section>
+</Layout>

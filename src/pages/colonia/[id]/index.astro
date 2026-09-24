@@ -1,0 +1,108 @@
+---
+import Layout from "../../../layouts/Layout.astro";
+import Icon from "../../../components/Icon.astro";
+import ColonyHeader from "../../../components/ColonyHeader.astro";
+import { loadColony } from "../../../lib/colony-page";
+import { activeMembers, CAT_ESTADOS, censusDue, censusTotal, listCats, listCensuses, SEXOS } from "../../../lib/colonies";
+import { formatDate } from "../../../lib/util";
+
+const { db, colony, error } = await loadColony(Astro);
+if (error) return error;
+const [members, censuses, cats] = await Promise.all([activeMembers(db, colony!.id), listCensuses(db, colony!.id), listCats(db, colony!.id)]);
+const last = censuses[0] ?? null;
+const total = last ? censusTotal(last) : 0;
+const due = censusDue(last?.fecha ?? null);
+const me = members.find((m) => m.user.id === Astro.locals.user!.id);
+const enColonia = cats.filter((c) => c.estado === "en_colonia");
+const q = Astro.url.searchParams;
+const nombre = (u: { nombre: string | null; apellidos: string | null; email: string }) => [u.nombre, u.apellidos].filter(Boolean).join(" ") || u.email;
+---
+<Layout title={colony!.nombre}>
+  <ColonyHeader colony={colony!} back={false} />
+  <h1>{colony!.nombre}</h1>
+  {q.has("censo") && <div class="alert ok" role="status" tabindex="-1" data-focus-on-load>Censo guardado. Tu carnet ya muestra {total} gatos.</div>}
+  {q.has("gato") && <div class="alert ok" role="status" tabindex="-1" data-focus-on-load>Ficha guardada.</div>}
+  <div class="meta">
+    <span>{colony!.direccion}</span>
+    {colony!.coordenadas && <span>{colony!.coordenadas}</span>}
+    <span>{colony!.titularidad === "publico" ? "Espacio público" : "Espacio privado"}</span>
+  </div>
+  <p class="muted text-sm">
+    {me ? (me.member.rol === "responsable" ? "Eres la persona cuidadora responsable." : "Colaboras en esta colonia.") : "Vista del Ayuntamiento."}
+    {members.length > 1 && <> Otras personas cuidadoras: {members.filter((m) => m.user.id !== Astro.locals.user!.id).map((m) => nombre(m.user)).join(", ")}.</>}
+  </p>
+
+  <section class="card" aria-labelledby="censo-h">
+    <div class="spread">
+      <h2 id="censo-h" class="mt-0 mb-0">Censo de la colonia</h2>
+      <span class:list={["badge", due ? "bad" : "ok"]}>{due ? "Toca actualizarlo" : "Al día"}</span>
+    </div>
+    {last ? (
+      <>
+        <p class="stat-num" style="margin:.6rem 0 0">{total} <span class="text-sm muted" style="font-weight:400">gatos declarados</span></p>
+        <p class="muted text-sm mt-0">Último censo: {formatDate(last.fecha)}. Se actualiza cada seis meses.</p>
+        <dl class="census-grid">
+          <div><dt>Hembras esterilizadas</dt><dd>{last.hembrasEsterilizadas}</dd></div>
+          <div><dt>Hembras sin esterilizar</dt><dd>{last.hembrasSinEsterilizar}</dd></div>
+          <div><dt>Machos castrados</dt><dd>{last.machosCastrados}</dd></div>
+          <div><dt>Machos sin castrar</dt><dd>{last.machosSinCastrar}</dd></div>
+          <div><dt>Adoptables</dt><dd>{last.adoptables}</dd></div>
+          <div><dt>Enfermos</dt><dd>{last.enfermos}</dd></div>
+        </dl>
+      </>
+    ) : <p>Todavía no hay ningún censo.</p>}
+    <a class="btn primary" href={`/colonia/${colony!.id}/censo`}>Actualizar el censo</a>
+  </section>
+
+  <section class="card" aria-labelledby="gatos-h">
+    <div class="spread">
+      <h2 id="gatos-h" class="mt-0 mb-0">Fichas de los gatos</h2>
+      <span class="muted text-sm">{enColonia.length} en la colonia · {cats.length} en total</span>
+    </div>
+    <p class="muted text-sm">Una ficha por gato (Anexo IV de la ordenanza) con sus datos y sus intervenciones veterinarias.</p>
+    {cats.length > 0 && (
+      <ul class="cat-list">
+        {cats.map((c) => (
+          <li>
+            <a href={`/colonia/${colony!.id}/gatos/${c.id}`} class="cat-item">
+              {c.photoId ? <img class="cat-thumb" src={`/api/fotos/${c.photoId}`} alt="" loading="lazy" /> : <span class="cat-thumb empty" aria-hidden="true"><Icon name="paw" size={22} /></span>}
+              <span class="step-body">
+                <span class="step-title">{c.nombre}</span>
+                <span class="step-sub">
+                  {SEXOS[c.sexo]}{c.edad ? ` · ${c.edad}` : ""}{c.estado !== "en_colonia" ? ` · ${CAT_ESTADOS[c.estado]}` : ""}
+                </span>
+              </span>
+              <span class:list={["badge", c.esterilizado ? "ok" : "todo"]}>{c.esterilizado ? "Esterilizado" : "Sin esterilizar"}</span>
+            </a>
+          </li>
+        ))}
+      </ul>
+    )}
+    <a class="btn" href={`/colonia/${colony!.id}/gatos/nuevo`}><Icon name="paw" size={18} /> Añadir ficha de un gato</a>
+  </section>
+
+  <details class="card">
+    <summary class="admin-summary" style="padding:0"><strong>Pautas básicas de la colonia (Anexo III)</strong></summary>
+    <ul class="prose" style="font-size:1rem">
+      <li>La colonia está identificada por el área de Bienestar Animal. Informa del número de gatos y, si es posible, de su estado.</li>
+      <li>Alimenta en los puntos de alimentación que conoce el Ayuntamiento, con un horario estable.</li>
+      <li>Usa solo pienso seco y agua limpia y fresca (salvo indicación veterinaria). Si pones comida húmeda, retira los recipientes.</li>
+      <li>Limpia a diario el punto de alimentación y retira platos vacíos y latas. No ensucies la vía pública.</li>
+      <li>Las capturas para el método CER se programan según el calendario municipal y el gato va al centro veterinario que indique el Ayuntamiento.</li>
+      <li>Rellena una ficha por gato con sus características y los resultados de las actuaciones veterinarias.</li>
+      <li>Colabora en la esterilización de los gatos de la colonia: captura, traslado, recogida y retorno al mismo lugar.</li>
+      <li>Avisa al Ayuntamiento cuanto antes si hay gatos enfermos.</li>
+    </ul>
+  </details>
+
+  {me && (
+    <a class="card end-cta" href={`/colonia/${colony!.id}/baja`}>
+      <span class="step-icon"><Icon name="logout" size={24} /></span>
+      <span class="grow">
+        <strong>Dejar de colaborar en esta colonia</strong>
+        <span class="muted text-sm" style="display:block">Comunica al Ayuntamiento que ya no puedes seguir cuidándola.</span>
+      </span>
+      <Icon name="arrow" />
+    </a>
+  )}
+</Layout>

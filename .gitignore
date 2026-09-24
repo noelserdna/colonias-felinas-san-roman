@@ -1,0 +1,19 @@
+node_modules
+dist
+.astro
+.wrangler
+.dev.vars
+seed/seed.sql
+test-results
+seed/.manual-extract.txt
+.sdd/
+pipeline-state.json
+.DS_Store
+
+# Contenido formativo del Colegio Oficial de Veterinarios de Toledo: uso autorizado solo en la aplicación,
+# no se redistribuye en este repositorio. Ver «Contenido formativo» en el README.
+seed/units/*.md
+seed/questions/*.json
+public/img/temario/
+public/img/hero.jpg
+public/img/hero-640.jpg

@@ -1,0 +1,79 @@
+---
+import Layout from "../layouts/Layout.astro";
+import Icon from "../components/Icon.astro";
+import { getDb } from "../lib/db";
+import { getActiveCarnet } from "../lib/carnet";
+const user = Astro.locals.user!;
+const q = Astro.url.searchParams;
+const carnet = await getActiveCarnet(getDb(), user.id);
+const error = Boolean(q.get("error"));
+// El servidor no indica qué campo falla: se asocia el aviso a los tres y se marcan los que siguen vacíos.
+const describedBy = error ? "perfil-error" : undefined;
+const invalid = (empty: boolean) => (error && empty ? "true" : undefined);
+---
+<Layout title="Perfil">
+  <p class="eyebrow">Cuenta</p>
+  <h1>Tu perfil</h1>
+  <p class="muted">{user.email}</p>
+  <section class="card">
+    {q.get("ok") && <div class="alert ok" role="status" tabindex="-1" data-focus-on-load>Datos guardados.</div>}
+    {error && (
+      <div class="alert bad" role="alert" id="perfil-error" tabindex="-1" data-focus-on-load>
+        Revisa los campos: nombre, apellidos y la casilla de consentimiento son obligatorios.
+      </div>
+    )}
+    {carnet && <div class="alert info">Tu carnet vigente conserva los datos con los que se emitió. Si hay un error, contacta con el ayuntamiento.</div>}
+    <form method="post" action="/api/profile">
+      <p class="muted text-sm mt-0">Todos los campos son obligatorios.</p>
+      <label for="nombre">Nombre</label>
+      <input
+        id="nombre"
+        name="nombre"
+        type="text"
+        autocomplete="given-name"
+        autocapitalize="words"
+        enterkeyhint="next"
+        required
+        maxlength="80"
+        value={user.nombre ?? ""}
+        aria-invalid={invalid(!user.nombre)}
+        aria-describedby={describedBy}
+      />
+      <label for="apellidos">Apellidos</label>
+      <input
+        id="apellidos"
+        name="apellidos"
+        type="text"
+        autocomplete="family-name"
+        autocapitalize="words"
+        enterkeyhint="next"
+        required
+        maxlength="120"
+        value={user.apellidos ?? ""}
+        aria-invalid={invalid(!user.apellidos)}
+        aria-describedby={describedBy}
+      />
+      <label class="check">
+        <input
+          type="checkbox"
+          name="consent"
+          required
+          checked={Boolean(user.consentAt)}
+          aria-invalid={invalid(!user.consentAt)}
+          aria-describedby={describedBy}
+        />
+        <span>He leído la <a href="/privacidad">política de privacidad</a> y acepto que el {Astro.locals.branding.ayuntamiento} trate mis datos para gestionar mi formación y acreditación como cuidador/a de colonias felinas.</span>
+      </label>
+      <button class="btn primary block" style="margin-top:1rem" type="submit">Guardar</button>
+    </form>
+  </section>
+  <section class="card spread" aria-labelledby="sesion-h">
+    <div>
+      <h2 id="sesion-h" class="mt-0 mb-0">Sesión</h2>
+      <p class="muted text-sm mb-0" style="margin-top:.1rem">Al salir se borran de este dispositivo las páginas guardadas sin conexión.</p>
+    </div>
+    <form method="post" action="/api/auth/logout">
+      <button class="btn" type="submit"><Icon name="logout" size={18} /> Cerrar sesión</button>
+    </form>
+  </section>
+</Layout>

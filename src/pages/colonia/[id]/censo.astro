@@ -1,0 +1,84 @@
+---
+import Layout from "../../../layouts/Layout.astro";
+import ColonyHeader from "../../../components/ColonyHeader.astro";
+import { ZodError } from "zod";
+import { loadColony } from "../../../lib/colony-page";
+import { addCensus, censusFromCats, ColonyError, listCats, listCensuses } from "../../../lib/colonies";
+import { formatDate } from "../../../lib/util";
+
+const { db, colony, error: notFound } = await loadColony(Astro);
+if (notFound) return notFound;
+let error: string | null = null;
+let form: Record<string, string> | null = null;
+if (Astro.request.method === "POST") {
+  const f = await Astro.request.formData();
+  form = Object.fromEntries([...f.entries()].map(([k, v]) => [k, String(v)]));
+  try {
+    await addCensus(db, colony!.id, Astro.locals.user!.id, form);
+    return Astro.redirect(`/colonia/${colony!.id}?censo=1`, 303);
+  } catch (e) {
+    error = e instanceof ZodError ? e.issues.map((i) => i.message).join(". ") : e instanceof ColonyError ? e.message : "No se pudo guardar el censo.";
+  }
+}
+const [censuses, cats] = await Promise.all([listCensuses(db, colony!.id), listCats(db, colony!.id)]);
+const last = censuses[0];
+const fromCats = censusFromCats(cats);
+const useCats = Astro.url.searchParams.has("desde-fichas");
+const val = (k: string) =>
+  form?.[k] ?? String(useCats && k in fromCats ? (fromCats as Record<string, number>)[k] : ((last as Record<string, unknown> | undefined)?.[k] ?? 0));
+const fields: [string, string][] = [
+  ["hembrasEsterilizadas", "Hembras esterilizadas"],
+  ["hembrasSinEsterilizar", "Hembras sin esterilizar"],
+  ["machosCastrados", "Machos castrados"],
+  ["machosSinCastrar", "Machos sin castrar"],
+];
+---
+<Layout title={`Censo · ${colony!.nombre}`}>
+  <ColonyHeader colony={colony!} />
+  <h1>Actualizar el censo</h1>
+  <p class="muted">Cuenta los gatos varios días y a distintas horas. El total aparecerá en tu carnet como gatos que atiendes.</p>
+  {error && <div class="alert bad" role="alert" id="censo-error" tabindex="-1" data-focus-on-load>{error}</div>}
+  {cats.length > 0 && !useCats && (
+    <p><a class="btn small ghost" href="?desde-fichas">Rellenar a partir de las {cats.filter((c) => c.estado === "en_colonia").length} fichas de gatos</a></p>
+  )}
+  <form method="post" class="card">
+    <fieldset class="card" style="box-shadow:none">
+      <legend>Número de gatos</legend>
+      <div class="census-grid" style="margin:0">
+        {fields.map(([k, label]) => (
+          <div><label for={k} class="mt-0">{label}</label><input id={k} name={k} type="number" inputmode="numeric" min="0" max="999" required value={val(k)} /></div>
+        ))}
+      </div>
+    </fieldset>
+    <fieldset class="card" style="box-shadow:none">
+      <legend>De ellos</legend>
+      <div class="census-grid" style="margin:0">
+        <div><label for="adoptables" class="mt-0">Adoptables (abandonados o cachorros)</label><input id="adoptables" name="adoptables" type="number" inputmode="numeric" min="0" max="999" required value={val("adoptables")} /></div>
+        <div><label for="enfermos" class="mt-0">Enfermos</label><input id="enfermos" name="enfermos" type="number" inputmode="numeric" min="0" max="999" required value={val("enfermos")} /></div>
+      </div>
+    </fieldset>
+    <label for="observaciones">Observaciones <span class="muted">(opcional: síntomas de gatos enfermos, camadas, peligros en la zona…)</span></label>
+    <textarea id="observaciones" name="observaciones" maxlength="2000">{form?.observaciones ?? ""}</textarea>
+    <button class="btn primary block" type="submit" style="margin-top:1rem">Guardar censo</button>
+  </form>
+  {censuses.length > 0 && (
+    <section class="card">
+      <h2 class="mt-0">Censos anteriores</h2>
+      <div class="table-scroll">
+        <table class="data responsive">
+          <thead><tr><th>Fecha</th><th>Total</th><th>Hembras (est./sin)</th><th>Machos (cast./sin)</th></tr></thead>
+          <tbody>
+            {censuses.map((c) => (
+              <tr>
+                <td class="primary-cell">{formatDate(c.fecha)}</td>
+                <td data-label="Total">{c.hembrasEsterilizadas + c.hembrasSinEsterilizar + c.machosCastrados + c.machosSinCastrar}</td>
+                <td data-label="Hembras">{c.hembrasEsterilizadas} / {c.hembrasSinEsterilizar}</td>
+                <td data-label="Machos">{c.machosCastrados} / {c.machosSinCastrar}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </section>
+  )}
+</Layout>

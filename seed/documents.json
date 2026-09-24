@@ -1,0 +1,48 @@
+[
+  {
+    "titulo": "Ordenanza municipal reguladora de plan de control y gestión ética de las colonias felinas urbanas",
+    "categoria": "ordenanza",
+    "descripcion": "Regula el registro de colonias, las personas cuidadoras, el método CER y los cuidados de las colonias. Incluye el Anexo I (solicitud para registrar una nueva colonia), el Anexo II (solicitud de alta como colaborador o colaboradora), el Anexo III (pautas básicas) y el Anexo IV (ficha de cada gato). Publicada en el BOP de Toledo n.º 122.",
+    "url": "https://bop.diputoledo.es/webEbop/DocGet?id=24065992%3B0&insert_number=3274&insert_year=2024",
+    "fecha": "2024-06-28",
+    "orden": 1
+  },
+  {
+    "titulo": "Ordenanza municipal reguladora de la tenencia responsable y del bienestar animal",
+    "categoria": "ordenanza",
+    "descripcion": "Ordenanza municipal adaptada a la Ley 7/2023. Publicada en el BOP de Toledo n.º 61.",
+    "url": "https://bop.diputoledo.es/webEbop/DocGet?id=24034171%3B0&insert_number=1450&insert_year=2024",
+    "fecha": "2024-03-27",
+    "orden": 2
+  },
+  {
+    "titulo": "Ley 7/2023, de 28 de marzo, de protección de los derechos y el bienestar de los animales",
+    "categoria": "normativa",
+    "descripcion": "Ley estatal. Su capítulo VI (artículos 38 a 42) regula las colonias felinas y la gestión de los gatos comunitarios.",
+    "url": "https://www.boe.es/buscar/act.php?id=BOE-A-2023-7936",
+    "fecha": "2023-03-28",
+    "orden": 1
+  },
+  {
+    "titulo": "Ley 7/2020, de 31 de agosto, de Bienestar, Protección y Defensa de los Animales de Castilla-La Mancha",
+    "categoria": "normativa",
+    "descripcion": "Ley autonómica de protección animal aplicable en Castilla-La Mancha.",
+    "url": "https://www.boe.es/buscar/act.php?id=BOE-A-2020-13916",
+    "fecha": "2020-08-31",
+    "orden": 2
+  },
+  {
+    "titulo": "Portal de transparencia del Ayuntamiento",
+    "categoria": "otro",
+    "descripcion": "Normativa, ordenanzas y resto de información pública del Ayuntamiento.",
+    "url": "https://sanromandelosmontes.sedelectronica.es/transparency",
+    "orden": 1
+  },
+  {
+    "titulo": "Sede electrónica del Ayuntamiento",
+    "categoria": "otro",
+    "descripcion": "Presentación de solicitudes y escritos por vía electrónica (registro electrónico y catálogo de trámites).",
+    "url": "https://sanromandelosmontes.sedelectronica.es/",
+    "orden": 2
+  }
+]

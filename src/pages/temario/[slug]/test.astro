@@ -1,0 +1,28 @@
+---
+import Layout from "../../../layouts/Layout.astro";
+import Quiz from "../../../components/Quiz";
+import { eq } from "drizzle-orm";
+import { getDb, schema } from "../../../lib/db";
+import { getProgress } from "../../../lib/exam";
+
+const db = getDb();
+if (Astro.locals.hasCarnet) return Astro.redirect(`/temario/${Astro.params.slug}`);
+const unit = await db.query.units.findFirst({ where: eq(schema.units.slug, Astro.params.slug!) });
+if (!unit || !unit.activo) return new Response("No encontrado", { status: 404 });
+const { units } = await getProgress(db, Astro.locals.user!.id);
+const idx = units.findIndex((u) => u.id === unit.id);
+if (!units[idx]?.unlocked) return Astro.redirect("/");
+const next = units[idx + 1];
+---
+<Layout title={`Test: ${unit.titulo}`}>
+  <p class="eyebrow">Test · Tema {unit.orden}</p>
+  <h1>{unit.titulo}</h1>
+  <Quiz
+    client:only="react"
+    kind="unit"
+    unitId={unit.id}
+    backHref={`/temario/${unit.slug}`}
+    nextHref={next ? `/temario/${next.slug}` : "/examen"}
+    nextLabel={next ? `Ir al tema ${next.orden}: ${next.titulo}` : "Ir al examen final"}
+  />
+</Layout>

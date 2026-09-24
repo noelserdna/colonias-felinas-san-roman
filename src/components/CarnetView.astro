@@ -1,0 +1,147 @@
+---
+// Carnet (anverso/reverso, reloj en directo y giro). Se usa en /carnet y como pantalla principal.
+import Icon from "./Icon.astro";
+import { getDb } from "../lib/db";
+import { carnetStatus, getLatestCarnet } from "../lib/carnet";
+import { formatDate } from "../lib/util";
+import { getUserColonies } from "../lib/colonies";
+
+const carnet = await getLatestCarnet(getDb(), Astro.locals.user!.id);
+// Colonias que atiende (solo nombre y número de gatos declarados en el último censo).
+const colonias = carnet ? await getUserColonies(getDb(), Astro.locals.user!.id) : [];
+const status = carnet ? carnetStatus(carnet) : null;
+const branding = Astro.locals.branding;
+const escudo = branding.escudo;
+---
+  {!carnet ? (
+    <div class="card end-cta">
+      <span class="step-icon"><Icon name="card" size={26} /></span>
+      <div>
+        <strong>Todavía no tienes carnet</strong>
+        <p class="muted" style="margin:.2rem 0 .8rem">Aprueba todos los temas y el examen final para obtenerlo.</p>
+        <a class="btn primary" href="/">Ir al temario <Icon name="arrow" /></a>
+      </div>
+    </div>
+  ) : (
+    <>
+      <div class:list={["carnet-flip", { invalid: status !== "vigente" }]} data-carnet-flip data-flipped="false">
+        {/* ---------- Anverso ---------- */}
+        <section class="carnet face front" role="group" aria-label="Carnet de cuidador/a de colonias felinas, anverso">
+          <div class="c-side">
+            <img src={escudo.src} srcset={escudo.srcset} alt={`Escudo del ${branding.ayuntamiento}`} width="78" height="100" />
+          </div>
+          <div class="c-main">
+            <div class="c-head">{branding.ayuntamiento}</div>
+            <div class="c-title">Cuidador/a acreditado/a de colonias felinas</div>
+            <div class="c-name">{carnet.nombre} {carnet.apellidos}</div>
+            <span class="c-label">Nº de carnet</span>
+            <div class="c-number">{carnet.numero}</div>
+            <div class="c-dates">
+              <div><span class="c-label">Emisión</span>{formatDate(carnet.issuedAt)}</div>
+              <div><span class="c-label">Válido hasta</span>{formatDate(carnet.expiresAt)}</div>
+            </div>
+            {colonias.length > 0 && (
+              <ul class="carnet-colonias" aria-label="Colonias que atiende">
+                {colonias.map((c) => (
+                  <li><span class="c-label">Colonia</span><strong>{c.colony.nombre}</strong> · {c.total} {c.total === 1 ? "gato" : "gatos"}</li>
+                ))}
+              </ul>
+            )}
+          </div>
+          <div class="c-live">
+            {status === "vigente" ? (
+              <><span><span class="dot"></span>Vigente</span><time data-live-clock></time></>
+            ) : (
+              <span>{status === "revocado" ? "Revocado" : "Caducado"}</span>
+            )}
+          </div>
+          {status !== "vigente" && <div class="c-stamp">{status!.toUpperCase()}</div>}
+        </section>
+
+        {/* ---------- Reverso ---------- */}
+        <section class="carnet face back" role="group" aria-label="Carnet de cuidador/a de colonias felinas, reverso" aria-hidden="true">
+          <div class="c-main">
+            <div class="c-head">Programa de Gestión de Colonias Felinas</div>
+            <p class="c-text">
+              El {branding.ayuntamiento} ({branding.provincia}) acredita que <strong>{carnet.nombre} {carnet.apellidos}</strong> ha superado
+              la formación en buenas prácticas en la gestión de colonias felinas y está acreditado/a como persona cuidadora colaboradora del
+              programa municipal.
+            </p>
+            <ul class="c-rules">
+              <li>Documento personal e intransferible.</li>
+              <li>Muéstralo junto a un documento de identidad cuando se solicite.</li>
+              <li>Válido solo mientras aparezca como vigente en la aplicación.</li>
+            </ul>
+            <div class="c-foot"><span class="c-label">Nº de carnet</span><span class="c-number small">{carnet.numero}</span></div>
+          </div>
+          <div class="c-side">
+            <img src={escudo.src} srcset={escudo.srcset} alt="" width="78" height="100" loading="lazy" decoding="async" />
+          </div>
+          <div class="c-live">
+            {status === "vigente" ? (
+              <><span><span class="dot"></span>Vigente</span><time data-live-clock></time></>
+            ) : (
+              <span>{status === "revocado" ? "Revocado" : "Caducado"}</span>
+            )}
+          </div>
+          {status !== "vigente" && <div class="c-stamp">{status!.toUpperCase()}</div>}
+        </section>
+      </div>
+
+      <div class="row" style="justify-content:center;margin-top:1rem">
+        <button class="btn" type="button" data-carnet-toggle>
+          <Icon name="card" size={18} /> <span data-toggle-label>Ver reverso</span>
+        </button>
+      </div>
+
+      <div class="card" style="margin-top:1rem">
+        {status === "vigente" && (
+          <p class="mt-0 mb-0">
+            Enseña esta pantalla cuando te lo pidan. La <strong>hora en directo</strong> y el brillo en movimiento indican que es el carnet real y no una captura.
+            Se guarda en tu móvil para poder verlo sin conexión.
+          </p>
+        )}
+        {status === "caducado" && <p class="mt-0 mb-0">Tu carnet ha caducado. Para renovarlo, vuelve a hacer el <a href="/examen">examen final</a>.</p>}
+        {status === "revocado" && <p class="mt-0 mb-0">Este carnet ha sido revocado por el ayuntamiento. Contacta con el ayuntamiento para más información.</p>}
+      </div>
+    </>
+  )}
+  <script>
+    let timer: ReturnType<typeof setInterval> | undefined;
+    document.addEventListener("astro:page-load", () => {
+      clearInterval(timer);
+      // Reloj en directo (en las dos caras).
+      const clocks = document.querySelectorAll<HTMLTimeElement>("[data-live-clock]");
+      if (clocks.length) {
+        const fmt = new Intl.DateTimeFormat("es-ES", {
+          day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit", second: "2-digit", timeZone: "Europe/Madrid",
+        });
+        const tick = () => {
+          const now = new Date();
+          clocks.forEach((el) => {
+            el.textContent = fmt.format(now).replace(",", "");
+            el.dateTime = now.toISOString();
+          });
+        };
+        tick();
+        timer = setInterval(tick, 1000);
+      }
+
+      // Girar el carnet: botón o toque sobre la tarjeta.
+      const flip = document.querySelector<HTMLElement>("[data-carnet-flip]");
+      const btn = document.querySelector<HTMLButtonElement>("[data-carnet-toggle]");
+      if (!flip || !btn) return;
+      const front = flip.querySelector(".front")!;
+      const back = flip.querySelector(".back")!;
+      const label = btn.querySelector("[data-toggle-label]")!;
+      const toggle = () => {
+        const flipped = flip.dataset.flipped !== "true";
+        flip.dataset.flipped = String(flipped);
+        label.textContent = flipped ? "Ver anverso" : "Ver reverso";
+        front.setAttribute("aria-hidden", String(flipped));
+        back.setAttribute("aria-hidden", String(!flipped));
+      };
+      btn.addEventListener("click", toggle);
+      flip.addEventListener("click", toggle);
+    });
+  </script>

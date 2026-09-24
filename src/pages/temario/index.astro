@@ -1,0 +1,37 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import Icon from "../../components/Icon.astro";
+import { asc, eq } from "drizzle-orm";
+import { getDb, schema } from "../../lib/db";
+import { readingMinutes } from "../../lib/exam";
+import { listDocuments } from "../../lib/documents";
+import DocumentList from "../../components/DocumentList.astro";
+
+// Sin carnet, el temario (con progreso y tests) está en la pantalla principal.
+if (!Astro.locals.hasCarnet) return Astro.redirect("/");
+const db = getDb();
+const docs = await listDocuments(db);
+const units = await db.query.units.findMany({ where: eq(schema.units.activo, true), orderBy: asc(schema.units.orden) });
+---
+<Layout title="Consulta">
+  <p class="eyebrow">Consulta</p>
+  <h1>Consulta</h1>
+  <p class="muted">Ya tienes tu acreditación. Aquí tienes el temario del curso y los documentos del Ayuntamiento siempre que los necesites.</p>
+  <h2>Temario del curso</h2>
+  <ol class="consult-list">
+    {units.map((u) => (
+      <li>
+        <a href={`/temario/${u.slug}`}>
+          <span class="node">{u.orden}</span>
+          <span class="step-body">
+            <span class="step-title">{u.titulo}</span>
+            <span class="step-sub"><Icon name="clock" size={14} /> {readingMinutes(u.contenido)} min de lectura</span>
+          </span>
+          <Icon name="arrow" size={18} />
+        </a>
+      </li>
+    ))}
+  </ol>
+  <h2 id="documentos">Documentos del Ayuntamiento</h2>
+  <DocumentList docs={docs} level={3} />
+</Layout>

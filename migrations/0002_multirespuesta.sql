@@ -1,0 +1,1 @@
+ALTER TABLE `questions` ADD `correct_indexes` text;

@@ -1,0 +1,15 @@
+---
+import Layout from "../layouts/Layout.astro";
+import DocumentList from "../components/DocumentList.astro";
+import { getDb } from "../lib/db";
+import { listDocuments } from "../lib/documents";
+
+const docs = await listDocuments(getDb());
+const b = Astro.locals.branding;
+---
+<Layout title="Documentos">
+  <p class="eyebrow">Consulta</p>
+  <h1>Documentos del Ayuntamiento</h1>
+  <p class="muted">Ordenanzas, formularios y normativa sobre colonias felinas y bienestar animal del {b.ayuntamiento}. Los enlaces abren la publicación oficial.</p>
+  <DocumentList docs={docs} />
+</Layout>

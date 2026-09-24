@@ -1,0 +1,46 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import AdminNav from "../../components/AdminNav.astro";
+import { getDb } from "../../lib/db";
+import { getColoniaGuide, saveColoniaGuide, splitSteps } from "../../lib/colonia";
+
+const db = getDb();
+let msg: string | null = null;
+if (Astro.request.method === "POST") {
+  const f = await Astro.request.formData();
+  if (f.get("action") === "reset") {
+    await saveColoniaGuide(db, null);
+    msg = "Se ha restaurado la guía por defecto.";
+  } else {
+    await saveColoniaGuide(db, String(f.get("guia") ?? ""));
+    msg = "Guía guardada.";
+  }
+}
+const guide = await getColoniaGuide(db);
+const steps = splitSteps(guide.markdown).steps.length;
+---
+<Layout title="Mi colonia · Administración" wide>
+  <p class="eyebrow">Administración</p>
+  <h1>Guía «Mi colonia»</h1>
+  <AdminNav />
+  {msg && <div class="alert ok" role="status" tabindex="-1" data-focus-on-load>{msg}</div>}
+  <p class="muted">
+    Pasos que ven las personas cuidadoras para solicitar el alta de una colonia. Se escribe en Markdown: el texto antes del primer
+    <code>## </code> es la introducción y cada línea que empieza por <code>## </code> inicia un paso. Ahora mismo hay {steps} pasos
+    {guide.custom ? "(guía personalizada)" : "(guía por defecto, basada en la ordenanza municipal)"}.
+  </p>
+  <form method="post" class="card">
+    <label for="guia">Contenido de la guía</label>
+    <textarea id="guia" name="guia" style="min-height:60vh;font-family:var(--mono)" required>{guide.markdown}</textarea>
+    <div class="row" style="margin-top:1rem">
+      <button class="btn primary" type="submit">Guardar guía</button>
+      <a class="btn ghost" href="/colonia" target="_blank">Ver como cuidador/a<span class="sr-only"> (se abre en una ventana nueva)</span></a>
+    </div>
+  </form>
+  {guide.custom && (
+    <form method="post">
+      <input type="hidden" name="action" value="reset" />
+      <button class="btn small ghost" type="submit">Restaurar la guía por defecto</button>
+    </form>
+  )}
+</Layout>

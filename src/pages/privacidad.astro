@@ -1,0 +1,72 @@
+---
+import Layout from "../layouts/Layout.astro";
+const b = Astro.locals.branding;
+---
+<Layout title="Privacidad">
+  <p class="eyebrow">Información legal</p>
+  <h1>Política de privacidad</h1>
+  <article class="card prose">
+    <h2>Responsable</h2>
+    <p>
+      {b.ayuntamiento} ({b.provincia}).
+      {b.accesibilidad_email && <> Contacto: {b.accesibilidad_email}.</>}
+    </p>
+
+    <h2>Qué datos tratamos y para qué</h2>
+    <ul>
+      <li>
+        <strong>Formación y acreditación:</strong> correo electrónico, nombre y apellidos, respuestas y resultados de los tests y del
+        examen final, y los datos de tu carnet. Sirven para darte acceso al curso, evaluar tus conocimientos y emitir tu acreditación.
+      </li>
+      <li>
+        <strong>Gestión de colonias felinas:</strong> las colonias que cuidas y tu papel en ellas (responsable o colaborador/a), los censos
+        que declaras, las fichas de los gatos (con sus fotos), sus intervenciones veterinarias y las observaciones y fotos de seguimiento
+        que añadas. Sirven para el registro y seguimiento de las colonias que exige la ordenanza municipal.
+      </li>
+      <li>
+        <strong>Bajas como persona cuidadora:</strong> la explicación que escribes al dejar de colaborar, que puede incluir el nombre de la
+        persona que se queda a cargo si tú lo indicas. La conserva el Ayuntamiento para organizar el cuidado de la colonia.
+      </li>
+      <li>
+        <strong>Comunicaciones de accesibilidad:</strong> el texto de la comunicación y, si los facilitas, tu nombre y correo, para
+        tramitarla y responderte.
+      </li>
+    </ul>
+    <p>
+      Las fotos y los datos de las colonias son privados: solo pueden verlos las personas que cuidan esa colonia y el personal del
+      Ayuntamiento. No subas fotos en las que se reconozca a personas.
+    </p>
+
+    <h2>Base jurídica</h2>
+    <p>
+      El ejercicio de las competencias municipales de gestión de colonias felinas (Ley 7/2023, de 28 de marzo, y Ordenanza municipal
+      reguladora del plan de control y gestión ética de las colonias felinas urbanas) y tu consentimiento, que das al completar tu perfil.
+    </p>
+
+    <h2>Quién más interviene (encargados del tratamiento)</h2>
+    <ul>
+      <li><strong>Cloudflare:</strong> alojamiento de la aplicación y de sus datos.</li>
+      <li><strong>El proveedor de envío de correo:</strong> envío de los enlaces de acceso.</li>
+      <li>
+        <strong>TypeSafe (corrección automática con JEV):</strong> recibe el texto de tus respuestas escritas del examen final y el de la
+        explicación cuando dejas de colaborar en una colonia, para valorarlos. No se le envían tu nombre, tu correo ni tu carnet; solo
+        el texto que escribes y datos de contexto (la pregunta, o el nombre de la colonia y su número de gatos). Por eso te pedimos que no
+        incluyas en esos textos datos personales que no sean necesarios.
+      </li>
+    </ul>
+
+    <h2>Cuánto tiempo los conservamos</h2>
+    <p>
+      Mientras tu acreditación esté vigente o sigas colaborando en una colonia y, después, durante los plazos legales aplicables. Los
+      censos, fichas e intervenciones forman parte del registro de la colonia y se conservan mientras la colonia exista en el registro
+      municipal.
+    </p>
+
+    <h2>Tus derechos</h2>
+    <p>
+      Puedes ejercer tus derechos de acceso, rectificación, supresión, oposición, limitación del tratamiento y portabilidad dirigiéndote al
+      {b.ayuntamiento}. También puedes reclamar ante la Agencia Española de Protección de Datos.
+    </p>
+    <p class="muted">Texto provisional: debe revisarlo la persona delegada de protección de datos del Ayuntamiento antes de la puesta en marcha.</p>
+  </article>
+</Layout>

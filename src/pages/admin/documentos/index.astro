@@ -1,0 +1,52 @@
+---
+import Layout from "../../../layouts/Layout.astro";
+import AdminNav from "../../../components/AdminNav.astro";
+import { getDb } from "../../../lib/db";
+import { DOC_CATEGORIAS } from "../../../lib/db/schema";
+import { deleteDocument, hostOf, listDocuments } from "../../../lib/documents";
+
+const db = getDb();
+let msg: string | null = null;
+if (Astro.request.method === "POST") {
+  const f = await Astro.request.formData();
+  if (f.get("action") === "delete") {
+    await deleteDocument(db, Number(f.get("id")));
+    msg = "Documento eliminado.";
+  }
+}
+if (Astro.url.searchParams.has("ok")) msg = "Documento guardado.";
+const docs = await listDocuments(db, false);
+---
+<Layout title="Documentos · Administración" wide>
+  <p class="eyebrow">Administración</p>
+  <h1>Documentos</h1>
+  <AdminNav />
+  {msg && <div class="alert ok" role="status" tabindex="-1" data-focus-on-load>{msg}</div>}
+  <p class="muted">
+    Enlaces a ordenanzas, formularios y normativa (por ejemplo, del portal de transparencia o de la sede electrónica). Se muestran en
+    <a href="/documentos">Documentos</a> y en la Consulta de las personas acreditadas.
+  </p>
+  <a class="btn primary" href="/admin/documentos/nuevo">Añadir documento</a>
+  <div class="card table-scroll" style="margin-top:1rem">
+    <table class="data responsive">
+      <thead><tr><th>Documento</th><th>Categoría</th><th>Enlace</th><th>Estado</th><th><span class="sr-only">Acciones</span></th></tr></thead>
+      <tbody>
+        {docs.map((d) => (
+          <tr>
+            <td class="primary-cell">{d.titulo}</td>
+            <td data-label="Categoría">{DOC_CATEGORIAS[d.categoria]}</td>
+            <td data-label="Enlace"><a href={d.url} target="_blank" rel="noopener noreferrer">{hostOf(d.url)}<span class="sr-only"> (se abre en una ventana nueva)</span></a></td>
+            <td data-label="Estado">{d.activo ? <span class="badge ok">publicado</span> : <span class="badge lock">oculto</span>}</td>
+            <td class="actions">
+              <a class="btn small" href={`/admin/documentos/${d.id}`} aria-label={`Editar ${d.titulo}`}>Editar</a>
+              <form method="post" style="display:inline" data-confirm>
+                <input type="hidden" name="action" value="delete" /><input type="hidden" name="id" value={d.id} />
+                <button class="btn small ghost danger" type="submit" aria-label={`Eliminar ${d.titulo}`}>Eliminar</button>
+              </form>
+            </td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </div>
+</Layout>

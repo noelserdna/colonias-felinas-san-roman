@@ -1,0 +1,7 @@
+# Copiar a .dev.vars para desarrollo local
+TYPESAFE_API_KEY=
+RESEND_API_KEY=
+ADMIN_EMAILS=admin@example.org
+JEV_MOCK=1
+MAIL_MOCK=1
+APP_SECRET=

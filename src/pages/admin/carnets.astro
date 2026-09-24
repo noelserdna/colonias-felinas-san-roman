@@ -1,0 +1,59 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import AdminNav from "../../components/AdminNav.astro";
+import { desc, eq } from "drizzle-orm";
+import { getDb, schema } from "../../lib/db";
+import { addMonths, carnetStatus } from "../../lib/carnet";
+import { getSettings } from "../../lib/settings";
+import { formatDate } from "../../lib/util";
+
+const db = getDb();
+if (Astro.request.method === "POST") {
+  const f = await Astro.request.formData();
+  const id = String(f.get("id"));
+  const action = f.get("action");
+  if (action === "revoke") await db.update(schema.carnets).set({ revokedAt: new Date() }).where(eq(schema.carnets.id, id));
+  if (action === "restore") await db.update(schema.carnets).set({ revokedAt: null }).where(eq(schema.carnets.id, id));
+  if (action === "renew") {
+    const s = await getSettings(db);
+    await db.update(schema.carnets).set({ expiresAt: addMonths(new Date(), s.carnet_validity_months), revokedAt: null }).where(eq(schema.carnets.id, id));
+  }
+  return Astro.redirect("/admin/carnets", 303);
+}
+const carnets = await db.query.carnets.findMany({ orderBy: desc(schema.carnets.issuedAt) });
+---
+<Layout title="Carnets" wide>
+  <p class="eyebrow">Administración</p>
+  <h1>Carnets</h1>
+  <AdminNav />
+  <div class="card table-scroll">
+    <table class="data responsive">
+      <thead><tr><th>Carnet</th><th>Emisión</th><th>Caducidad</th><th>Estado</th><th>Acciones</th></tr></thead>
+      <tbody>
+        {carnets.map((c) => {
+          const st = carnetStatus(c);
+          return (
+            <tr>
+              <td class="primary-cell"><span>{c.numero} · <a href={`/admin/usuarios/${c.userId}`}>{c.nombre} {c.apellidos}</a></span></td>
+              <td data-label="Emisión">{formatDate(c.issuedAt)}</td>
+              <td data-label="Caducidad">{formatDate(c.expiresAt)}</td>
+              <td data-label="Estado"><span class:list={["badge", st === "vigente" ? "ok" : "bad"]}>{st}</span></td>
+              <td class="actions" data-label="Acciones">
+                <form method="post" class="row">
+                  <input type="hidden" name="id" value={c.id} />
+                  {st === "revocado" ? (
+                    <button class="btn small" name="action" value="restore">Rehabilitar</button>
+                  ) : (
+                    <button class="btn small danger" name="action" value="revoke">Revocar</button>
+                  )}
+                  <button class="btn small" name="action" value="renew">Renovar</button>
+                </form>
+              </td>
+            </tr>
+          );
+        })}
+      </tbody>
+    </table>
+  </div>
+  <p class="muted">Renovar amplía la caducidad desde hoy según los ajustes. Revocar invalida el carnet inmediatamente en el móvil del titular (al volver a conectarse).</p>
+</Layout>

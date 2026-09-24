@@ -1,0 +1,10 @@
+[
+  { "orden": 1, "slug": "legislacion", "titulo": "Legislación", "peso": 1 },
+  { "orden": 2, "slug": "aspectos-generales", "titulo": "Aspectos generales sobre los gatos", "peso": 1 },
+  { "orden": 3, "slug": "sanidad-y-salud", "titulo": "Aspectos sanitarios y de salud", "peso": 1 },
+  { "orden": 4, "slug": "colonias-felinas", "titulo": "Poblaciones de gatos urbanos: las colonias felinas y el gato comunitario", "peso": 1 },
+  { "orden": 5, "slug": "metodo-cer", "titulo": "El método CER", "peso": 1 },
+  { "orden": 6, "slug": "gestion-integral", "titulo": "La gestión integral de colonias felinas", "peso": 1 },
+  { "orden": 7, "slug": "programa-municipal", "titulo": "El programa de Gestión Integral de Colonias Felinas Urbanas. Trámites administrativos", "peso": 1 },
+  { "orden": 8, "slug": "identificacion", "titulo": "Identificación de los gatos", "peso": 1 }
+]
