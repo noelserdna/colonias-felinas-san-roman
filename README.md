@@ -1,9 +1,18 @@
-# Cuidadores de Colonias Felinas · San Román de los Montes
+# Cuidadores de Colonias Felinas
 
-Plataforma web instalable (PWA) de formación y acreditación de cuidadores de colonias felinas:
-temario por temas → test por tema (desbloquea el siguiente) → examen final (test + respuestas escritas corregidas por JEV) → carnet digital.
+Plataforma web instalable (PWA) para que un ayuntamiento forme, acredite y coordine a las personas que cuidan
+colonias felinas:
+temario por temas → test por tema (desbloquea el siguiente) → examen final (test + respuestas escritas corregidas por JEV)
+→ carnet digital → alta y gestión de la colonia (censo, fichas de los gatos, intervenciones y bajas), con avisos en el
+móvil y por correo.
 
-**Stack:** Astro 7 (SSR) en Cloudflare Workers · D1 + Drizzle · React (islas del test/examen) · JEV (TypeSafe) · Resend (correo del magic link).
+Se ha desarrollado pensando en el **Ayuntamiento de San Román de los Montes (Toledo)** y su ordenanza de colonias
+felinas, y se comparte para que cualquier otro ayuntamiento pueda usarla o adaptarla: el municipio, el escudo, los
+parámetros del curso, la guía para registrar una colonia y los documentos se configuran desde el panel de
+administración, sin tocar el código.
+
+**Stack:** Astro 7 (SSR) en Cloudflare Workers · D1 + Drizzle · R2 (fotos) · React (islas del test, el examen y los
+formularios) · JEV (TypeSafe) · Cloudflare Email Service (correo de acceso y avisos) · Web Push.
 
 ## Desarrollo local
 
@@ -36,9 +45,10 @@ npm run db:migrate:remote
 npm run db:seed:remote
 npx wrangler secret put APP_SECRET        # cadena aleatoria larga: cifra las claves guardadas desde el panel
 npx wrangler secret put TYPESAFE_API_KEY  # opcional: también se puede poner en Admin → Ajustes
-npx wrangler secret put RESEND_API_KEY
 npx wrangler secret put ADMIN_EMAILS      # correos de administración, separados por comas
-# En wrangler.jsonc: MAIL_FROM (remitente del dominio dado de alta), MAIL_MOCK="0", JEV_MOCK="0"
+npx wrangler secret put VAPID_PRIVATE_KEY # notificaciones push (ver «Aplicación instalable»)
+npx wrangler email sending enable <dominio-del-remitente>   # correo con Cloudflare Email Service
+# En wrangler.jsonc: MAIL_FROM (remitente de ese dominio), APP_ORIGIN, VAPID_PUBLIC_KEY, MAIL_MOCK="0", JEV_MOCK="0"
 npm run deploy
 ```
 
@@ -46,7 +56,8 @@ Las fotos de los gatos se guardan en el bucket R2 `colonias-fotos` (privado: la 
 Si hay fotos antiguas guardadas en D1 (versiones anteriores), se pasan a R2 con
 `node scripts/migrate-photos-to-r2.mjs --remote` (idempotente; sin `--remote` actúa en local).
 
-El Cron (`*/5 * * * *`) reintenta la corrección de exámenes que quedaron pendientes si JEV no respondió.
+Crons: cada 5 minutos se reintenta la corrección de exámenes pendientes si JEV no respondió, y cada día a las 08:00
+UTC se envían los recordatorios de censo y de carnet.
 
 ## Aplicación instalable (PWA)
 
@@ -114,23 +125,29 @@ Si se cambia `APP_SECRET`, la clave guardada deja de poder descifrarse y hay que
 - `seed/questions/*.json`: banco inicial (25 test + 6 escritas por tema). **Debe revisarlo el ayuntamiento** antes de abrir la plataforma.
 - `npm run db:seed:*` es idempotente: actualiza los temas y solo añade preguntas nuevas.
 
-## Correo del enlace de acceso
+## Correo (enlace de acceso y avisos)
 
-La aplicación usa, por este orden, el primer proveedor disponible:
+El correo se envía con **Cloudflare Email Service** (binding `"send_email": [{ "name": "EMAIL", "remote": true }]` en
+`wrangler.jsonc`). En la instalación de San Román el remitente es `no-reply@avisos.colonia.dev`. Para usar otro dominio:
 
-1. **Cloudflare Email Service** (configurado: `avisos.colonia.dev`, alta con `npx wrangler email sending enable <dominio>`):
-   binding `"send_email": [{ "name": "EMAIL", "remote": true }]` en `wrangler.jsonc`,
-   dar de alta el dominio del remitente en *Compute → Email Service → Email Sending* (el dominio debe usar los DNS de
-   Cloudflare; el envío a cualquier destinatario requiere el plan Workers Paid mientras esté en beta) y poner `MAIL_FROM`.
-2. **Resend**: secreto `RESEND_API_KEY` y `MAIL_FROM` con un dominio verificado en Resend.
-3. Si no hay ninguno, el enlace se escribe en el log del Worker (`npx wrangler tail`): sirve para entrar como
-   administración mientras se configura el correo.
+1. `npx wrangler email sending enable <dominio>` (o *Compute → Email Service → Email Sending* en el panel). El dominio
+   debe usar los DNS de Cloudflare, que crea los registros SPF, DKIM y DMARC; el envío a cualquier destinatario requiere
+   el plan Workers Paid mientras el servicio esté en beta.
+2. Poner el remitente en `MAIL_FROM` (`"Nombre <no-reply@dominio>"`).
+
+Todos los correos usan la misma plantilla (`mailTemplate` en `src/lib/email.ts`): HTML completo con el enlace también
+visible como texto y un pie que explica quién los envía y por qué, para reducir la probabilidad de acabar en spam.
+
+Alternativas, por orden, si no hay Cloudflare Email Service: **Resend** (secreto `RESEND_API_KEY` y `MAIL_FROM` de un
+dominio verificado en Resend) o, sin proveedor, el enlace se escribe en el log del Worker (`npx wrangler tail`), útil
+para entrar como administración mientras se configura el correo.
 
 ## Contenido formativo
 
 El temario, sus imágenes y el banco de preguntas proceden del *Manual de buenas prácticas en la gestión de colonias
-felinas* del **Colegio Oficial de Veterinarios de Toledo**, cuyo uso está autorizado solo para esta aplicación. Por eso
-**no se incluyen en este repositorio**. Para desplegar una instancia hacen falta:
+felinas* del **Colegio Oficial de Veterinarios de Toledo**, y su uso en la instalación de San Román está sujeto a la
+autorización del Colegio. Por eso **no se incluyen en este repositorio**: cada ayuntamiento debe aportar su propio
+temario o contar con los permisos correspondientes. Para desplegar una instancia hacen falta:
 
 - `seed/units/NN-<slug>.md`: un Markdown por tema (los slugs y títulos están en `seed/units.json`).
 - `seed/questions/*.json`: el banco de preguntas (formato en `src/lib/questions-io.ts`; también se pueden cargar desde
