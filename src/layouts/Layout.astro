@@ -101,7 +101,7 @@ const active = (n: (typeof nav)[number]) => n.match(path);
       <slot />
     </main>
     <footer class="footer">
-      <a href="/privacidad">Privacidad</a> · <a href={path === "/accesibilidad" ? "/accesibilidad" : `/accesibilidad?desde=${encodeURIComponent(path)}`}>Accesibilidad</a> · <a href="/documentos">Documentos</a> · Contenido formativo: Colegio Oficial de Veterinarios de Toledo
+      <a href="/privacidad">Privacidad</a> · <a href={path === "/accesibilidad" ? "/accesibilidad" : `/accesibilidad?desde=${encodeURIComponent(path)}`}>Accesibilidad</a> · <a href="/documentos">Documentos</a>{branding.credito_formativo && <> · Contenido formativo: {branding.credito_formativo}</>}
     </footer>
     {demo && user && <DemoPanel />}
     {nav.length > 0 && (

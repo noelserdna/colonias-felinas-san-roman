@@ -22,6 +22,11 @@ const passedCount = data?.units.filter((u) => u.passed).length ?? 0;
 const total = data?.units.length ?? 0;
 const next = data?.units.find((u) => u.unlocked && !u.passed);
 const pct = total ? Math.round((passedCount / total) * 100) : 0;
+// Foto de portada propia si existe (public/img/hero.jpg, no incluida en el repositorio); si no, la ilustración.
+const hasHero = Object.keys(import.meta.glob("/public/img/hero.jpg", { query: "?url" })).length > 0;
+const hero = hasHero
+  ? { src: "/img/hero.jpg", srcset: "/img/hero-640.jpg 640w, /img/hero.jpg 1010w", alt: "Gato atigrado y blanco mirando con atención" }
+  : { src: "/img/portada.jpg", srcset: "/img/portada-640.jpg 640w, /img/portada.jpg 1010w", alt: "Ilustración de tres gatos: uno negro, uno atigrado naranja y uno blanco" };
 const steps = [
   { icon: "book", title: "Estudia el temario", text: "8 temas, a tu ritmo y desde el móvil." },
   { icon: "check", title: "Aprueba cada tema", text: "Un test corto desbloquea el siguiente." },
@@ -49,7 +54,7 @@ const steps = [
   ) : !user ? (
     <section>
       <div class="hero">
-        <img src="/img/hero.jpg" srcset="/img/hero-640.jpg 640w, /img/hero.jpg 1010w" sizes="(min-width: 760px) 728px, 100vw" alt="Gato atigrado y blanco mirando con atención" width="1010" height="565" fetchpriority="high" decoding="async" />
+        <img src={hero.src} srcset={hero.srcset} sizes="(min-width: 760px) 728px, 100vw" alt={hero.alt} width="1010" height="565" fetchpriority="high" decoding="async" />
         <div class="hero-text">
           <h1>Cuidadores de colonias felinas</h1>
           <p>Formación y acreditación oficial del {Astro.locals.branding.ayuntamiento}.</p>

@@ -9,15 +9,25 @@ const q = (v) => (v == null ? "NULL" : typeof v === "number" ? String(v) : `'${S
 const units = JSON.parse(readFileSync(join(root, "units.json"), "utf8"));
 const out = [];
 
+// Sin el temario (no está en el repositorio: ver README), cada tema se crea con un texto de ejemplo para
+// redactarlo desde Administración → Temas; en ese caso nunca se sobrescribe lo que ya se haya escrito.
+const unitsDir = join(root, "units");
+const mdFiles = existsSync(unitsDir) ? readdirSync(unitsDir) : [];
+let placeholders = 0;
 for (const u of units) {
-  const file = readdirSync(join(root, "units")).find((f) => f.endsWith(`-${u.slug}.md`));
-  if (!file) throw new Error(`Falta el markdown del tema ${u.slug}`);
-  const contenido = readFileSync(join(root, "units", file), "utf8").trim();
+  const file = mdFiles.find((f) => f.endsWith(`-${u.slug}.md`));
+  const contenido = file
+    ? readFileSync(join(unitsDir, file), "utf8").trim()
+    : `> **Tema pendiente de redactar.** Escribe aquí el contenido desde *Administración → Temas → ${u.titulo}*. ` +
+      `Admite Markdown: títulos (\`##\`), listas, negritas, tablas e imágenes.\n\n` +
+      `Cada tema necesita también sus preguntas (*Administración → Preguntas*) para que el test funcione.`;
+  if (!file) placeholders++;
   out.push(
     `INSERT INTO units (slug, orden, titulo, contenido, peso, activo) VALUES (${q(u.slug)}, ${u.orden}, ${q(u.titulo)}, ${q(contenido)}, ${u.peso}, 1) ` +
-      `ON CONFLICT(slug) DO UPDATE SET orden = excluded.orden, titulo = excluded.titulo, contenido = excluded.contenido;`,
+      (file ? `ON CONFLICT(slug) DO UPDATE SET orden = excluded.orden, titulo = excluded.titulo, contenido = excluded.contenido;` : `ON CONFLICT(slug) DO NOTHING;`),
   );
 }
+if (placeholders) console.log(`Aviso: ${placeholders} temas sin texto (seed/units/): se crean con un texto de ejemplo para editarlos en el panel.`);
 
 let count = 0;
 const qdir = join(root, "questions");

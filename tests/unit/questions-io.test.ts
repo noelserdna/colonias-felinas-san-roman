@@ -23,3 +23,12 @@ describe("CSV", () => {
     expect(questionInput.safeParse({ tema: 1, tipo: "written", enunciado: "Enunciado" }).success).toBe(false);
   });
 });
+
+import { readFileSync } from "node:fs";
+
+describe("docs/preguntas-ejemplo.json", () => {
+  it("son preguntas válidas en el formato de importación", () => {
+    const items = JSON.parse(readFileSync("docs/preguntas-ejemplo.json", "utf8"));
+    for (const it of items) expect(questionInput.safeParse(it).success, it.enunciado).toBe(true);
+  });
+});

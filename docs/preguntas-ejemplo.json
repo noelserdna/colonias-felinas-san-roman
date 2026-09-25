@@ -1,0 +1,39 @@
+[
+  {
+    "tema": "legislacion",
+    "tipo": "mc",
+    "dificultad": "baja",
+    "enunciado": "¿Qué ley estatal regula la protección de los gatos comunitarios y la gestión de las colonias felinas en España?",
+    "opciones": [
+      "La Ley 7/2023, de protección de los derechos y el bienestar de los animales",
+      "La Ley 50/1999, sobre el régimen jurídico de la tenencia de animales potencialmente peligrosos",
+      "La Ley 42/2007, del Patrimonio Natural y de la Biodiversidad"
+    ],
+    "correcta": 0,
+    "explicacion": "La Ley 7/2023 dedica su capítulo VI a los gatos comunitarios y a la gestión de las colonias felinas."
+  },
+  {
+    "tema": "metodo-cer",
+    "tipo": "mc",
+    "dificultad": "baja",
+    "enunciado": "¿Qué significan las siglas CER en la gestión de colonias felinas?",
+    "opciones": ["Captura, esterilización y retorno", "Control, eliminación y reubicación", "Censo, evaluación y registro"],
+    "correcta": 0
+  },
+  {
+    "tema": "gestion-integral",
+    "tipo": "multi",
+    "dificultad": "media",
+    "enunciado": "¿Cuáles de estas tareas forman parte del cuidado diario de una colonia?",
+    "opciones": ["Poner agua limpia y fresca", "Dar pienso seco de calidad", "Dejar comida húmeda en el suelo", "Retirar los restos de comida"],
+    "correctas": [0, 1, 3]
+  },
+  {
+    "tema": "metodo-cer",
+    "tipo": "written",
+    "dificultad": "media",
+    "enunciado": "¿Para qué se marca la oreja de los gatos de una colonia que ya han sido esterilizados?",
+    "respuesta_referencia": "Para identificar a simple vista, incluso a distancia, que el gato ya está esterilizado y evitar capturarlo y operarlo de nuevo.",
+    "puntos_clave": ["identificarlo a simple vista o a distancia", "indica que ya está esterilizado", "evita capturas u operaciones innecesarias"]
+  }
+]

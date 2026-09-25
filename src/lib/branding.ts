@@ -17,6 +17,8 @@ export const brandingSchema = z.object({
     z.email("El correo de accesibilidad no es válido").max(254).optional(),
   ),
   accesibilidad_telefono: optionalText(40),
+  // Autoría del temario, que se cita en el pie de todas las páginas (p. ej. el colegio de veterinarios).
+  credito_formativo: optionalText(160),
 });
 
 export type Branding = z.infer<typeof brandingSchema> & {

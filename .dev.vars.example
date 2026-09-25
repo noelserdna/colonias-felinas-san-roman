@@ -1,7 +1,11 @@
-# Copiar a .dev.vars para desarrollo local
-TYPESAFE_API_KEY=
-RESEND_API_KEY=
+# Copiar a .dev.vars para desarrollo local (nunca se sube al repositorio).
 ADMIN_EMAILS=admin@example.org
+APP_SECRET=cambia-esto-por-una-cadena-aleatoria-larga
+# JEV (TypeSafe): opcional. Con JEV_MOCK=1 se usa un simulador local.
+TYPESAFE_API_KEY=
 JEV_MOCK=1
+# Correo: con MAIL_MOCK=1 el enlace de acceso aparece en la propia página de login.
 MAIL_MOCK=1
-APP_SECRET=
+RESEND_API_KEY=
+# Notificaciones push: node scripts/vapid-keys.mjs (la privada, entre comillas simples)
+VAPID_PRIVATE_KEY=
