@@ -59,6 +59,14 @@ const active = (n: (typeof nav)[number]) => n.match(path);
     {demo && <meta name="robots" content="noindex, nofollow" />}
     <title>{demo ? "[Demo] " : ""}{title} · Cuidadores de Colonias Felinas</title>
     <ClientRouter />
+    <script is:inline>
+      // Chrome/Android: guarda el aviso de instalación para ofrecerlo desde un botón propio (InstallPrompt).
+      addEventListener("beforeinstallprompt", (e) => {
+        e.preventDefault();
+        window.__installPrompt = e;
+        dispatchEvent(new Event("installable"));
+      });
+    </script>
   </head>
   <body class:list={{ "has-tabbar": nav.length > 0 }}>
     <a class="skip" href="#main">Saltar al contenido</a>

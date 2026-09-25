@@ -101,6 +101,7 @@ const demo = isDemo();
           <p class="mt-0 mb-0">
             Enseña esta pantalla cuando te lo pidan. La <strong>hora en directo</strong> y el brillo en movimiento indican que es el carnet real y no una captura.
             Se guarda en tu móvil para poder verlo sin conexión.
+            <span data-wake-note hidden> Mientras lo tienes abierto, la pantalla no se apaga.</span>
           </p>
         )}
         {status === "caducado" && <p class="mt-0 mb-0">Tu carnet ha caducado. Para renovarlo, vuelve a hacer el <a href="/examen">examen final</a>.</p>}
@@ -110,8 +111,31 @@ const demo = isDemo();
   )}
   <script>
     let timer: ReturnType<typeof setInterval> | undefined;
+    // Pantalla encendida mientras se enseña el carnet (Screen Wake Lock). Se libera al salir de la página
+    // y el navegador la suelta al ocultarla, así que se vuelve a pedir al volver a ella.
+    let lock: WakeLockSentinel | null = null;
+    const wantLock = () => document.querySelector("[data-carnet-flip]:not(.invalid)") !== null;
+    async function requestLock() {
+      if (!("wakeLock" in navigator) || !wantLock() || document.visibilityState !== "visible") return;
+      try {
+        lock = await navigator.wakeLock.request("screen");
+        document.querySelector<HTMLElement>("[data-wake-note]")?.removeAttribute("hidden");
+      } catch {
+        lock = null; // sin batería, en segundo plano o sin permiso: no pasa nada
+      }
+    }
+    document.addEventListener("visibilitychange", () => {
+      if (document.visibilityState === "visible" && (!lock || lock.released)) requestLock();
+    });
+    document.addEventListener("astro:before-swap", () => {
+      lock?.release().catch(() => {});
+      lock = null;
+    });
     document.addEventListener("astro:page-load", () => {
       clearInterval(timer);
+      requestLock();
+      // Que el navegador no borre el carnet guardado sin conexión aunque pasen semanas sin abrirlo.
+      if (wantLock()) navigator.storage?.persist?.().catch(() => {});
       // Reloj en directo (en las dos caras).
       const clocks = document.querySelectorAll<HTMLTimeElement>("[data-live-clock]");
       if (clocks.length) {

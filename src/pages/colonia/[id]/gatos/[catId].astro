@@ -88,7 +88,7 @@ const fmt = (iso: string) => new Intl.DateTimeFormat("es-ES", { day: "2-digit", 
       <form method="post" enctype="multipart/form-data" data-astro-reload>
         <input type="hidden" name="accion" value="foto" />
         <label for="foto">{cat.photoId ? "Cambiar la foto" : "Añadir una foto"}</label>
-        <input id="foto" name="foto" type="file" accept="image/*" required data-resize data-preview="foto-preview" data-status="foto-status" aria-describedby="foto-status" />
+        <input id="foto" name="foto" type="file" accept="image/*" required data-resize data-camera data-preview="foto-preview" data-status="foto-status" aria-describedby="foto-status" />
         <div class="photo-preview" id="foto-preview"></div>
         <p class="muted text-sm" id="foto-status" role="status"></p>
         <button class="btn" type="submit">Guardar foto</button>
@@ -138,7 +138,7 @@ const fmt = (iso: string) => new Intl.DateTimeFormat("es-ES", { day: "2-digit", 
         <label for="texto" class="mt-0">Nueva observación</label>
         <textarea id="texto" name="texto" maxlength="4000"></textarea>
         <label for="fotos" class="mt-0">Fotos <span class="muted">(opcional, hasta {MAX_NOTE_PHOTOS})</span></label>
-        <input id="fotos" name="fotos" type="file" accept="image/*" multiple data-resize data-max={MAX_NOTE_PHOTOS} data-preview="fotos-preview" data-status="fotos-status" aria-describedby="fotos-status" />
+        <input id="fotos" name="fotos" type="file" accept="image/*" multiple data-resize data-camera data-max={MAX_NOTE_PHOTOS} data-preview="fotos-preview" data-status="fotos-status" aria-describedby="fotos-status" />
         <div class="photo-preview" id="fotos-preview"></div>
         <p class="muted text-sm mb-0" id="fotos-status" role="status"></p>
         <button class="btn" type="submit">Añadir observación</button>

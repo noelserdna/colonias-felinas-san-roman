@@ -3,6 +3,7 @@ import Layout from "../layouts/Layout.astro";
 import Icon from "../components/Icon.astro";
 import CarnetView from "../components/CarnetView.astro";
 import Notices from "../components/Notices.astro";
+import InstallPrompt from "../components/InstallPrompt.astro";
 import { getDb } from "../lib/db";
 import { getProgress } from "../lib/exam";
 import { getActiveCarnet } from "../lib/carnet";
@@ -33,6 +34,7 @@ const steps = [
       <h1>{user.nombre ? `Hola, ${user.nombre}` : "Mi carnet"}</h1>
       <Notices />
       <CarnetView />
+      <InstallPrompt motivo="Tendrás tu carnet a un toque para enseñarlo cuando te lo pidan, también sin cobertura." />
       <a class="card end-cta" href="/temario">
         <span class="step-icon"><Icon name="book" size={26} /></span>
         <span style="flex:1">
@@ -155,6 +157,7 @@ const steps = [
         </span>
         <Icon name="arrow" />
       </a>
+      <InstallPrompt motivo="Podrás estudiar el temario desde el icono de tu móvil, también sin cobertura." />
     </section>
   )}
 </Layout>

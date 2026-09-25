@@ -5,6 +5,9 @@
   - Alertas .ok/.bad/.info llevan icono además del color.
   - Ritmo vertical: dentro de tarjeta --space-3, entre tarjetas --space-4, entre secciones --space-6.
 */
+
+/* El atributo hidden siempre oculta, aunque la clase del elemento declare display (p. ej. .btn o .card con flex). */
+[hidden] { display: none !important; }
 :root {
   --bg: #f6f4ef;
   --surface: #ffffff;
@@ -690,3 +693,10 @@ nav.segmented { display: flex; flex-wrap: wrap; border-radius: var(--radius); ma
 .demo-mail-frame { width: 100%; height: 540px; border: 1px solid var(--border); border-radius: var(--radius-md); margin-top: 0.8rem; background: #f5f3ee; }
 .demo-mail-text { white-space: pre-wrap; font-size: 0.9rem; margin-top: 0.8rem; }
 .demo-shortcut { display: flex; flex-wrap: wrap; gap: 0.6rem 1rem; align-items: center; justify-content: space-between; border: 2px dashed #b4532a; background: color-mix(in srgb, #b4532a 7%, var(--surface)); }
+.photo-camera { display: flex; margin-bottom: 0.5rem; }
+
+/* Invitación a instalar la aplicación */
+.install-card { display: flex; gap: 0.9rem; align-items: flex-start; margin-top: 1rem; }
+.install-card img { border-radius: 12px; flex-shrink: 0; }
+.install-card .grow { min-width: 0; flex: 1; }
+.install-card h2 { font-size: 1.1rem; margin: 0 0 0.3rem; }

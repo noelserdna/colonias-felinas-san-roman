@@ -20,10 +20,42 @@
       return file;
     }
   }
+  /**
+   * En móviles, añade «Hacer una foto»: abre directamente la cámara trasera (capture) y pasa la foto al
+   * campo original, que sigue permitiendo elegirla de la galería. Con varias fotos, se van sumando.
+   */
+  function addCameraButton(input: HTMLInputElement) {
+    if (!matchMedia("(pointer: coarse)").matches || input.dataset.camera === undefined) return;
+    const cam = document.createElement("input");
+    cam.type = "file";
+    cam.accept = "image/*";
+    cam.setAttribute("capture", "environment");
+    cam.hidden = true;
+    cam.tabIndex = -1;
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "btn small photo-camera";
+    btn.textContent = "Hacer una foto";
+    btn.addEventListener("click", () => cam.click());
+    cam.addEventListener("change", () => {
+      const taken = [...(cam.files ?? [])];
+      if (!taken.length) return;
+      const dt = new DataTransfer();
+      if (input.multiple) [...(input.files ?? [])].forEach((f) => dt.items.add(f));
+      taken.forEach((f) => dt.items.add(f));
+      input.files = dt.files;
+      cam.value = "";
+      input.dispatchEvent(new Event("change"));
+    });
+    input.insertAdjacentElement("beforebegin", btn);
+    input.insertAdjacentElement("afterend", cam);
+  }
+
   function setup() {
     document.querySelectorAll<HTMLInputElement>("input[type=file][data-resize]").forEach((input) => {
       if (input.dataset.ready) return;
       input.dataset.ready = "1";
+      addCameraButton(input);
       const preview = document.getElementById(input.dataset.preview ?? "");
       const max = Number(input.dataset.max ?? 0);
       input.addEventListener("change", async () => {

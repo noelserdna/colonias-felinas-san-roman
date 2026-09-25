@@ -94,6 +94,8 @@ export default function SolicitudForm({ anexo, municipio, escudoSrc, nombre = ""
   const [busy, setBusy] = useState(false);
   const [status, setStatus] = useState<{ ok: boolean; msg: string } | null>(null);
   const [url, setUrl] = useState<string | null>(null);
+  // PDF listo para compartir (Web Share con archivos: WhatsApp, correo, Drive…), si el dispositivo lo permite.
+  const [shareFile, setShareFile] = useState<File | null>(null);
 
   const setS = (k: keyof Solicitante) => (v: string) => setSol((s) => ({ ...s, [k]: v }));
   const setC = (k: keyof AnexoIData["colonia"]) => (v: string) => setCol((c) => ({ ...c, [k]: v }));
@@ -159,6 +161,8 @@ export default function SolicitudForm({ anexo, municipio, escudoSrc, nombre = ""
       if (url) URL.revokeObjectURL(url);
       const u = URL.createObjectURL(new Blob([bytes as BlobPart], { type: "application/pdf" }));
       setUrl(u);
+      const file = new File([bytes as BlobPart], incluirAut ? FILE.iAut : FILE[anexo], { type: "application/pdf" });
+      setShareFile(navigator.canShare?.({ files: [file] }) ? file : null);
       const a = document.createElement("a");
       a.href = u;
       a.download = incluirAut ? FILE.iAut : FILE[anexo];
@@ -201,6 +205,15 @@ export default function SolicitudForm({ anexo, municipio, escudoSrc, nombre = ""
       )}
     </>
   );
+
+  async function compartir() {
+    if (!shareFile) return;
+    try {
+      await navigator.share({ files: [shareFile], title: shareFile.name });
+    } catch {
+      // Cancelado por la persona o no disponible: el PDF ya se ha descargado igualmente.
+    }
+  }
 
   const persona = (p: Persona, i: number) => {
     const upd = (k: keyof Persona) => (v: string) => setOtros((o) => o.map((x, j) => (j === i ? { ...x, [k]: v } : x)));
@@ -394,6 +407,11 @@ export default function SolicitudForm({ anexo, municipio, escudoSrc, nombre = ""
           </>
         )}
       </p>
+      {status?.ok && shareFile && (
+        <button type="button" className="btn block" onClick={compartir}>
+          Compartir el PDF (WhatsApp, correo…)
+        </button>
+      )}
     </form>
   );
 }

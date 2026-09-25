@@ -1,0 +1,78 @@
+---
+// Invitación a instalar la aplicación. En Chrome/Android usa el diálogo del navegador (beforeinstallprompt,
+// capturado en el <head> del layout); en iPhone/iPad explica cómo añadirla a la pantalla de inicio.
+// No se muestra si ya está instalada ni durante 30 días tras pulsar «Ahora no».
+interface Props {
+  /** Texto de por qué instalarla, según la pantalla. */
+  motivo?: string;
+}
+const { motivo = "Tendrás tu carnet y el temario a un toque, también sin cobertura." } = Astro.props;
+---
+<section class="card install-card" data-install hidden aria-labelledby="install-h">
+  <img src="/icons/icon-192.png" alt="" width="48" height="48" />
+  <div class="grow">
+    <h2 id="install-h">Instala la aplicación en tu móvil</h2>
+    <p class="mt-0">{motivo}</p>
+    <p class="mt-0 install-ios" data-install-ios hidden>
+      En iPhone o iPad: pulsa <strong>Compartir</strong>
+      <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-3px"><path d="M12 3v12"/><path d="m7 8 5-5 5 5"/><path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7"/></svg>
+      y después <strong>«Añadir a pantalla de inicio»</strong>.
+    </p>
+    <div class="row">
+      <button class="btn small primary" type="button" data-install-btn hidden>Instalar</button>
+      <button class="btn small ghost" type="button" data-install-close>Ahora no</button>
+    </div>
+  </div>
+</section>
+<script>
+  type BIP = Event & { prompt: () => Promise<void>; userChoice: Promise<{ outcome: string }> };
+  const KEY = "install-dismissed";
+  const standalone = () => matchMedia("(display-mode: standalone)").matches || (navigator as any).standalone === true;
+  const dismissed = () => {
+    try {
+      return Date.now() - Number(localStorage.getItem(KEY) ?? 0) < 30 * 86_400_000;
+    } catch {
+      return false;
+    }
+  };
+  const isIOS = () => /iPhone|iPad|iPod/.test(navigator.userAgent) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+
+  function setup() {
+    const card = document.querySelector<HTMLElement>("[data-install]");
+    if (!card || card.dataset.ready) return;
+    card.dataset.ready = "1";
+    const btn = card.querySelector<HTMLButtonElement>("[data-install-btn]")!;
+    const ios = card.querySelector<HTMLElement>("[data-install-ios]")!;
+    const hide = () => (card.hidden = true);
+    const render = () => {
+      if (standalone() || dismissed()) return hide();
+      const prompt = (window as any).__installPrompt as BIP | undefined;
+      if (prompt) {
+        btn.hidden = false;
+        ios.hidden = true;
+        card.hidden = false;
+      } else if (isIOS()) {
+        ios.hidden = false;
+        card.hidden = false;
+      }
+    };
+    btn.addEventListener("click", async () => {
+      const prompt = (window as any).__installPrompt as BIP | undefined;
+      if (!prompt) return;
+      await prompt.prompt();
+      const { outcome } = await prompt.userChoice;
+      (window as any).__installPrompt = undefined;
+      if (outcome === "accepted") hide();
+    });
+    card.querySelector("[data-install-close]")!.addEventListener("click", () => {
+      try {
+        localStorage.setItem(KEY, String(Date.now()));
+      } catch {}
+      hide();
+    });
+    window.addEventListener("installable", render);
+    window.addEventListener("appinstalled", hide);
+    render();
+  }
+  document.addEventListener("astro:page-load", setup);
+</script>

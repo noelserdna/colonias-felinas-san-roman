@@ -48,6 +48,17 @@ Si hay fotos antiguas guardadas en D1 (versiones anteriores), se pasan a R2 con
 
 El Cron (`*/5 * * * *`) reintenta la corrección de exámenes que quedaron pendientes si JEV no respondió.
 
+## Aplicación instalable (PWA)
+
+- **Instalación**: invitación propia en el inicio (botón del navegador en Chrome/Android; instrucciones en
+  iPhone/iPad), que no se repite en 30 días si se descarta. Manifest con `id`, accesos directos (Carnet,
+  Colonia, Temario), capturas para el diálogo de instalación (`public/screenshots/`) y categorías.
+- **Sin conexión**: el service worker (`public/sw.js`) guarda el carnet, el temario, «Mi colonia» y los
+  documentos; el carnet pide almacenamiento persistente (`navigator.storage.persist()`).
+- **Carnet**: mantiene la pantalla encendida mientras se enseña (Screen Wake Lock).
+- **Fotos de los gatos**: botón «Hacer una foto» que abre la cámara trasera en el móvil (`capture`).
+- **Anexos en PDF**: además de descargarlos, se pueden compartir (WhatsApp, correo…) con Web Share.
+
 ## Instancia de pruebas y demostración
 
 `demo.colonia.dev` es una copia para pruebas y presentaciones, con los mismos contenidos de San Román pero con
