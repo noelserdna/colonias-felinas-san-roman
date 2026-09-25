@@ -1,0 +1,31 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import SolicitudForm from "../../components/SolicitudForm.tsx";
+
+const BOP_COLONIAS_URL = "https://bop.diputoledo.es/webEbop/DocGet?id=24065992%3B0&insert_number=3274&insert_year=2024";
+const b = Astro.locals.branding;
+const user = Astro.locals.user!;
+const anexo = Astro.url.searchParams.get("anexo") === "ii" ? "ii" : "i";
+const nombre = [user.nombre, user.apellidos].filter(Boolean).join(" ");
+// El PDF se genera en el navegador con el escudo en PNG; el escudo por defecto tiene una versión @2x más nítida.
+const escudoSrc = b.escudo.custom ? b.escudo.src : "/img/escudo@2x.png";
+const titulo = anexo === "i" ? "Solicitud de registro de una colonia" : "Solicitud de alta como colaborador/a";
+---
+<Layout title={titulo}>
+  <p class="eyebrow"><a href="/colonia">Mi colonia</a></p>
+  <h1>Rellenar la solicitud</h1>
+  <nav class="segmented" aria-label="Formulario">
+    <a href="/colonia/solicitud" aria-current={anexo === "i" ? "page" : undefined}>Anexo I · Registro de colonia</a>
+    <a href="/colonia/solicitud?anexo=ii" aria-current={anexo === "ii" ? "page" : undefined}>Anexo II · Alta como colaborador/a</a>
+  </nav>
+  <p>
+    {anexo === "i"
+      ? "Rellena los datos, descarga el PDF y preséntalo firmado en el Ayuntamiento. Es el Anexo I de la ordenanza de colonias felinas."
+      : "Con el Anexo II solicitas colaborar en el proyecto CER. Preséntalo firmado en el Ayuntamiento junto con una fotocopia de tu DNI."}
+    {" "}¿Prefieres hacerlo a mano?{" "}
+    <a href={anexo === "i" ? "/docs/anexo-i-solicitud-registro-colonia.pdf" : "/docs/anexo-ii-solicitud-alta-colaborador.pdf"} download>
+      Descarga el formulario en blanco (PDF)
+    </a>. Texto oficial en el <a href={BOP_COLONIAS_URL} target="_blank" rel="noopener">BOP de Toledo<span class="sr-only"> (se abre en una ventana nueva)</span></a>.
+  </p>
+  <SolicitudForm client:only="react" anexo={anexo} municipio={b.municipio} escudoSrc={escudoSrc} nombre={nombre} email={user.email} />
+</Layout>

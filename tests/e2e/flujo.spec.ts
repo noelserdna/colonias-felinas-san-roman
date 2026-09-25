@@ -281,6 +281,7 @@ test("accesibilidad (axe-core WCAG 2.1 AA) en las pantallas principales, claro y
     const page = await ctx.newPage();
     const check = async (url: string) => {
       await page.goto(url);
+      if (url.startsWith("/colonia/solicitud")) await expect(page.locator("form.solicitud")).toBeVisible(); // isla client:only
       const r = await new AxeBuilder({ page }).withTags(["wcag2a", "wcag2aa", "wcag21a", "wcag21aa"]).analyze();
       expect(r.violations.map((v) => `${url} [${colorScheme}]: ${v.id} (${v.nodes.length})`)).toEqual([]);
     };
@@ -290,7 +291,7 @@ test("accesibilidad (axe-core WCAG 2.1 AA) en las pantallas principales, claro y
     await login(page, ADMIN);
     await check("/documentos");
     await check("/privacidad");
-    for (const url of ["/", "/carnet", "/colonia", "/temario", "/temario/sanidad-y-salud", "/perfil", "/admin", "/admin/preguntas", "/admin/ajustes"]) await check(url);
+    for (const url of ["/", "/carnet", "/colonia", "/colonia/solicitud", "/colonia/solicitud?anexo=ii", "/temario", "/temario/sanidad-y-salud", "/perfil", "/admin", "/admin/preguntas", "/admin/ajustes"]) await check(url);
     await ctx.close();
   }
 });
@@ -347,6 +348,29 @@ test("Mi colonia y documentos del Ayuntamiento", async ({ browser }) => {
   await expect(page.locator(".colonia-step")).toHaveCount(6);
   await expect(page.locator(".colonia-step").first()).not.toHaveClass(/done/);
   await expect(page.getByText("no se registran colonias en viviendas particulares")).toBeVisible();
+
+  // Anexo I: formulario en blanco descargable y relleno en el dispositivo, sin enviar datos al servidor.
+  const blanco = await page.request.get("/docs/anexo-i-solicitud-registro-colonia.pdf");
+  expect(blanco.ok()).toBeTruthy();
+  expect(blanco.headers()["content-type"]).toContain("application/pdf");
+  await page.getByRole("link", { name: "Rellenar el Anexo I", exact: true }).click();
+  await expect(page).toHaveURL(/\/colonia\/solicitud$/);
+  const form = page.locator("form.solicitud");
+  await form.getByLabel("NIF").first().fill("12345678Z");
+  await form.getByLabel("Dirección exacta").fill("Calle Real, 1 (solar municipal)");
+  await form.getByLabel("Público", { exact: true }).check();
+  await form.getByLabel("Hembras sin esterilizar").fill("3");
+  await form.getByRole("button", { name: "Añadir otra persona cuidadora" }).click();
+  await expect(form.getByRole("group", { name: "Persona cuidadora 2" })).toBeVisible();
+  const posts: string[] = [];
+  page.on("request", (r) => r.method() !== "GET" && posts.push(r.url()));
+  const [descarga] = await Promise.all([page.waitForEvent("download"), form.getByRole("button", { name: "Descargar el PDF relleno" }).click()]);
+  expect(descarga.suggestedFilename()).toBe("anexo-i-solicitud-registro-colonia.pdf");
+  await expect(form.getByRole("status").last()).toContainText("PDF generado");
+  expect(posts).toEqual([]);
+  await page.getByRole("link", { name: /Anexo II/ }).click();
+  await expect(page.locator("form.solicitud")).not.toContainText("Datos de la colonia");
+  await page.goto("/colonia");
 
   // Admin: añade un documento, aparece publicado y se elimina; edita y restaura la guía.
   const admin = await (await browser.newContext()).newPage();

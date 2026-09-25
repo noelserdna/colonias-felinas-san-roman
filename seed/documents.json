@@ -44,5 +44,21 @@
     "descripcion": "Presentación de solicitudes y escritos por vía electrónica (registro electrónico y catálogo de trámites).",
     "url": "https://sanromandelosmontes.sedelectronica.es/",
     "orden": 2
+  },
+  {
+    "titulo": "Anexo I · Solicitud para registrar una nueva colonia de gatos urbanos",
+    "categoria": "formulario",
+    "descripcion": "Formulario en blanco para imprimir y rellenar a mano. También puedes rellenarlo en la aplicación, desde «Mi colonia», y descargarlo listo para firmar.",
+    "url": "/docs/anexo-i-solicitud-registro-colonia.pdf",
+    "fecha": "2024-06-28",
+    "orden": 1
+  },
+  {
+    "titulo": "Anexo II · Solicitud de alta como colaborador o colaboradora del proyecto CER",
+    "categoria": "formulario",
+    "descripcion": "Formulario en blanco. Se presenta firmado en el Ayuntamiento junto con una fotocopia del DNI.",
+    "url": "/docs/anexo-ii-solicitud-alta-colaborador.pdf",
+    "fecha": "2024-06-28",
+    "orden": 2
   }
 ]

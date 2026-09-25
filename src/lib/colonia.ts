@@ -15,6 +15,8 @@ Cada colonia registrada tiene una **persona cuidadora responsable**, que es quie
 
 Si todavía no lo has hecho, solicita tu alta como persona colaboradora con el **Anexo II** de la ordenanza («Solicitud de alta como colaborador o colaboradora del proyecto CER»), acompañado de una fotocopia de tu DNI.
 
+<p class="row"><a class="btn small" href="/colonia/solicitud?anexo=ii">Rellenar el Anexo II</a> <a class="btn small ghost" href="/docs/anexo-ii-solicitud-alta-colaborador.pdf" download>Descargar en blanco (PDF)</a></p>
+
 ## Comprueba que el lugar puede ser una colonia
 Las colonias se pueden ubicar en:
 
@@ -38,6 +40,10 @@ La solicitud (**Anexo I** de la ordenanza) pide:
   - gatos enfermos, describiendo sus síntomas.
 
 Cuenta los gatos varios días y a distintas horas para que los datos sean fiables.
+
+Puedes **rellenar la solicitud aquí** y descargar el PDF listo para firmar (tus datos no se guardan en la aplicación), o descargar el formulario en blanco y rellenarlo a mano.
+
+<p class="row"><a class="btn small primary" href="/colonia/solicitud">Rellenar el Anexo I</a> <a class="btn small ghost" href="/docs/anexo-i-solicitud-registro-colonia.pdf" download>Descargar en blanco (PDF)</a></p>
 
 ## Presenta la solicitud al Ayuntamiento
 Entrega el Anexo I cumplimentado y firmado a la **Concejalía con competencias en Bienestar Animal**, en el registro del Ayuntamiento o a través de la [sede electrónica](/documentos#otro). Si el terreno es privado, adjunta la autorización de la persona propietaria.

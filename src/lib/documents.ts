@@ -10,10 +10,13 @@ export const documentInput = z.object({
   titulo: z.string().trim().min(3, "El título es obligatorio").max(250),
   categoria: z.enum(Object.keys(DOC_CATEGORIAS) as [DocCategoria, ...DocCategoria[]]),
   descripcion: z.preprocess(blank, z.string().max(1000).optional()),
-  // Solo enlaces http(s): evita javascript:, data:, etc.
+  // Solo enlaces http(s) o rutas de esta misma web («/docs/…»): evita javascript:, data:, etc.
   url: z.preprocess(
     (v) => (typeof v === "string" ? v.trim() : v),
-    z.url({ protocol: /^https?$/, error: "La dirección debe ser un enlace que empiece por https:// o http://" }).max(2000),
+    z.union(
+      [z.url({ protocol: /^https?$/ }).max(2000), z.string().regex(/^\/(?!\/)[\w\-./%?=&#]*$/).max(2000)],
+      { error: "La dirección debe ser un enlace que empiece por https:// o http://, o una ruta de esta web que empiece por /" },
+    ),
   ),
   fecha: z.preprocess(blank, z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Fecha no válida").optional()),
   orden: z.coerce.number().int().min(0).max(9999).default(0),
@@ -50,6 +53,7 @@ export async function deleteDocument(db: DB, id: number) {
 }
 
 export function hostOf(url: string): string {
+  if (url.startsWith("/")) return /\.pdf$/i.test(url) ? "PDF · esta web" : "esta web";
   try {
     return new URL(url).hostname.replace(/^www\./, "");
   } catch {
