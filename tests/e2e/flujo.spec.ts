@@ -291,7 +291,7 @@ test("accesibilidad (axe-core WCAG 2.1 AA) en las pantallas principales, claro y
     await login(page, ADMIN);
     await check("/documentos");
     await check("/privacidad");
-    for (const url of ["/", "/carnet", "/colonia", "/colonia/solicitud", "/colonia/solicitud?anexo=ii", "/temario", "/temario/sanidad-y-salud", "/perfil", "/admin", "/admin/preguntas", "/admin/ajustes"]) await check(url);
+    for (const url of ["/", "/carnet", "/colonia", "/colonia/solicitud", "/colonia/solicitud?anexo=ii", "/colonia/solicitud?anexo=aut", "/temario", "/temario/sanidad-y-salud", "/perfil", "/admin", "/admin/preguntas", "/admin/ajustes"]) await check(url);
     await ctx.close();
   }
 });
@@ -367,6 +367,18 @@ test("Mi colonia y documentos del Ayuntamiento", async ({ browser }) => {
   const [descarga] = await Promise.all([page.waitForEvent("download"), form.getByRole("button", { name: "Descargar el PDF relleno" }).click()]);
   expect(descarga.suggestedFilename()).toBe("anexo-i-solicitud-registro-colonia.pdf");
   await expect(form.getByRole("status").last()).toContainText("PDF generado");
+  expect(posts).toEqual([]);
+  // Solar privado: el Anexo I sale con la autorización de la persona propietaria en el mismo PDF.
+  await form.getByLabel(/^Privado/).check();
+  await expect(form.getByText("autorización expresa de la persona propietaria")).toBeVisible();
+  const [conAut] = await Promise.all([page.waitForEvent("download"), form.getByRole("button", { name: "Descargar el PDF relleno" }).click()]);
+  expect(conAut.suggestedFilename()).toBe("anexo-i-y-autorizacion-propietario.pdf");
+  expect((await page.request.get("/docs/autorizacion-propietario-terreno.pdf")).ok()).toBeTruthy();
+  await page.getByRole("link", { name: "Autorización de la persona propietaria" }).first().click();
+  await expect(page).toHaveURL(/anexo=aut/);
+  await page.locator("form.solicitud").getByLabel("Referencia catastral (opcional)").fill("1234567VK1234N0001AB");
+  const [soloAut] = await Promise.all([page.waitForEvent("download"), page.getByRole("button", { name: "Descargar el PDF relleno" }).click()]);
+  expect(soloAut.suggestedFilename()).toBe("autorizacion-propietario-terreno.pdf");
   expect(posts).toEqual([]);
   await page.getByRole("link", { name: /Anexo II/ }).click();
   await expect(page.locator("form.solicitud")).not.toContainText("Datos de la colonia");

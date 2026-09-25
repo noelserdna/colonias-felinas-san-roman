@@ -1,18 +1,24 @@
 import { useId, useState } from "react";
-import type { AnexoIData, Persona, Solicitante } from "../lib/anexos-pdf";
+import type { AnexoIData, AutorizacionData, Persona, Solicitante } from "../lib/anexos-pdf";
 
-// Rellena el Anexo I o II de la ordenanza y descarga el PDF listo para firmar.
+// Rellena el Anexo I o II de la ordenanza, o la autorización de la persona propietaria del terreno,
+// y descarga el PDF listo para firmar.
 // Todo ocurre en el navegador: los datos no se envían ni se guardan en el servidor.
 
 type Props = {
-  anexo: "i" | "ii";
+  anexo: "i" | "ii" | "aut";
   municipio: string;
   escudoSrc: string;
   nombre?: string;
   email?: string;
 };
 
-const FILE = { i: "anexo-i-solicitud-registro-colonia.pdf", ii: "anexo-ii-solicitud-alta-colaborador.pdf" };
+const FILE = {
+  i: "anexo-i-solicitud-registro-colonia.pdf",
+  iAut: "anexo-i-y-autorizacion-propietario.pdf",
+  ii: "anexo-ii-solicitud-alta-colaborador.pdf",
+  aut: "autorizacion-propietario-terreno.pdf",
+};
 const vacia = (): Persona => ({ nombre: "", nif: "", telefono: "", email: "" });
 const hoy = () => new Date().toISOString().slice(0, 10);
 
@@ -79,6 +85,9 @@ export default function SolicitudForm({ anexo, municipio, escudoSrc, nombre = ""
     adoptables: "",
     enfermos: "",
   });
+  const [prop, setProp] = useState<Required<AutorizacionData["propietario"]>>({ nombre: "", nif: "", direccion: "", telefono: "", email: "", representa: "" });
+  const [catastral, setCatastral] = useState("");
+  const [conAut, setConAut] = useState(true);
   const [lugar, setLugar] = useState(municipio);
   const [fecha, setFecha] = useState(hoy());
   const [geo, setGeo] = useState<string | null>(null);
@@ -88,6 +97,8 @@ export default function SolicitudForm({ anexo, municipio, escudoSrc, nombre = ""
 
   const setS = (k: keyof Solicitante) => (v: string) => setSol((s) => ({ ...s, [k]: v }));
   const setC = (k: keyof AnexoIData["colonia"]) => (v: string) => setCol((c) => ({ ...c, [k]: v }));
+  const setP = (k: keyof AutorizacionData["propietario"]) => (v: string) => setProp((x) => ({ ...x, [k]: v }));
+  const privado = anexo === "i" && col.titularidad === "privado";
   const maxOtros = yoCuido ? 3 : 4;
 
   function ubicacion() {
@@ -111,10 +122,27 @@ export default function SolicitudForm({ anexo, municipio, escudoSrc, nombre = ""
     setBusy(true);
     setStatus(null);
     try {
-      const [{ anexoI, anexoII }, escudo] = await Promise.all([import("../lib/anexos-pdf"), escudoPng(escudoSrc)]);
+      const [{ anexoI, anexoII, autorizacionPropietario, unirPdfs }, escudo] = await Promise.all([import("../lib/anexos-pdf"), escudoPng(escudoSrc)]);
       const f = fecha ? new Date(`${fecha}T12:00:00`) : null;
-      const bytes =
-        anexo === "i"
+      // En el Anexo I con solar privado, la autorización sale con los datos del terreno y de la persona
+      // responsable; la persona propietaria completa los suyos a mano, o se rellenan en su pestaña.
+      const aut = (propietario: AutorizacionData["propietario"]) =>
+        autorizacionPropietario({
+          municipio,
+          escudoPng: escudo,
+          data: {
+            propietario,
+            terreno: { direccion: col.direccion, coordenadas: col.coordenadas, referenciaCatastral: catastral },
+            responsable: { nombre: sol.nombre, nif: sol.nif },
+            lugar: anexo === "aut" ? lugar : "",
+            fecha: anexo === "aut" ? f : null,
+          },
+        });
+      const incluirAut = privado && conAut;
+      let bytes =
+        anexo === "aut"
+          ? await aut(prop)
+          : anexo === "i"
           ? await anexoI({
               municipio,
               escudoPng: escudo,
@@ -127,22 +155,52 @@ export default function SolicitudForm({ anexo, municipio, escudoSrc, nombre = ""
               },
             })
           : await anexoII({ municipio, escudoPng: escudo, data: { solicitante: sol, lugar, fecha: f } });
+      if (incluirAut) bytes = await unirPdfs([bytes, await aut({})], "Anexo I y autorización de la persona propietaria del terreno");
       if (url) URL.revokeObjectURL(url);
       const u = URL.createObjectURL(new Blob([bytes as BlobPart], { type: "application/pdf" }));
       setUrl(u);
       const a = document.createElement("a");
       a.href = u;
-      a.download = FILE[anexo];
+      a.download = incluirAut ? FILE.iAut : FILE[anexo];
       document.body.appendChild(a);
       a.click();
       a.remove();
-      setStatus({ ok: true, msg: "PDF generado. Imprímelo, fírmalo y preséntalo en el Ayuntamiento." });
+      setStatus({
+        ok: true,
+        msg:
+          anexo === "aut"
+            ? "PDF generado. La persona propietaria debe firmarlo; preséntalo con el Anexo I y una fotocopia de su DNI."
+            : incluirAut
+            ? "PDF generado con dos páginas: el Anexo I, que firmas tú, y la autorización, que completa y firma la persona propietaria."
+            : "PDF generado. Imprímelo, fírmalo y preséntalo en el Ayuntamiento.",
+      });
     } catch {
       setStatus({ ok: false, msg: "No se ha podido generar el PDF. Inténtalo de nuevo o descarga el formulario en blanco." });
     } finally {
       setBusy(false);
     }
   }
+
+  const coordenadas = (
+    <>
+      <Text
+        label="Coordenadas"
+        value={col.coordenadas}
+        onChange={setC("coordenadas")}
+        autoComplete="off"
+        maxLength={60}
+        hint="Latitud y longitud, por ejemplo 40.0712, -4.4040."
+      />
+      <button type="button" className="btn small" onClick={ubicacion}>
+        Usar mi ubicación actual
+      </button>
+      {geo && (
+        <p className="muted text-sm" role="status">
+          {geo}
+        </p>
+      )}
+    </>
+  );
 
   const persona = (p: Persona, i: number) => {
     const upd = (k: keyof Persona) => (v: string) => setOtros((o) => o.map((x, j) => (j === i ? { ...x, [k]: v } : x)));
@@ -171,17 +229,62 @@ export default function SolicitudForm({ anexo, municipio, escudoSrc, nombre = ""
         </span>
       </p>
 
+      {anexo === "aut" && (
+        <>
+          <fieldset className="card">
+            <legend>
+              <h2 className="mt-0">Persona propietaria del terreno</h2>
+            </legend>
+            <p className="muted text-sm mt-0">Pide permiso a la persona propietaria antes de escribir aquí sus datos.</p>
+            <Text label="Nombre y apellidos" value={prop.nombre} onChange={setP("nombre")} autoComplete="off" maxLength={120} />
+            <Text label="NIF" value={prop.nif} onChange={setP("nif")} autoComplete="off" maxLength={20} />
+            <Text label="Dirección" value={prop.direccion} onChange={setP("direccion")} autoComplete="off" maxLength={160} />
+            <div className="solicitud-grid">
+              <Text label="Teléfono" type="tel" value={prop.telefono} onChange={setP("telefono")} autoComplete="off" maxLength={30} />
+              <Text label="Correo electrónico" type="email" value={prop.email} onChange={setP("email")} autoComplete="off" maxLength={120} />
+            </div>
+            <Text
+              label="En representación de (opcional)"
+              value={prop.representa}
+              onChange={setP("representa")}
+              autoComplete="off"
+              maxLength={120}
+              hint="Si firma en nombre de una empresa, una comunidad de propietarios u otra persona."
+            />
+          </fieldset>
+          <fieldset className="card">
+            <legend>
+              <h2 className="mt-0">Terreno</h2>
+            </legend>
+            <Text label="Dirección o ubicación" value={col.direccion} onChange={setC("direccion")} autoComplete="off" maxLength={160} />
+            <Text
+              label="Referencia catastral (opcional)"
+              value={catastral}
+              onChange={setCatastral}
+              autoComplete="off"
+              maxLength={30}
+              hint="Está en el recibo del IBI o en la Sede Electrónica del Catastro."
+            />
+            {coordenadas}
+          </fieldset>
+        </>
+      )}
+
       <fieldset className="card">
         <legend>
-          <h2 className="mt-0">Tus datos</h2>
+          <h2 className="mt-0">{anexo === "aut" ? "Persona cuidadora responsable de la colonia" : "Tus datos"}</h2>
         </legend>
         <Text label="Nombre y apellidos" value={sol.nombre} onChange={setS("nombre")} autoComplete="name" maxLength={120} />
         <Text label="NIF" value={sol.nif} onChange={setS("nif")} autoComplete="off" maxLength={20} />
+        {anexo !== "aut" && (
+          <>
         <Text label="Dirección" value={sol.direccion} onChange={setS("direccion")} autoComplete="street-address" maxLength={160} />
         <div className="solicitud-grid">
           <Text label="Teléfono" type="tel" value={sol.telefono} onChange={setS("telefono")} autoComplete="tel" maxLength={30} />
           <Text label="Correo electrónico" type="email" value={sol.email} onChange={setS("email")} autoComplete="email" maxLength={120} />
         </div>
+          </>
+        )}
       </fieldset>
 
       {anexo === "i" && (
@@ -208,22 +311,7 @@ export default function SolicitudForm({ anexo, municipio, escudoSrc, nombre = ""
               <h2 className="mt-0">Datos de la colonia</h2>
             </legend>
             <Text label="Dirección exacta" value={col.direccion} onChange={setC("direccion")} autoComplete="off" maxLength={160} />
-            <Text
-              label="Coordenadas"
-              value={col.coordenadas}
-              onChange={setC("coordenadas")}
-              autoComplete="off"
-              maxLength={60}
-              hint="Latitud y longitud, por ejemplo 40.0712, -4.4040."
-            />
-            <button type="button" className="btn small" onClick={ubicacion}>
-              Usar mi ubicación actual
-            </button>
-            {geo && (
-              <p className="muted text-sm" role="status">
-                {geo}
-              </p>
-            )}
+            {coordenadas}
             <div className="solicitud-radio" role="radiogroup" aria-labelledby="tit-l">
               <p className="label" id="tit-l">
                 ¿El solar es público o privado?
@@ -235,6 +323,32 @@ export default function SolicitudForm({ anexo, municipio, escudoSrc, nombre = ""
                 </label>
               ))}
             </div>
+            {privado && (
+              <div className="alert info solicitud-aut">
+                <p className="mt-0">
+                  En un terreno privado hace falta la <strong>autorización expresa de la persona propietaria</strong> (apartado 7.1.4 de la
+                  ordenanza).
+                </p>
+                <label className="check">
+                  <input type="checkbox" checked={conAut} onChange={(e) => setConAut(e.target.checked)} />
+                  Añadir al PDF la autorización, con los datos del terreno y los tuyos ya puestos
+                </label>
+                {conAut && (
+                  <Text
+                    label="Referencia catastral (opcional)"
+                    value={catastral}
+                    onChange={setCatastral}
+                    autoComplete="off"
+                    maxLength={30}
+                    hint="Está en el recibo del IBI o en la Sede Electrónica del Catastro."
+                  />
+                )}
+                <p className="text-sm mb-0">
+                  La persona propietaria completa sus datos y firma. Si prefieres rellenarlos también aquí, usa la pestaña{" "}
+                  <a href="/colonia/solicitud?anexo=aut">Autorización de la persona propietaria</a>. Descarga antes este PDF: al cambiar de pestaña se borra lo que hayas escrito.
+                </p>
+              </div>
+            )}
             <fieldset className="solicitud-gatos">
               <legend className="label">Número de gatos</legend>
               <div className="solicitud-grid">

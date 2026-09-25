@@ -26,6 +26,16 @@ export type AnexoIData = {
 
 export type AnexoIIData = { solicitante: Solicitante; lugar?: string; fecha?: Date | null };
 
+export type AutorizacionData = {
+  propietario: Solicitante & { representa?: string };
+  terreno: { direccion?: string; referenciaCatastral?: string; coordenadas?: string };
+  responsable: Persona;
+  lugar?: string;
+  fecha?: Date | null;
+};
+
+const PIE_ANEXO = "Anexo de la Ordenanza municipal publicada en el BOP de Toledo n.º 122, de 28 de junio de 2024.";
+
 type Ctx = {
   doc: PDFDocument;
   page: PDFPage;
@@ -130,7 +140,7 @@ function firma(c: Ctx, lugar?: string, fecha?: Date | null, quien = "El/La solic
   c.y -= 30;
 }
 
-function proteccionDatos(c: Ctx) {
+function proteccionDatos(c: Ctx, pie = PIE_ANEXO) {
   const size = 7.5;
   const t =
     `Protección de datos: el responsable del tratamiento es el Ayuntamiento de ${c.municipio}. Los datos se tratan para tramitar esta solicitud y ` +
@@ -142,7 +152,11 @@ function proteccionDatos(c: Ctx) {
     text(c, l, M, y, size, c.font, MUTED);
     y -= size + 2;
   }
-  text(c, "Anexo de la Ordenanza municipal publicada en el BOP de Toledo n.º 122, de 28 de junio de 2024.", M, M - 16, 7.5, c.font, MUTED);
+  let py = M - 16;
+  for (const l of wrap(pie, c.font, 7.5, W)) {
+    text(c, l, M, py, 7.5, c.font, MUTED);
+    py -= 9.5;
+  }
 }
 
 async function newDoc(municipio: string, escudoPng?: Uint8Array, title = "Solicitud") {
@@ -285,4 +299,84 @@ export async function anexoII(opts: { municipio: string; escudoPng?: Uint8Array;
   firma(c, d?.lugar, d?.fecha ?? null, "La persona solicitante");
   proteccionDatos(c);
   return c.doc.save();
+}
+
+/**
+ * Modelo de autorización expresa de la persona propietaria de un terreno privado, que exige el
+ * apartado 7.1.4 de la ordenanza para ubicar en él una colonia. No es un anexo oficial: es un modelo orientativo.
+ */
+export async function autorizacionPropietario(opts: { municipio: string; escudoPng?: Uint8Array; data?: AutorizacionData }): Promise<Uint8Array> {
+  const d = opts.data;
+  const c = await newDoc(opts.municipio, opts.escudoPng, "Autorización de la persona propietaria del terreno para ubicar una colonia felina");
+  header(c, "AUTORIZACIÓN DE LA PERSONA PROPIETARIA DEL TERRENO PARA UBICAR UNA COLONIA FELINA");
+
+  heading(c, "DATOS DE LA PERSONA PROPIETARIA");
+  const p = d?.propietario ?? {};
+  field(c, "NIF:", p.nif, M, 180);
+  c.y -= 22;
+  field(c, "Nombre y apellidos:", p.nombre);
+  c.y -= 22;
+  field(c, "Dirección:", p.direccion);
+  c.y -= 22;
+  field(c, "Teléfono:", p.telefono, M, 180);
+  field(c, "Correo electrónico:", p.email, M + 195, W - 195);
+  c.y -= 22;
+  field(c, "En representación de (si actúa por una empresa, comunidad u otra persona):", p.representa);
+  c.y -= 14;
+
+  heading(c, "DATOS DEL TERRENO");
+  const t = d?.terreno ?? {};
+  field(c, "Dirección o ubicación:", t.direccion);
+  c.y -= 22;
+  field(c, "Referencia catastral:", t.referenciaCatastral, M, 240);
+  field(c, "Coordenadas:", t.coordenadas, M + 255, W - 255);
+  c.y -= 14;
+
+  heading(c, "PERSONA CUIDADORA RESPONSABLE DE LA COLONIA");
+  const r = d?.responsable ?? {};
+  field(c, "Nombre y apellidos:", r.nombre, M, 300);
+  field(c, "NIF:", r.nif, M + 315, W - 315);
+  c.y -= 26;
+
+  paragraph(
+    c,
+    "AUTORIZA expresamente, conforme al apartado 7.1.4 de la Ordenanza municipal reguladora del plan de control y gestión ética de las colonias felinas urbanas, la ubicación en este terreno de una colonia felina incluida en dicho plan y, en consecuencia:",
+    9.5,
+    c.bold,
+  );
+  c.y -= 2;
+  const puntos = [
+    "Permite el acceso a la persona cuidadora responsable y a las personas colaboradoras con carné para alimentar a los gatos, darles agua, limpiar y observar su estado.",
+    "Permite instalar los puntos de alimentación, cobijo y eliminación de excrementos y el cartel identificativo que autorice el Ayuntamiento.",
+    "Permite el acceso del personal del Ayuntamiento y de los servicios veterinarios designados para visitar la colonia y realizar las capturas del método CER.",
+    "Declara ser la persona propietaria del terreno o tener capacidad suficiente para autorizar su uso.",
+  ];
+  puntos.forEach((txt, i) => {
+    text(c, `${i + 1}.`, M, c.y, 9.5, c.bold);
+    for (const l of wrap(txt, c.font, 9.5, W - 18)) {
+      text(c, l, M + 18, c.y, 9.5);
+      c.y -= 13;
+    }
+    c.y -= 3;
+  });
+  c.y -= 2;
+  paragraph(c, "Esta autorización se mantiene mientras no se revoque por escrito ante el Ayuntamiento. Se acompaña fotocopia del DNI de la persona propietaria.", 9.5);
+  firma(c, d?.lugar, d?.fecha ?? null, "La persona propietaria");
+  proteccionDatos(
+    c,
+    "Modelo orientativo de la autorización expresa que exige el apartado 7.1.4 de la Ordenanza municipal (BOP de Toledo n.º 122, de 28 de junio de 2024). No es un anexo de la ordenanza.",
+  );
+  return c.doc.save();
+}
+
+/** Une varios PDF en uno (por ejemplo, el Anexo I y la autorización de la persona propietaria). */
+export async function unirPdfs(pdfs: Uint8Array[], title?: string): Promise<Uint8Array> {
+  const out = await PDFDocument.create();
+  if (title) out.setTitle(title);
+  out.setLanguage("es-ES");
+  for (const bytes of pdfs) {
+    const src = await PDFDocument.load(bytes);
+    for (const page of await out.copyPages(src, src.getPageIndices())) out.addPage(page);
+  }
+  return out.save();
 }

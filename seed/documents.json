@@ -60,5 +60,12 @@
     "url": "/docs/anexo-ii-solicitud-alta-colaborador.pdf",
     "fecha": "2024-06-28",
     "orden": 2
+  },
+  {
+    "titulo": "Autorización de la persona propietaria del terreno para ubicar una colonia felina",
+    "categoria": "formulario",
+    "descripcion": "Modelo orientativo de la autorización expresa que exige la ordenanza (apartado 7.1.4) cuando la colonia está en un terreno privado. Lo firma la persona propietaria y se presenta con el Anexo I.",
+    "url": "/docs/autorizacion-propietario-terreno.pdf",
+    "orden": 3
   }
 ]

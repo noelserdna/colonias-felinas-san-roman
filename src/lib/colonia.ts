@@ -27,6 +27,10 @@ Las colonias se pueden ubicar en:
 
 > **Importante:** no se registran colonias en viviendas particulares. Los técnicos municipales valorarán si el lugar es adecuado para la salud pública y la protección de los animales.
 
+Si el terreno es privado, pide a la persona propietaria que firme la autorización. Tienes un modelo preparado:
+
+<p class="row"><a class="btn small" href="/colonia/solicitud?anexo=aut">Rellenar la autorización</a> <a class="btn small ghost" href="/docs/autorizacion-propietario-terreno.pdf" download>Descargar en blanco (PDF)</a></p>
+
 ## Reúne los datos de la solicitud
 La solicitud (**Anexo I** de la ordenanza) pide:
 
@@ -46,7 +50,7 @@ Puedes **rellenar la solicitud aquí** y descargar el PDF listo para firmar (tus
 <p class="row"><a class="btn small primary" href="/colonia/solicitud">Rellenar el Anexo I</a> <a class="btn small ghost" href="/docs/anexo-i-solicitud-registro-colonia.pdf" download>Descargar en blanco (PDF)</a></p>
 
 ## Presenta la solicitud al Ayuntamiento
-Entrega el Anexo I cumplimentado y firmado a la **Concejalía con competencias en Bienestar Animal**, en el registro del Ayuntamiento o a través de la [sede electrónica](/documentos#otro). Si el terreno es privado, adjunta la autorización de la persona propietaria.
+Entrega el Anexo I cumplimentado y firmado a la **Concejalía con competencias en Bienestar Animal**, en el registro del Ayuntamiento o a través de la [sede electrónica](/documentos#otro). Si el terreno es privado, adjunta la [autorización firmada por la persona propietaria](/colonia/solicitud?anexo=aut) y una fotocopia de su DNI.
 
 ## Visita e informe municipal
 El Ayuntamiento estudiará la solicitud, **visitará la ubicación**, hará las consultas necesarias y emitirá un **informe** que justifique si la colonia se registra o no.
