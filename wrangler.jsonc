@@ -14,6 +14,12 @@
       "migrations_dir": "migrations"
     }
   ],
+  // Correo del enlace de acceso: Cloudflare Email Service (avisos.colonia.dev dado de alta en Email Sending).
+  "send_email": [{ "name": "EMAIL", "remote": true }],
+  // Dirección propia de la web (además de *.workers.dev).
+  "routes": [{ "pattern": "sanroman.colonia.dev", "custom_domain": true }],
+  // Mantiene también la dirección *.workers.dev.
+  "workers_dev": true,
   // Fotos privadas de las colonias (fichas y observaciones de los gatos).
   "r2_buckets": [{ "binding": "PHOTOS", "bucket_name": "colonias-fotos" }],
   // Reintenta cada 5 minutos la corrección JEV de exámenes pendientes.
@@ -23,7 +29,7 @@
   ],
   "vars": {
     "APP_NAME": "Cuidadores de Colonias Felinas · San Román de los Montes",
-    "MAIL_FROM": "Ayuntamiento San Román <no-reply@example.org>",
+    "MAIL_FROM": "Colonias Felinas · San Román <no-reply@avisos.colonia.dev>",
     "JEV_MOCK": "0",
     "MAIL_MOCK": "0"
   },

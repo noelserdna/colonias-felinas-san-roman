@@ -2,6 +2,12 @@ import { env } from "cloudflare:workers";
 
 type Mail = { to: string; subject: string; text: string; html?: string };
 
+/** «Nombre <correo@dominio>» → { name, email } (formato del remitente de Cloudflare Email). */
+export function parseFrom(from: string): { email: string; name?: string } {
+  const m = from.match(/^\s*(.*?)\s*<([^>]+)>\s*$/);
+  return m ? { email: m[2].trim(), ...(m[1] ? { name: m[1].replace(/^"|"$/g, "") } : {}) } : { email: from.trim() };
+}
+
 /**
  * Envía un correo con el primer proveedor disponible:
  * 1. Cloudflare Email Service (binding `EMAIL`, dominio dado de alta en Email Sending);
@@ -12,7 +18,7 @@ type Mail = { to: string; subject: string; text: string; html?: string };
 async function deliver(mail: Mail): Promise<boolean> {
   const e = env as Cloudflare.Env & { EMAIL?: { send: (m: Record<string, unknown>) => Promise<unknown> } };
   if (env.MAIL_MOCK !== "1" && e.EMAIL && env.MAIL_FROM) {
-    await e.EMAIL.send({ to: mail.to, from: env.MAIL_FROM, subject: mail.subject, text: mail.text, ...(mail.html ? { html: mail.html } : {}) });
+    await e.EMAIL.send({ to: mail.to, from: parseFrom(env.MAIL_FROM), subject: mail.subject, text: mail.text, ...(mail.html ? { html: mail.html } : {}) });
     return false;
   }
   if (env.MAIL_MOCK !== "1" && env.RESEND_API_KEY) {

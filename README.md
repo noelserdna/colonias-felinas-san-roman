@@ -68,7 +68,8 @@ Si se cambia `APP_SECRET`, la clave guardada deja de poder descifrarse y hay que
 
 La aplicación usa, por este orden, el primer proveedor disponible:
 
-1. **Cloudflare Email Service**: añadir en `wrangler.jsonc` el binding `"send_email": [{ "name": "EMAIL", "remote": true }]`,
+1. **Cloudflare Email Service** (configurado: `avisos.colonia.dev`, alta con `npx wrangler email sending enable <dominio>`):
+   binding `"send_email": [{ "name": "EMAIL", "remote": true }]` en `wrangler.jsonc`,
    dar de alta el dominio del remitente en *Compute → Email Service → Email Sending* (el dominio debe usar los DNS de
    Cloudflare; el envío a cualquier destinatario requiere el plan Workers Paid mientras esté en beta) y poner `MAIL_FROM`.
 2. **Resend**: secreto `RESEND_API_KEY` y `MAIL_FROM` con un dominio verificado en Resend.
