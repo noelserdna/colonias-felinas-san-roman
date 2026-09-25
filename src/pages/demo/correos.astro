@@ -1,0 +1,44 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import { desc, eq } from "drizzle-orm";
+import { getDb, schema } from "../../lib/db";
+import { isDemo } from "../../lib/demo";
+
+if (!isDemo()) return new Response("No encontrado", { status: 404 });
+const user = Astro.locals.user!;
+const db = getDb();
+// Cada perfil ve los correos que ha «recibido»; el Ayuntamiento ve los últimos de toda la demo.
+const mails = await db
+  .select()
+  .from(schema.demoOutbox)
+  .where(user.role === "admin" ? undefined : eq(schema.demoOutbox.to, user.email))
+  .orderBy(desc(schema.demoOutbox.createdAt))
+  .limit(20);
+const fmt = (d: Date) => new Intl.DateTimeFormat("es-ES", { dateStyle: "short", timeStyle: "short", timeZone: "Europe/Madrid" }).format(d);
+---
+<Layout title="Bandeja de correos">
+  <p class="eyebrow">Demostración</p>
+  <h1>Bandeja de correos</h1>
+  <p>En la demo los correos no se envían: aquí ves los que la aplicación habría mandado{user.role === "admin" ? " a las personas de la demo" : " a este perfil"}.</p>
+  {mails.length === 0 ? (
+    <div class="card">Todavía no hay correos. Por ejemplo, entra como Ayuntamiento y registra una colonia: sus cuidadores reciben un aviso.</div>
+  ) : (
+    <ul class="demo-mails">
+      {mails.map((m, i) => (
+        <li class="card">
+          <details open={i === 0}>
+            <summary>
+              <strong>{m.subject}</strong>
+              <span class="muted text-sm" style="display:block">Para {m.to} · {fmt(m.createdAt)}</span>
+            </summary>
+            {m.html ? (
+              <iframe class="demo-mail-frame" sandbox="" srcdoc={m.html} title={`Correo: ${m.subject}`} loading="lazy"></iframe>
+            ) : (
+              <pre class="demo-mail-text">{m.text}</pre>
+            )}
+          </details>
+        </li>
+      ))}
+    </ul>
+  )}
+</Layout>

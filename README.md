@@ -51,17 +51,30 @@ El Cron (`*/5 * * * *`) reintenta la corrección de exámenes que quedaron pendi
 ## Instancia de pruebas y demostración
 
 `demo.colonia.dev` es una copia para pruebas y presentaciones, con los mismos contenidos de San Román pero con
-su propia base de datos (`colonias-demo`) y su propio bucket de fotos (`colonias-fotos-demo`). Con `DEMO=1`
-la web muestra un aviso en todas las páginas, los carnets llevan la marca «DEMO · SIN VALIDEZ» (y el prefijo
-`DEMO-SRM`), los correos salen con «[Demo]» en el asunto y los buscadores no la indexan.
+su propia base de datos (`colonias-demo`) y su propio bucket de fotos (`colonias-fotos-demo`). Con `DEMO=1`:
+
+- **Acceso con enlace**: `https://demo.colonia.dev/?codigo=<DEMO_CODE>` (se recuerda 60 días). Sin él solo se ve la portada.
+- **Sin correo**: en `/demo` se elige un perfil (empieza el curso, a mitad, lista para el examen, con carnet,
+  responsable de colonia o Ayuntamiento). Cada «Entrar como…» crea **una copia nueva** para ese visitante.
+- **Atajos**: «Aprobar este tema» y «Rellenar con respuestas de ejemplo» (JEV corrige de verdad).
+- **Botón «Demo»**: recorrido de lo que se puede probar con cada perfil, bandeja de correos y cambio de perfil.
+- **Bandeja**: los correos no se envían; se guardan en `demo_outbox` y se ven en `/demo/correos`.
+- **Solo lectura** en temario, preguntas, documentos, guía y ajustes.
+- **Reinicio** cada noche (cron `0 3 * * *`): se borran las copias y se crean los datos de base (colonias en
+  distintos estados, carnets vigentes, caducado y revocado, un examen final corregido por JEV…).
+- Aviso en todas las páginas, carnets «DEMO · SIN VALIDEZ» (prefijo `DEMO-SRM`), `[Demo]` en los asuntos y `noindex`.
 
 ```sh
 npm run db:migrate:demo   # migraciones
 npm run db:seed:demo      # temario, preguntas y documentos
+npm run demo:gatos        # ilustraciones de los gatos (R2 demo-base/)
 npm run deploy:demo       # compila con CLOUDFLARE_ENV=demo y despliega
+# Reinicio manual:
+curl -X POST -H "Origin: https://demo.colonia.dev" -H "Authorization: Bearer $DEMO_RESET_TOKEN" https://demo.colonia.dev/api/demo/reset
 ```
 
-Los secretos (`ADMIN_EMAILS`, `TYPESAFE_API_KEY`, `APP_SECRET`) se configuran aparte con `wrangler secret put … --env demo`.
+Secretos (`wrangler secret put … --env demo`): `ADMIN_EMAILS`, `TYPESAFE_API_KEY`, `APP_SECRET`, `DEMO_CODE` y
+`DEMO_RESET_TOKEN`. En local: `CLOUDFLARE_ENV=demo npx astro dev` con `.dev.vars.demo`.
 
 ## Administración (`/admin`)
 

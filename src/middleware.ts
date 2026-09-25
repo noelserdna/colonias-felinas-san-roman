@@ -1,11 +1,11 @@
-import { isDemo } from "./lib/demo";
+import { demoGate, isDemo } from "./lib/demo";
 import { defineMiddleware } from "astro:middleware";
 import { getDb } from "./lib/db";
 import { getSessionUser, SESSION_COOKIE } from "./lib/auth";
 import { getBranding } from "./lib/branding";
 import { getActiveCarnet } from "./lib/carnet";
 
-const PUBLIC = [/^\/$/, /^\/login/, /^\/auth\//, /^\/api\/auth\//, /^\/privacidad/, /^\/accesibilidad/, /^\/documentos/, /^\/offline/, /^\/branding\//, /^\/manifest\.webmanifest$/];
+const PUBLIC = [/^\/$/, /^\/login/, /^\/auth\//, /^\/api\/auth\//, /^\/privacidad/, /^\/accesibilidad/, /^\/documentos/, /^\/offline/, /^\/branding\//, /^\/manifest\.webmanifest$/, /^\/demo$/, /^\/api\/demo\/(entrar|reset)$/];
 
 export const onRequest = defineMiddleware(async (ctx, next) => {
   const db = getDb();
@@ -16,6 +16,8 @@ export const onRequest = defineMiddleware(async (ctx, next) => {
   ctx.locals.hasCarnet = ctx.locals.user ? Boolean(await getActiveCarnet(db, ctx.locals.user.id)) : false;
   const path = ctx.url.pathname;
   const isApi = path.startsWith("/api/");
+  const gate = await demoGate(ctx);
+  if (gate) return gate;
 
   if (!PUBLIC.some((re) => re.test(path)) && !ctx.locals.user) {
     if (isApi) return new Response(JSON.stringify({ error: "No autenticado" }), { status: 401 });

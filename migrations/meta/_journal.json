@@ -71,6 +71,13 @@
       "when": 1790325438036,
       "tag": "0009_avisos",
       "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "6",
+      "when": 1790330931200,
+      "tag": "0010_demo_bandeja",
+      "breakpoints": true
     }
   ]
 }

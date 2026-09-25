@@ -1,0 +1,70 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import Icon from "../../components/Icon.astro";
+import { isDemo } from "../../lib/demo";
+import { PERSONAS, PERSONA_KEYS, personaOf } from "../../lib/demo-personas";
+
+if (!isDemo()) return new Response("No encontrado", { status: 404 });
+const q = Astro.url.searchParams;
+const access = Astro.locals.demoAccess;
+const user = Astro.locals.user;
+const actual = personaOf(user?.email);
+const ICON = { nueva: "book", mitad: "check", examen: "exam", carnet: "card", responsable: "paw", ayuntamiento: "shield" } as const;
+---
+<Layout title="Demo">
+  <p class="eyebrow">Demostración</p>
+  {!access ? (
+    <>
+      <h1>Demo privada</h1>
+      <p>Esta es la versión de demostración de la plataforma de cuidadores de colonias felinas. Para entrar necesitas el enlace que te han facilitado.</p>
+      {q.get("codigo") === "incorrecto" && <div class="alert bad" role="alert">El código no es correcto. Revisa el enlace.</div>}
+      <form method="get" action="/demo" class="card">
+        <label for="codigo">¿Tienes el código? Escríbelo aquí</label>
+        <input id="codigo" name="codigo" type="text" autocomplete="off" required />
+        <button class="btn primary" type="submit" style="margin-top:.8rem">Entrar en la demo</button>
+      </form>
+    </>
+  ) : (
+    <>
+      <h1>Prueba la aplicación</h1>
+      <p>
+        Elige un perfil y entra directamente en ese punto de la aplicación, sin registrarte. Cada vez que entras se crea{" "}
+        <strong>una copia nueva solo para ti</strong>, así que puedes probarlo todo sin miedo.
+      </p>
+      <ul class="demo-facts">
+        <li>Los correos no se envían: los ves en la <strong>bandeja</strong> del botón «Demo».</li>
+        <li>Hay atajos para aprobar temas y rellenar los exámenes con respuestas de ejemplo.</li>
+        <li>Las respuestas escritas y las bajas las corrige JEV de verdad.</li>
+        <li>Todo vuelve a su estado inicial cada noche.</li>
+      </ul>
+      {q.has("espera") && <div class="alert bad" role="alert">Has entrado muchas veces seguidas. Espera un minuto y vuelve a intentarlo.</div>}
+      {q.has("error") && <div class="alert bad" role="alert">No se ha podido preparar el perfil. Inténtalo de nuevo.</div>}
+      {actual && user && (
+        <div class="alert info" role="status">
+          <span>Ahora estás como <strong>{PERSONAS[actual].titulo}</strong> ({user.nombre} {user.apellidos}). <a href={PERSONAS[actual].inicio}>Seguir con este perfil</a></span>
+        </div>
+      )}
+      <ul class="demo-personas">
+        {PERSONA_KEYS.map((k) => {
+          const p = PERSONAS[k];
+          return (
+            <li class="card demo-persona">
+              <span class="step-icon" aria-hidden="true"><Icon name={ICON[k]} size={24} /></span>
+              <div class="grow">
+                <h2>{p.titulo}</h2>
+                <p class="muted mt-0">{p.descripcion}</p>
+                <ul class="text-sm demo-persona-list">
+                  {p.recorrido.slice(0, 3).map((r) => <li>{r.texto}</li>)}
+                </ul>
+                <form method="post" action="/api/demo/entrar">
+                  <input type="hidden" name="persona" value={k} />
+                  <button class="btn primary small" type="submit">Entrar como «{p.titulo}»</button>
+                </form>
+              </div>
+            </li>
+          );
+        })}
+      </ul>
+    </>
+  )}
+</Layout>

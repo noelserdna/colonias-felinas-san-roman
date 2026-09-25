@@ -326,3 +326,17 @@ export const notices = sqliteTable(
   },
   (t) => [index("notices_user").on(t.userId, t.readAt)],
 );
+
+/** Bandeja de la instancia demo: en ella los correos no se envían, se guardan aquí para enseñarlos. */
+export const demoOutbox = sqliteTable(
+  "demo_outbox",
+  {
+    id: text("id").primaryKey(),
+    to: text("to").notNull(),
+    subject: text("subject").notNull(),
+    text: text("text").notNull(),
+    html: text("html"),
+    createdAt: integer("created_at", { mode: "timestamp_ms" }).notNull(),
+  },
+  (t) => [index("demo_outbox_to").on(t.to, t.createdAt)],
+);

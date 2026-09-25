@@ -1,5 +1,6 @@
 ---
 import Layout from "../../layouts/Layout.astro";
+import { isDemo } from "../../lib/demo";
 import Icon from "../../components/Icon.astro";
 import { eq } from "drizzle-orm";
 import { getDb, schema } from "../../lib/db";
@@ -23,6 +24,9 @@ const html = renderMarkdown(unit.contenido);
   <a class="btn ghost small" href={consulta ? "/temario" : "/"} style="margin-left:-.6rem"><Icon name="back" size={18} /> {consulta ? "Consulta" : "Temario"}</a>
   <p class="eyebrow" style="margin-top:.6rem">Tema {unit.orden} de {units.length}</p>
   <h1>{unit.titulo}</h1>
+  {isDemo() && Astro.url.searchParams.get("aprobado") && (
+    <div class="alert ok" role="status" tabindex="-1" data-focus-on-load>Tema {Astro.url.searchParams.get("aprobado")} aprobado con el atajo de la demo. Este es el siguiente.</div>
+  )}
   <div class="meta">
     <span><Icon name="clock" size={16} /> {p.minutos} min de lectura</span>
     {consulta ? null : p.passed ? <span class="badge ok"><Icon name="check" size={14} /> Aprobado{p.bestPct != null ? ` · ${p.bestPct}%` : ""}</span> : <a class="btn small ghost" href={`/temario/${unit.slug}/test`}>Ir directamente al test</a>}

@@ -35,6 +35,8 @@ type Props = {
   backHref: string;
   nextHref: string;
   nextLabel: string;
+  /** Instancia demo: botón para rellenar con respuestas de ejemplo. */
+  demo?: boolean;
 };
 
 const MAX_WRITTEN = 2000;
@@ -186,6 +188,19 @@ export default function Quiz(props: Props) {
     }
   }
 
+  async function fillExample() {
+    if (!view) return;
+    try {
+      const { answers: ex } = await api<{ answers: Record<string, Answer> }>(`/api/demo/respuestas/${view.id}`);
+      setAnswers(ex);
+      saveDraft(view.id, ex);
+      setConfirming(false);
+      setAnnounce("Respuestas de ejemplo rellenadas. Revísalas o envía el examen.");
+    } catch (e: any) {
+      fail(e.message);
+    }
+  }
+
   function retry() {
     setView(null);
     setAnswers({});
@@ -324,6 +339,16 @@ export default function Quiz(props: Props) {
             </div>
           </div>
         </div>
+        {props.demo && (
+          <div className="card demo-shortcut">
+            <p className="mt-0 mb-0 text-sm">
+              <strong>Atajo de la demo:</strong> rellena las respuestas con ejemplos (casi todas bien, con algún fallo para ver la corrección).
+            </p>
+            <button type="button" className="btn small" onClick={fillExample}>
+              Rellenar con respuestas de ejemplo
+            </button>
+          </div>
+        )}
         {items.map((it, n) => {
           const legendId = `q-${v.id}-${it.position}`;
           const hintId = `hint-${v.id}-${it.position}`;

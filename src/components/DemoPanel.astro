@@ -1,0 +1,51 @@
+---
+// Botón flotante de la demo: perfil actual, recorrido guiado, bandeja de correos y cambio de perfil.
+import { count, eq } from "drizzle-orm";
+import Icon from "./Icon.astro";
+import { getDb, schema } from "../lib/db";
+import { PERSONAS, personaOf } from "../lib/demo-personas";
+
+const user = Astro.locals.user!;
+const key = personaOf(user.email);
+const p = key ? PERSONAS[key] : null;
+const db = getDb();
+const [{ n }] = await db
+  .select({ n: count() })
+  .from(schema.demoOutbox)
+  .where(user.role === "admin" ? undefined : eq(schema.demoOutbox.to, user.email));
+const path = Astro.url.pathname;
+---
+<details class="demo-panel" data-demo-panel>
+  <summary><Icon name="star" size={18} /> Demo{n > 0 && <span class="demo-count" aria-label={`${n} correos en la bandeja`}>{n}</span>}</summary>
+  <div class="demo-panel-body">
+    <p class="mt-0 text-sm muted">Estás como</p>
+    <p class="demo-who">{p?.titulo ?? "Perfil propio"} <span class="muted">· {user.nombre} {user.apellidos}</span></p>
+    {p && (
+      <>
+        <h2 class="demo-panel-h">Qué probar</h2>
+        <ol class="demo-tour">
+          {p.recorrido.map((r) => (
+            <li><a href={r.href} aria-current={r.href === path ? "page" : undefined}>{r.texto}</a></li>
+          ))}
+        </ol>
+      </>
+    )}
+    <div class="demo-panel-actions">
+      <a class="btn small" href="/demo/correos"><Icon name="mail" size={18} /> Bandeja de correos{n > 0 ? ` (${n})` : ""}</a>
+      <a class="btn small primary" href="/demo">Cambiar de perfil</a>
+    </div>
+  </div>
+</details>
+<script>
+  // Se cierra al navegar o con Escape, para que no tape la página.
+  document.addEventListener("astro:page-load", () => {
+    const panel = document.querySelector<HTMLDetailsElement>("[data-demo-panel]");
+    if (!panel) return;
+    panel.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && panel.open) {
+        panel.open = false;
+        panel.querySelector("summary")?.focus();
+      }
+    });
+  });
+</script>

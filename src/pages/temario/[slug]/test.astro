@@ -4,6 +4,7 @@ import Quiz from "../../../components/Quiz";
 import { eq } from "drizzle-orm";
 import { getDb, schema } from "../../../lib/db";
 import { getProgress } from "../../../lib/exam";
+import { isDemo } from "../../../lib/demo";
 
 const db = getDb();
 if (Astro.locals.hasCarnet) return Astro.redirect(`/temario/${Astro.params.slug}`);
@@ -13,11 +14,20 @@ const { units } = await getProgress(db, Astro.locals.user!.id);
 const idx = units.findIndex((u) => u.id === unit.id);
 if (!units[idx]?.unlocked) return Astro.redirect("/");
 const next = units[idx + 1];
+const demo = isDemo();
 ---
 <Layout title={`Test: ${unit.titulo}`}>
   <p class="eyebrow">Test · Tema {unit.orden}</p>
   <h1>{unit.titulo}</h1>
+  {demo && !units[idx].passed && (
+    <form method="post" action="/api/demo/aprobar" class="card demo-shortcut">
+      <input type="hidden" name="unitId" value={unit.id} />
+      <p class="mt-0 mb-0 text-sm"><strong>Atajo de la demo:</strong> aprueba este tema sin hacer el test, o empieza el test y rellénalo con respuestas de ejemplo.</p>
+      <button class="btn small" type="submit">Aprobar este tema</button>
+    </form>
+  )}
   <Quiz
+    demo={demo}
     client:only="react"
     kind="unit"
     unitId={unit.id}

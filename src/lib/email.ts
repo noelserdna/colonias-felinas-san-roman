@@ -16,7 +16,14 @@ export function parseFrom(from: string): { email: string; name?: string } {
  * Devuelve true si el correo no se ha enviado de verdad (simulado).
  */
 async function deliver(mail: Mail): Promise<boolean> {
-  if (env.DEMO === "1") mail = { ...mail, subject: `[Demo] ${mail.subject}` };
+  if (env.DEMO === "1") {
+    // En la demo no sale ningún correo: se guarda en la bandeja para enseñarlo en /demo/correos.
+    const { getDb, schema } = await import("./db");
+    await getDb()
+      .insert(schema.demoOutbox)
+      .values({ id: crypto.randomUUID(), to: mail.to, subject: mail.subject, text: mail.text, html: mail.html ?? null, createdAt: new Date() });
+    return true;
+  }
   const e = env as Cloudflare.Env & { EMAIL?: { send: (m: Record<string, unknown>) => Promise<unknown> } };
   if (env.MAIL_MOCK !== "1" && e.EMAIL && env.MAIL_FROM) {
     await e.EMAIL.send({ to: mail.to, from: parseFrom(env.MAIL_FROM), subject: mail.subject, text: mail.text, ...(mail.html ? { html: mail.html } : {}) });

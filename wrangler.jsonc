@@ -52,7 +52,8 @@
       "routes": [{ "pattern": "demo.colonia.dev", "custom_domain": true }],
       "workers_dev": true,
       "r2_buckets": [{ "binding": "PHOTOS", "bucket_name": "colonias-fotos-demo" }],
-      "triggers": { "crons": ["*/5 * * * *"] },
+      // Además del reintento de JEV, cada noche (03:00 UTC) la demo vuelve a su estado inicial.
+      "triggers": { "crons": ["*/5 * * * *", "0 3 * * *"] },
       "ratelimits": [
         { "name": "LOGIN_LIMITER", "namespace_id": "1002", "simple": { "limit": 5, "period": 60 } }
       ],

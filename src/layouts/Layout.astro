@@ -6,6 +6,7 @@ import "@fontsource/atkinson-hyperlegible/400-italic.css";
 import "../styles/global.css";
 import Icon, { type IconName } from "../components/Icon.astro";
 import { isDemo } from "../lib/demo";
+import DemoPanel from "../components/DemoPanel.astro";
 
 interface Props {
   title: string;
@@ -78,15 +79,19 @@ const active = (n: (typeof nav)[number]) => n.match(path);
           ))}
         </nav>
       )}
-      {!user && !hideLoginButton && <a class="btn small primary" href="/login">Entrar</a>}
+      {!user && !hideLoginButton && (demo ? <a class="btn small primary" href="/demo">Elegir perfil</a> : <a class="btn small primary" href="/login">Entrar</a>)}
       {readingProgress && <div class="reading-progress" aria-hidden="true"><span></span></div>}
     </header>
     <main id="main" class:list={["container", { wide }]}>
+      {demo && Astro.url.searchParams.has("bloqueado") && (
+        <div class="alert info" role="status">En la demo se pueden ver los contenidos y los ajustes, pero no cambiarlos.</div>
+      )}
       <slot />
     </main>
     <footer class="footer">
       <a href="/privacidad">Privacidad</a> · <a href={path === "/accesibilidad" ? "/accesibilidad" : `/accesibilidad?desde=${encodeURIComponent(path)}`}>Accesibilidad</a> · <a href="/documentos">Documentos</a> · Contenido formativo: Colegio Oficial de Veterinarios de Toledo
     </footer>
+    {demo && user && <DemoPanel />}
     {nav.length > 0 && (
       <nav class="tabbar" aria-label="Navegación principal (móvil)">
         {nav.map((n) => (

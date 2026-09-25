@@ -12,6 +12,10 @@ declare namespace Cloudflare {
     MAIL_MOCK: string;
     /** "1" en la instancia de pruebas y demostración. */
     DEMO?: string;
+    /** Código del enlace de acceso a la demo (?codigo=…). */
+    DEMO_CODE?: string;
+    /** Token para reiniciar la demo desde fuera (POST /api/demo/reset). */
+    DEMO_RESET_TOKEN?: string;
     TYPESAFE_API_KEY?: string;
     /** Clave para cifrar los secretos guardados desde el panel (mín. 16 caracteres). */
     APP_SECRET?: string;
@@ -29,5 +33,7 @@ declare namespace App {
     branding: import("./lib/branding").Branding;
     /** El usuario tiene un carnet vigente: modo «consulta» (sin tests ni examen). */
     hasCarnet: boolean;
+    /** En la demo: si el visitante ha entrado con el enlace con código. */
+    demoAccess?: boolean;
   }
 }
