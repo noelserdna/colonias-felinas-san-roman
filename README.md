@@ -65,17 +65,51 @@ en unos minutos. El acceso es con un enlace privado: pídelo abriendo un
 
 ## 💶 Cuánto cuesta
 
-Para un municipio pequeño o mediano, **prácticamente nada**:
+Unos **5 $ al mes** (unos 4,5 €) para casi cualquier municipio:
 
 | Servicio | Para qué | Coste |
 |---|---|---|
-| **Cloudflare** (plan gratuito) | Alojar la web, la base de datos y las fotos | **0 €** · 100.000 peticiones al día, 5 GB de datos y 10 GB de fotos |
-| **Resend** (plan gratuito) | Enviar los correos de acceso y los avisos | **0 €** · 3.000 correos/mes (máx. 100 al día) |
-| *o bien* Cloudflare Email | Lo mismo, sin salir de Cloudflare | Plan Workers Paid: **5 $/mes** |
-| **Dominio** | La dirección de la web y del correo | **0 €** si usáis un subdominio del ayuntamiento (p. ej. `colonias.ayto-ejemplo.es`); si no, unos **10 €/año** |
-| **TypeSafe – JEV** (opcional) | Corregir con IA las respuestas escritas y las bajas | **Unos pocos euros** de saldo dan para mucho: cada corrección es una llamada pequeña |
+| **Cloudflare Workers Paid** | Alojar la web, la base de datos, las fotos y enviar los correos | **5 $/mes**. Incluye 10 millones de peticiones al mes, la base de datos, **3.000 correos al mes** (Cloudflare Email) y 10 GB de fotos. A partir de ahí, céntimos: 0,35 $ por cada 1.000 correos y 0,015 $ por GB de fotos al mes |
+| **Dominio** | La dirección de la web y del correo | **0 €** con un subdominio del ayuntamiento (p. ej. `colonias.ayto-ejemplo.es`); si no, unos **10 €/año** |
+| **TypeSafe – JEV** (opcional) | Corregir con IA las respuestas escritas y las bajas | **Unos pocos euros** de saldo: cada corrección es una llamada pequeña |
 
+> **¿Y el plan gratuito de Cloudflare?** Sirve para **probarla**, pero no para el uso diario: limita cada petición a
+> 10 ms de CPU y las páginas de la aplicación usan entre 10 y 30 ms (medido en la demo), así que Cloudflare cortaría
+> muchas (error 1102). Si aun así quieres empezar gratis, el correo tiene que ir por **Resend** (gratis hasta 3.000
+> correos al mes y 100 al día), que se configura en el panel.
+>
 > Sin JEV la aplicación funciona igual, pero el examen final es solo de tipo test.
+
+## 🏘️ ¿Para qué municipios es adecuada?
+
+En España hay unos **1,8 millones de gatos comunitarios en unas 125.000 colonias**
+([Plan de Acción 2026-2030](https://www.animalshealth.es/politica/asi-es-plan-accion-sobre-gestion-colonias-felinas-espana-one-health-veterinarios-elemento-imprescindible)):
+de media, **una colonia por cada 400 habitantes** y unos 14 gatos por colonia, con más densidad en los municipios
+rurales que en las grandes ciudades (Barcelona tiene entre
+[614 y 700 colonias](https://ajuntament.barcelona.cat/benestaranimal/es/gatos) para 1,66 millones de habitantes: una
+por cada 2.500). Según el [estudio de las Jornadas Felinas Nacionales](https://jornadasfelinasnacionales.com/wp-content/uploads/2022/09/Situacio%CC%81n-colonias-felinas-Espan%CC%83a_JFN2021.pdf),
+el 40 % de las personas cuidadoras trabaja sola y la mayoría atiende una o dos colonias.
+
+Con esas cifras, y las 1–2 personas cuidadoras por colonia de esa encuesta, esto es lo que necesitaría cada municipio:
+
+| Habitantes | Colonias (estimación) | Personas cuidadoras | Correos al mes | Fotos al año | Coste | ¿Adecuada? |
+|---|---|---|---|---|---|---|
+| Menos de 5.000 | 2 – 12 | hasta 25 | menos de 30 | < 0,3 GB | 5 $/mes | ✅ Ideal |
+| 5.000 – 20.000 | 8 – 50 | 10 – 100 | hasta 100 | < 1 GB | 5 $/mes | ✅ Ideal |
+| 20.000 – 100.000 | 40 – 250 | 60 – 500 | 100 – 500 | 1 – 5 GB | 5 $/mes | ✅ Muy adecuada |
+| 100.000 – 300.000 | 120 – 750 | 200 – 1.500 | 300 – 1.500 | 3 – 15 GB | 5 – 6 $/mes | 🟡 Funciona; conviene añadir paginación y filtros al panel |
+| Más de 300.000 | cientos o miles | miles | más de 1.500 | 15 GB o más | 6 – 10 $/mes | 🟠 Técnicamente escala, pero necesitaría adaptaciones (distritos, varios equipos, mapa) |
+
+- **Correos**: cada sesión dura 90 días, así que cada persona recibe pocos enlaces de acceso; lo demás son avisos
+  (alta de la colonia, censo cada seis meses, caducidad del carnet). Hasta 3.000 al mes están incluidos.
+- **Fotos**: la app las reduce en el móvil (unos 0,3 MB cada una); con unas 4 fotos por gato al año, son unos
+  20 MB por colonia y año. Los primeros 10 GB son gratis.
+- **Peticiones**: incluso el municipio más grande queda muy lejos de los 10 millones al mes incluidos.
+
+**En resumen**: es ideal para municipios de **hasta unos 100.000 habitantes**, que son el **99 % de los 8.132
+municipios de España** (solo 68 superan esa cifra, [INE 2025](https://www.ine.es/dyngs/Prensa/CensoVariables2025.htm)),
+por unos 5 $ al mes. Por encima funciona, pero el panel de administración está pensado para decenas o cientos de
+colonias, no para miles.
 
 ## 🚀 Instálala para tu municipio
 
@@ -85,7 +119,8 @@ No hace falta saber programar. Un **asistente de IA que pueda ejecutar comandos 
 [Claude Code](https://claude.com/claude-code)) puede hacer casi toda la instalación por ti: este repositorio incluye
 [instrucciones específicas para él](AGENTS.md).
 
-1. Crea una cuenta gratuita en **[Cloudflare](https://dash.cloudflare.com/sign-up)**.
+1. Crea una cuenta en **[Cloudflare](https://dash.cloudflare.com/sign-up)** y contrata el plan **Workers Paid**
+   (5 $/mes: *Workers & Pages → Plans*).
 2. *(Opcional)* Crea una cuenta en **[TypeSafe](https://console.typesafe.ai)**, añade unos pocos euros de saldo y
    genera una clave en *API keys*.
 3. Instala **[Node.js](https://nodejs.org)** (versión LTS) y tu asistente de IA.
@@ -107,8 +142,9 @@ aplicación funcionando en una dirección `https://….workers.dev`.
 <details>
 <summary><strong>Ver los 10 pasos</strong> (unos 30–45 minutos; hay que usar la terminal)</summary>
 
-1. **Cuentas**: crea una cuenta en [Cloudflare](https://dash.cloudflare.com/sign-up) (gratis) y, si quieres
-   corrección con IA, en [TypeSafe](https://console.typesafe.ai) (añade unos pocos euros y crea una clave).
+1. **Cuentas**: crea una cuenta en [Cloudflare](https://dash.cloudflare.com/sign-up) y contrata **Workers Paid**
+   (5 $/mes, *Workers & Pages → Plans*). Si quieres corrección con IA, crea otra en
+   [TypeSafe](https://console.typesafe.ai), añade unos pocos euros y crea una clave.
 2. **Herramientas**: instala [Node.js](https://nodejs.org) (LTS, 22 o superior) y [Git](https://git-scm.com).
 3. **Descarga la aplicación**:
    ```bash
@@ -132,11 +168,12 @@ aplicación funcionando en una dirección `https://….workers.dev`.
    - Borra los bloques `routes` y `env` (son de la instalación de San Román).
    - `APP_NAME` y `MAIL_FROM` con el nombre de tu municipio y tu dirección de envío.
 7. **Correo** — elige una opción:
-   - **Resend (gratis)**: en [resend.com](https://resend.com), *Domains → Add domain*, añade en tu DNS los registros
-     que te indica y crea una clave en *API Keys*. La clave y el remitente se ponen después en el panel
-     (*Ajustes → Correo*), con un botón para enviarte un correo de prueba.
-   - **Cloudflare Email (5 $/mes)**: contrata *Workers Paid*, con el dominio en Cloudflare, y ejecuta
+   - **Cloudflare Email** (incluido en Workers Paid): con el dominio en Cloudflare, ejecuta
      `npx wrangler email sending enable tu-dominio.es`.
+   - **Resend** (gratis hasta 3.000 correos al mes): útil si el dominio no está en Cloudflare. En
+     [resend.com](https://resend.com), *Domains → Add domain*, añade en tu DNS los registros que te indica y crea una
+     clave en *API Keys*. La clave y el remitente se ponen después en el panel (*Ajustes → Correo*), con un botón para
+     enviarte un correo de prueba.
 8. **Claves y secretos**:
    ```bash
    node scripts/vapid-keys.mjs              # "publicKey" → VAPID_PUBLIC_KEY en wrangler.jsonc

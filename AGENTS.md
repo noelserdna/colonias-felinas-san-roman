@@ -21,13 +21,17 @@ Documentación: [README.md](README.md) (visión general y costes) · [docs/TECNI
 
 1. Nombre del **municipio** y **provincia**.
 2. **Correo de administración** (quien gestionará el panel). Puede haber varios, separados por comas.
-3. **Correo de envío**: ¿tiene un dominio o puede usar un subdominio del ayuntamiento (p. ej. `avisos.ayto-ejemplo.es`)?
-   - Opción A (gratuita): **Resend** (3.000 correos/mes). Añadir en el DNS del dominio los registros que indique Resend.
-   - Opción B: **Cloudflare Email Service**. Requiere el plan **Workers Paid (5 USD/mes)** y que el dominio use los DNS
-     de Cloudflare.
-4. ¿Quiere **corrección con IA (JEV)** de las respuestas escritas? Es opcional; sin ella el examen es solo de tipo test.
+3. **Plan de Cloudflare**: para el uso real hace falta **Workers Paid (5 USD/mes)**. El plan gratuito limita cada
+   petición a 10 ms de CPU y las páginas usan 10–30 ms (medido), así que Cloudflare cortaría muchas con el error
+   1102. El gratuito solo sirve para probar. Confírmalo con la persona antes de contratar nada.
+4. **Correo de envío**: ¿tiene un dominio o puede usar un subdominio del ayuntamiento (p. ej. `avisos.ayto-ejemplo.es`)?
+   - **Cloudflare Email Service** (incluido en Workers Paid, 3.000 correos/mes): el dominio debe usar los DNS de
+     Cloudflare.
+   - **Resend** (gratis, 3.000/mes y 100/día): si el dominio no está en Cloudflare. Añadir en su DNS los registros que
+     indique Resend.
+5. ¿Quiere **corrección con IA (JEV)** de las respuestas escritas? Es opcional; sin ella el examen es solo de tipo test.
    Necesita una cuenta en TypeSafe (https://console.typesafe.ai) con unos pocos euros de saldo.
-5. ¿Tiene el **temario** (texto de los temas) y las **preguntas**? Si no, la app se instala con temas de ejemplo que se
+6. ¿Tiene el **temario** (texto de los temas) y las **preguntas**? Si no, la app se instala con temas de ejemplo que se
    redactan desde el panel.
 
 ## 2. Preparar el ordenador
@@ -41,7 +45,8 @@ npm install
 npx wrangler login   # abre el navegador: la persona inicia sesión en Cloudflare y autoriza
 ```
 
-Si la persona no tiene cuenta de Cloudflare, que la cree en https://dash.cloudflare.com/sign-up (plan gratuito).
+Si la persona no tiene cuenta de Cloudflare, que la cree en https://dash.cloudflare.com/sign-up y contrate Workers Paid
+en *Workers & Pages → Plans* (tras confirmar el coste).
 
 ## 3. Crear los recursos en Cloudflare
 
