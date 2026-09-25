@@ -117,11 +117,16 @@ const vapid = vapidConfig();
         await render();
       } catch (e: any) {
         const msg = String(e?.message ?? "");
+        // Navegador detectado, para poder ayudar por teléfono o correo («Chrome 131», «Mi Browser»…).
+        const brands = ((navigator as any).userAgentData?.brands ?? []) as { brand: string; version: string }[];
+        const brand = brands.find((b) => !/Not.?A.?Brand|Chromium/i.test(b.brand));
+        const vendor = navigator.userAgent.match(/MiuiBrowser|XiaoMi|SamsungBrowser|HuaweiBrowser|Brave|OPR|EdgA|Firefox/i)?.[0];
+        const nav = vendor ?? (brand ? `${brand.brand} ${brand.version}` : "desconocido");
         // «Registration failed - push service error»: el navegador no llega a su servicio de avisos
         // (Brave con el push de Google desactivado, móviles sin servicios de Google, Play Services…).
         state.textContent = /AbortError|push service/i.test(msg)
-          ? "Tu navegador no ha podido conectar con su servicio de avisos. Si es el navegador del fabricante (Xiaomi, Huawei, Oppo…), abre esta web en Chrome y actívalos allí. Si usas Brave, activa «Usar los servicios de Google para la mensajería push» en brave://settings/privacy y reinícialo. Si tu móvil no tiene servicios de Google (por ejemplo, Huawei), prueba con Firefox. Mientras tanto, los avisos te seguirán llegando por correo."
-          : `No se han podido activar los avisos. Inténtalo de nuevo. Detalle: ${msg || e?.name || "desconocido"}.`;
+          ? `Tu navegador no ha podido conectar con su servicio de avisos. Si es el navegador del fabricante (Xiaomi, Huawei, Oppo…), abre esta web en Chrome y actívalos allí. Si usas Brave, activa «Usar los servicios de Google para la mensajería push» en brave://settings/privacy y reinícialo. Si tu móvil no tiene servicios de Google (por ejemplo, Huawei), prueba con Firefox. Mientras tanto, los avisos te seguirán llegando por correo. (Navegador: ${nav}.)`
+          : `No se han podido activar los avisos. Inténtalo de nuevo. Detalle: ${msg || e?.name || "desconocido"} (navegador: ${nav}).`;
       } finally {
         on.removeAttribute("aria-busy");
       }
