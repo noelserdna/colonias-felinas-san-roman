@@ -66,7 +66,6 @@ Edita el archivo (no contiene secretos):
 - `vars.APP_ORIGIN`: la dirección pública. Tras el primer despliegue será `https://<name>.<subdominio>.workers.dev`
   (wrangler la muestra); actualízala y vuelve a desplegar.
 - `vars.VAPID_PUBLIC_KEY`: genera un par propio con `node scripts/vapid-keys.mjs` (ver paso 5).
-- **Correo con Resend (opción A)**: **borra** el bloque `"send_email"`. Si se deja sin el plan de pago, los correos fallan.
 - `triggers.crons`: el plan gratuito admite 5 crons por cuenta; esta app usa 2.
 
 ## 5. Secretos
@@ -77,11 +76,12 @@ node scripts/vapid-keys.mjs          # {"publicKey": "...", "privateJwk": {...}}
 npx wrangler secret put VAPID_PRIVATE_KEY
 npx wrangler secret put APP_SECRET        # cadena aleatoria larga (p. ej. openssl rand -base64 32)
 npx wrangler secret put ADMIN_EMAILS      # correo(s) de administración
-npx wrangler secret put RESEND_API_KEY    # solo con la opción A
 ```
 
-La clave de JEV es mejor que la introduzca la persona en *Administración → Ajustes* (se guarda cifrada). También vale
-`npx wrangler secret put TYPESAFE_API_KEY`.
+Las claves de **Resend** y de **JEV** es mejor que las introduzca la persona en *Administración → Ajustes* (secciones
+«Correo» y «JEV»): se guardan cifradas con `APP_SECRET`, tienen prioridad sobre la configuración del servidor y la
+sección de correo tiene un botón de correo de prueba. Con la clave de Resend en el panel no hace falta tocar el bloque
+`send_email`. Por terminal también valen `RESEND_API_KEY` y `TYPESAFE_API_KEY` como secretos.
 
 ## 6. Contenido inicial
 
@@ -105,10 +105,10 @@ npm run deploy             # compila y publica; muestra la dirección https://�
 ```
 
 1. Actualiza `APP_ORIGIN` con esa dirección y vuelve a ejecutar `npm run deploy`.
-2. La persona abre la dirección, entra con su correo de administración y comprueba que le llega el enlace.
-   Si el correo no funciona todavía, el enlace aparece en `npx wrangler tail` al pedirlo.
-3. En *Administración → Ajustes*: municipio, provincia, escudo (PNG/JPG/WebP ≤ 1 MB), autoría del contenido formativo
-   y clave de JEV.
+2. La persona abre la dirección y pide el enlace con su correo de administración. Mientras el correo no esté
+   configurado (o si el envío falla), el enlace aparece en `npx wrangler tail`: ejecútalo tú y pásale el enlace.
+3. En *Administración → Ajustes*: municipio, provincia, escudo (PNG/JPG/WebP ≤ 1 MB), autoría del contenido formativo,
+   **Correo** (clave de Resend + remitente → «Enviarme un correo de prueba») y clave de JEV.
 
 ## 8. Adaptar al municipio (desde el panel, sin código)
 
@@ -125,7 +125,8 @@ npm run deploy             # compila y publica; muestra la dirección https://�
 
 - **Dominio propio**: con el dominio en Cloudflare, añade a `wrangler.jsonc`
   `"routes": [{ "pattern": "colonias.ayto-ejemplo.es", "custom_domain": true }]`, actualiza `APP_ORIGIN` y despliega.
-- **Resend**: https://resend.com → Domains → añadir el dominio de envío y los registros DNS → API Keys.
+- **Resend**: https://resend.com → Domains → añadir el dominio de envío y los registros DNS → API Keys. La clave se
+  pega en *Ajustes → Correo*.
 
 ## Desarrollo
 

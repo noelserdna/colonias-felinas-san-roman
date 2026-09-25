@@ -8,6 +8,8 @@ import { DEFAULT_SETTINGS, getSettings, saveSettings, SETTINGS_LABELS, type Sett
 import { brandingSchema, deleteEscudo, getBranding, readEscudo, saveBranding, saveEscudo, ESCUDO_MAX_BYTES } from "../../lib/branding";
 import { canStoreSecrets, deleteSecret, getJevApiKey, secretStatus, setSecret } from "../../lib/secrets";
 import { gradeWritten } from "../../lib/jev";
+import { getMailConfig, saveMailFrom, sendTestEmail } from "../../lib/email";
+import { isResendKey, PROVIDER_LABEL } from "../../lib/mail-provider";
 import { formatDate } from "../../lib/util";
 
 const db = getDb();
@@ -53,6 +55,27 @@ if (Astro.request.method === "POST") {
     } else if (section === "jev-delete") {
       await deleteSecret(db, "typesafe_api_key");
       msg = { section: "jev", ok: true, text: "Clave del panel eliminada. Se usará la del servidor si existe." };
+    } else if (section === "correo-remitente") {
+      const from = String(f.get("mail_from") ?? "").trim();
+      await saveMailFrom(db, from || null);
+      msg = { section: "correo", ok: true, text: from ? "Remitente guardado." : "Remitente del panel eliminado: se usa el del servidor (MAIL_FROM)." };
+    } else if (section === "correo-clave") {
+      const key = String(f.get("resend_key") ?? "").trim();
+      if (!isResendKey(key)) throw new Error("La clave de Resend no tiene un formato válido: empieza por «re_».");
+      await setSecret(db, "resend_api_key", key);
+      msg = { section: "correo", ok: true, text: "Clave de Resend guardada (cifrada). A partir de ahora los correos se envían con Resend. Prueba el envío." };
+    } else if (section === "correo-quitar") {
+      await deleteSecret(db, "resend_api_key");
+      msg = { section: "correo", ok: true, text: "Clave de Resend del panel eliminada." };
+    } else if (section === "correo-prueba") {
+      const to = Astro.locals.user!.email;
+      const simulado = await sendTestEmail(to, (await getBranding(db)).ayuntamiento, Astro.url.origin);
+      const modo = (await getMailConfig(db)).provider;
+      msg = simulado
+        ? modo === "simulado"
+          ? { section: "correo", ok: true, text: "Modo simulado (desarrollo): el correo de prueba se ha escrito en el registro del servidor." }
+          : { section: "correo", ok: false, text: "No hay ningún proveedor de correo configurado: el correo de prueba solo se ha escrito en el registro del servidor." }
+        : { section: "correo", ok: true, text: `Correo de prueba enviado a ${to}. Si no llega en un par de minutos, revisa la carpeta de spam.` };
     } else if (section === "jev-test") {
       const { key } = await getJevApiKey(db);
       if (!key) throw new Error("No hay ninguna clave configurada.");
@@ -73,9 +96,9 @@ if (Astro.request.method === "POST") {
       e instanceof ZodError
         ? e.issues.map((i) => `${SETTINGS_LABELS[i.path[0] as keyof Settings] ?? String(i.path[0] ?? "")}: ${i.message}`).join(". ")
         : e instanceof Error
-          ? e.message.replace(/apikey_[\w]+/g, "apikey_…")
+          ? e.message.replace(/apikey_[\w]+/g, "apikey_…").replace(/re_[\w-]+/g, "re_…")
           : "No se pudo guardar.";
-    msg = { section: section.startsWith("jev") ? "jev" : section === "escudo-reset" ? "ayuntamiento" : section, ok: false, text };
+    msg = { section: section.startsWith("jev") ? "jev" : section.startsWith("correo") ? "correo" : section === "escudo-reset" ? "ayuntamiento" : section, ok: false, text };
   }
 }
 
@@ -87,6 +110,7 @@ const jevStatus = await secretStatus(db, "typesafe_api_key");
 const jevSource = (await getJevApiKey(db)).source;
 const secretsEnabled = canStoreSecrets();
 const serverKey = Boolean(env.TYPESAFE_API_KEY);
+const mail = await getMailConfig(db);
 
 const groups: [string, (keyof Settings)[]][] = [
   ["Tests de tema", ["unit_quiz_size", "unit_pass_pct"]],
@@ -205,6 +229,85 @@ const noteRole = (section: string) => (note(section)?.ok ? "status" : "alert");
     </div>
     <p class="muted text-sm mb-0" id="jev-help">
       La clave se guarda cifrada y nunca se vuelve a mostrar; solo sus últimos 4 caracteres. Tiene prioridad sobre la del servidor.
+    </p>
+  </section>
+
+  <!-- ---------- Correo ---------- -->
+  <section class="card" id="correo">
+    <h2 class="mt-0">Correo (enlaces de acceso y avisos)</h2>
+    {note("correo") && <div class:list={["alert", note("correo")!.ok ? "ok" : "bad"]} role={noteRole("correo")} id="correo-msg" tabindex="-1" data-focus-on-load>{note("correo")!.text}</div>}
+    <p class="mt-0">
+      Se envía con:{" "}
+      {mail.provider ? (
+        <span class:list={["badge", mail.provider === "simulado" ? "todo" : "ok"]}>{PROVIDER_LABEL[mail.provider]}</span>
+      ) : (
+        <span class="badge bad">Sin configurar</span>
+      )}
+      {mail.from && <span class="muted text-sm" style="display:block;margin-top:.3rem">Remitente: {mail.from}</span>}
+    </p>
+    {!mail.provider && (
+      <div class="alert bad">
+        Sin correo, nadie más puede entrar: los enlaces de acceso solo se escriben en el registro del servidor
+        (<code>npx wrangler tail</code>). Configura Resend aquí debajo.
+      </div>
+    )}
+
+    <form method="post" class="row" style="align-items:flex-end">
+      <input type="hidden" name="section" value="correo-remitente" />
+      <div style="flex:1;min-width:min(260px,100%)">
+        <label for="mail_from">Remitente</label>
+        <input id="mail_from" name="mail_from" type="text" maxlength="200" autocomplete="off" placeholder={mail.envFrom ?? "Colonias Felinas <no-reply@tu-dominio.es>"} value={mail.panelFrom ?? ""} aria-describedby="mail-from-help" />
+      </div>
+      <button class="btn" type="submit">Guardar remitente</button>
+    </form>
+    <small class="muted" id="mail-from-help">
+      Formato «Nombre &lt;no-reply@tu-dominio.es&gt;». El dominio debe estar verificado en Resend (o dado de alta en
+      Cloudflare Email). Vacío = el del servidor{mail.envFrom ? ` (${mail.envFrom})` : ""}.
+    </small>
+
+    <h3>Resend</h3>
+    <p class="mt-0 text-sm">
+      Servicio de correo con plan gratuito (3.000 correos al mes). En <a href="https://resend.com" target="_blank" rel="noopener">resend.com<span class="sr-only"> (se abre en una ventana nueva)</span></a>:
+      añade tu dominio en <em>Domains</em>, pon en tu DNS los registros que te indica y crea una clave en <em>API Keys</em>.
+      Si la guardas aquí, tiene prioridad sobre cualquier otra configuración.
+    </p>
+    <p class="mt-0">
+      Estado:{" "}
+      {mail.panelKey.stored ? (
+        <span class="badge ok">Clave guardada · termina en …{mail.panelKey.last4} · {formatDate(mail.panelKey.updatedAt)}</span>
+      ) : (
+        <span class="badge todo">Sin clave en el panel</span>
+      )}
+    </p>
+    {!secretsEnabled ? (
+      <div class="alert info">
+        Para guardar la clave desde el panel hay que definir el secreto <code>APP_SECRET</code> en el servidor
+        (<code>npx wrangler secret put APP_SECRET</code>). Mientras tanto se puede usar el secreto <code>RESEND_API_KEY</code>.
+      </div>
+    ) : (
+      <form method="post" class="row" style="align-items:flex-end">
+        <input type="hidden" name="section" value="correo-clave" />
+        <div style="flex:1;min-width:min(240px,100%)">
+          <label for="resend_key">{mail.panelKey.stored ? "Sustituir la clave de Resend" : "Clave de Resend"}</label>
+          <input id="resend_key" name="resend_key" type="password" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="re_…" required aria-describedby="resend-help" />
+        </div>
+        <button class="btn primary" type="submit">Guardar clave</button>
+      </form>
+    )}
+    <div class="row" style="margin-top:.8rem">
+      <form method="post">
+        <input type="hidden" name="section" value="correo-prueba" />
+        <button class="btn" type="submit" disabled={!mail.provider}>Enviarme un correo de prueba</button>
+      </form>
+      {mail.panelKey.stored && (
+        <form method="post">
+          <input type="hidden" name="section" value="correo-quitar" />
+          <button class="btn ghost danger" type="submit">Quitar la clave de Resend</button>
+        </form>
+      )}
+    </div>
+    <p class="muted text-sm mb-0" id="resend-help">
+      La clave se guarda cifrada y nunca se vuelve a mostrar; solo sus últimos 4 caracteres. El correo de prueba se envía a {Astro.locals.user!.email}.
     </p>
   </section>
 

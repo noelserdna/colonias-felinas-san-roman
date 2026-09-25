@@ -131,10 +131,10 @@ aplicación funcionando en una dirección `https://….workers.dev`.
    - `name`: `colonias-felinas-tu-municipio`; `database_id`: el del paso 5.
    - Borra los bloques `routes` y `env` (son de la instalación de San Román).
    - `APP_NAME` y `MAIL_FROM` con el nombre de tu municipio y tu dirección de envío.
-   - Si vas a usar **Resend**, borra el bloque `send_email`.
 7. **Correo** — elige una opción:
    - **Resend (gratis)**: en [resend.com](https://resend.com), *Domains → Add domain*, añade en tu DNS los registros
-     que te indica y crea una clave en *API Keys*.
+     que te indica y crea una clave en *API Keys*. La clave y el remitente se ponen después en el panel
+     (*Ajustes → Correo*), con un botón para enviarte un correo de prueba.
    - **Cloudflare Email (5 $/mes)**: contrata *Workers Paid*, con el dominio en Cloudflare, y ejecuta
      `npx wrangler email sending enable tu-dominio.es`.
 8. **Claves y secretos**:
@@ -143,7 +143,6 @@ aplicación funcionando en una dirección `https://….workers.dev`.
    npx wrangler secret put VAPID_PRIVATE_KEY   # pega el "privateJwk" (en una línea)
    npx wrangler secret put APP_SECRET          # una frase aleatoria larga
    npx wrangler secret put ADMIN_EMAILS        # tu correo
-   npx wrangler secret put RESEND_API_KEY      # solo si usas Resend
    ```
 9. **Contenido y publicación**. Edita antes `seed/documents.json` (trae los documentos de San Román) y después:
    ```bash
@@ -152,13 +151,15 @@ aplicación funcionando en una dirección `https://….workers.dev`.
    npm run deploy            # te da la dirección https://….workers.dev
    ```
    Pon esa dirección en `APP_ORIGIN` (en `wrangler.jsonc`) y vuelve a ejecutar `npm run deploy`.
-10. **Entra** con tu correo y completa *Administración → Ajustes* (paso siguiente).
+10. **Entra** con tu correo. Si el correo aún no está configurado, el enlace de acceso aparece en la terminal con
+    `npx wrangler tail` al pedirlo. Después completa *Administración → Ajustes* (paso siguiente).
 
 </details>
 
 ### Después de instalar: adáptala a tu municipio (desde el panel)
 
-1. **Ajustes**: municipio, provincia, **escudo**, contacto de accesibilidad y la **clave de JEV** (se guarda cifrada).
+1. **Ajustes**: municipio, provincia, **escudo**, contacto de accesibilidad, **correo** (clave de Resend, remitente y
+   correo de prueba) y la **clave de JEV**. Las claves se guardan cifradas.
 2. **Temas**: se crean 8 temas con un texto de ejemplo. Redacta el vuestro o pega el temario que tengáis.
 3. **Preguntas**: impórtalas en CSV o JSON (*Preguntas → Importar*). Tu asistente de IA puede generarlas a partir de
    vuestro temario en el formato de [`docs/preguntas-ejemplo.json`](docs/preguntas-ejemplo.json). **Que las revise

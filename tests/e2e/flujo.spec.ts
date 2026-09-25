@@ -260,6 +260,30 @@ test("ajustes del ayuntamiento, escudo y clave de JEV", async ({ browser }) => {
     await expect(admin.locator("#jev")).toContainText("Usando la clave del servidor");
     await admin.locator("#jev").getByRole("button", { name: "Probar conexión" }).click();
     await expect(admin.locator("#jev .alert.ok")).toContainText("Conexión correcta", { timeout: 30_000 });
+
+    // Correo: remitente y clave de Resend validados; la clave se guarda cifrada y no se muestra.
+    const correo = () => admin.locator("#correo");
+    await correo().getByLabel("Remitente").fill("sin arroba");
+    await correo().getByRole("button", { name: "Guardar remitente" }).click();
+    await expect(correo().locator(".alert.bad")).toContainText("remitente no es válido");
+    await correo().getByLabel("Remitente").fill("Colonias Felinas · Villaprueba <no-reply@avisos.villaprueba.es>");
+    await correo().getByRole("button", { name: "Guardar remitente" }).click();
+    await expect(correo()).toContainText("Remitente: Colonias Felinas · Villaprueba <no-reply@avisos.villaprueba.es>");
+    await correo().getByLabel(/Clave de Resend/).fill("apikey_no_es_de_resend");
+    await correo().getByRole("button", { name: "Guardar clave" }).click();
+    await expect(correo().locator(".alert.bad")).toContainText("re_");
+    await correo().getByLabel(/Clave de Resend/).fill("re_clave_falsa_para_pruebas_4321");
+    await correo().getByRole("button", { name: "Guardar clave" }).click();
+    await expect(correo()).toContainText("termina en …4321");
+    expect(await admin.content()).not.toContain("re_clave_falsa_para_pruebas_4321");
+    // En desarrollo (MAIL_MOCK=1) el envío es simulado: no sale nada hacia Resend.
+    await correo().getByRole("button", { name: "Enviarme un correo de prueba" }).click();
+    await expect(correo().locator(".alert.ok")).toContainText("simulado");
+    await correo().getByRole("button", { name: "Quitar la clave de Resend" }).click();
+    await expect(correo()).toContainText("Sin clave en el panel");
+    await correo().getByLabel("Remitente").fill("");
+    await correo().getByRole("button", { name: "Guardar remitente" }).click();
+    await expect(correo().locator(".alert.ok")).toContainText("se usa el del servidor");
   } finally {
     await admin.goto("/admin/ajustes");
     await admin.locator("#ayuntamiento").getByLabel("Municipio").fill("San Román de los Montes");

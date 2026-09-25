@@ -150,6 +150,12 @@ Si se cambia `APP_SECRET`, la clave guardada deja de poder descifrarse y hay que
 
 ## Correo (enlace de acceso y avisos)
 
+El proveedor se elige así (`chooseProvider` en `src/lib/mail-provider.ts`): simulado con `MAIL_MOCK=1` →
+**Resend con la clave guardada en Administración → Ajustes → Correo** → Cloudflare Email Service (binding `EMAIL`) →
+Resend con el secreto `RESEND_API_KEY` → ninguno. El remitente del panel tiene prioridad sobre `MAIL_FROM`. Sin
+proveedor, o si el envío falla, el correo (con el enlace) se escribe en el log del Worker (`npx wrangler tail`).
+
+
 El correo se envía con **Cloudflare Email Service** (binding `"send_email": [{ "name": "EMAIL", "remote": true }]` en
 `wrangler.jsonc`). En la instalación de San Román el remitente es `no-reply@avisos.colonia.dev`. Para usar otro dominio:
 

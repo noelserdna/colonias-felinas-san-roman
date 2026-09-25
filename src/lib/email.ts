@@ -1,18 +1,70 @@
+import { eq } from "drizzle-orm";
 import { env } from "cloudflare:workers";
+import type { DB } from "./db";
+import * as schema from "./db/schema";
+import { chooseProvider, parseSender } from "./mail-provider";
 
 type Mail = { to: string; subject: string; text: string; html?: string };
 
 /** «Nombre <correo@dominio>» → { name, email } (formato del remitente de Cloudflare Email). */
 export function parseFrom(from: string): { email: string; name?: string } {
-  const m = from.match(/^\s*(.*?)\s*<([^>]+)>\s*$/);
-  return m ? { email: m[2].trim(), ...(m[1] ? { name: m[1].replace(/^"|"$/g, "") } : {}) } : { email: from.trim() };
+  return parseSender(from) ?? { email: from.trim() };
+}
+
+const MAIL_FROM_KEY = "mail_from";
+type CloudflareEmail = { send: (m: Record<string, unknown>) => Promise<unknown> };
+const binding = () => (env as Cloudflare.Env & { EMAIL?: CloudflareEmail }).EMAIL;
+
+/** Configuración efectiva del correo (panel + servidor), sin revelar claves. */
+export async function getMailConfig(db?: DB) {
+  const d = db ?? (await import("./db")).getDb();
+  const [{ getSecret, secretStatus }, row] = await Promise.all([
+    import("./secrets"),
+    d.query.settings.findFirst({ where: eq(schema.settings.key, MAIL_FROM_KEY) }),
+  ]);
+  const panelFrom = typeof row?.value === "string" ? row.value : null;
+  const panelResendKey = await getSecret(d, "resend_api_key");
+  const chosen = chooseProvider({
+    mock: env.MAIL_MOCK === "1",
+    panelResendKey,
+    hasCloudflareBinding: Boolean(binding()),
+    envResendKey: env.RESEND_API_KEY ?? null,
+    panelFrom,
+    envFrom: env.MAIL_FROM ?? null,
+  });
+  return {
+    ...chosen,
+    resendKey: chosen.provider === "resend-panel" ? panelResendKey : chosen.provider === "resend-servidor" ? (env.RESEND_API_KEY ?? null) : null,
+    panelFrom,
+    envFrom: env.MAIL_FROM ?? null,
+    panelKey: await secretStatus(d, "resend_api_key"),
+  };
+}
+
+export async function saveMailFrom(db: DB, from: string | null) {
+  if (!from) return void (await db.delete(schema.settings).where(eq(schema.settings.key, MAIL_FROM_KEY)));
+  if (!parseSender(from)) throw new Error("El remitente no es válido. Escríbelo como «Nombre <no-reply@tu-dominio.es>».");
+  const value = from.trim();
+  await db.insert(schema.settings).values({ key: MAIL_FROM_KEY, value }).onConflictDoUpdate({ target: schema.settings.key, set: { value } });
+}
+
+async function sendResend(key: string, from: string, mail: Mail) {
+  const res = await fetch("https://api.resend.com/emails", {
+    method: "POST",
+    headers: { Authorization: `Bearer ${key}`, "Content-Type": "application/json" },
+    body: JSON.stringify({ from, to: [mail.to], subject: mail.subject, text: mail.text, html: mail.html }),
+  });
+  if (!res.ok) {
+    const body = (await res.json().catch(() => null)) as { message?: string } | null;
+    throw new Error(`Resend respondió ${res.status}${body?.message ? `: ${body.message}` : ""}`);
+  }
 }
 
 /**
- * Envía un correo con el primer proveedor disponible:
- * 1. Cloudflare Email Service (binding `EMAIL`, dominio dado de alta en Email Sending);
- * 2. Resend (secreto `RESEND_API_KEY`);
- * 3. si no hay ninguno (o `MAIL_MOCK=1`), lo escribe en el log del Worker (`wrangler tail`).
+ * Envía un correo con el proveedor configurado (ver `chooseProvider`): Resend con la clave del panel,
+ * Cloudflare Email Service o Resend con la clave del servidor. Sin proveedor (o con `MAIL_MOCK=1`), o si el
+ * envío falla, el correo se escribe en el log del Worker (`wrangler tail`): así se puede entrar la primera vez
+ * como administración para configurar el correo desde el panel.
  * Devuelve true si el correo no se ha enviado de verdad (simulado).
  */
 async function deliver(mail: Mail): Promise<boolean> {
@@ -24,22 +76,35 @@ async function deliver(mail: Mail): Promise<boolean> {
       .values({ id: crypto.randomUUID(), to: mail.to, subject: mail.subject, text: mail.text, html: mail.html ?? null, createdAt: new Date() });
     return true;
   }
-  const e = env as Cloudflare.Env & { EMAIL?: { send: (m: Record<string, unknown>) => Promise<unknown> } };
-  if (env.MAIL_MOCK !== "1" && e.EMAIL && env.MAIL_FROM) {
-    await e.EMAIL.send({ to: mail.to, from: parseFrom(env.MAIL_FROM), subject: mail.subject, text: mail.text, ...(mail.html ? { html: mail.html } : {}) });
-    return false;
+  const cfg = await getMailConfig();
+  const log = (why: string) => console.log(`[MAIL_MOCK] ${why} · Para ${mail.to} · ${mail.subject}\n${mail.text}`);
+  if (cfg.provider === null || cfg.provider === "simulado" || !cfg.from) {
+    log(cfg.provider === "simulado" ? "Simulado" : "Sin proveedor de correo");
+    return true;
   }
-  if (env.MAIL_MOCK !== "1" && env.RESEND_API_KEY) {
-    const res = await fetch("https://api.resend.com/emails", {
-      method: "POST",
-      headers: { Authorization: `Bearer ${env.RESEND_API_KEY}`, "Content-Type": "application/json" },
-      body: JSON.stringify({ from: env.MAIL_FROM, to: [mail.to], subject: mail.subject, text: mail.text, html: mail.html }),
-    });
-    if (!res.ok) throw new Error(`Resend ${res.status}: ${await res.text()}`);
+  try {
+    if (cfg.provider === "cloudflare") {
+      await binding()!.send({ to: mail.to, from: parseFrom(cfg.from), subject: mail.subject, text: mail.text, ...(mail.html ? { html: mail.html } : {}) });
+    } else {
+      await sendResend(cfg.resendKey!, cfg.from, mail);
+    }
     return false;
+  } catch (e) {
+    log(`No enviado (${cfg.provider}: ${e instanceof Error ? e.message : e})`);
+    throw e;
   }
-  console.log(`[MAIL_MOCK] Para ${mail.to} · ${mail.subject}\n${mail.text}`);
-  return true;
+}
+
+/** Correo de prueba desde Administración → Ajustes → Correo. */
+export async function sendTestEmail(to: string, ayuntamiento: string, origin: string) {
+  const { text, html } = mailTemplate({
+    ayuntamiento,
+    titulo: "Correo de prueba",
+    parrafos: ["Si lees esto, el correo de la plataforma de cuidadores de colonias felinas funciona correctamente.", "Los enlaces de acceso y los avisos llegarán con este mismo remitente."],
+    boton: { url: origin, texto: "Abrir la plataforma" },
+    motivo: `Recibes este correo porque se ha pedido una prueba desde el panel de administración para ${to}.`,
+  });
+  return deliver({ to, subject: "Correo de prueba · Colonias Felinas", text, html });
 }
 
 const esc = (t: string) => t.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
