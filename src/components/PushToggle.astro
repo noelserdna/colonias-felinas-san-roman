@@ -109,8 +109,12 @@ const vapid = vapidConfig();
         }
         await render();
       } catch (e: any) {
-        // El detalle técnico ayuda a saber si falla el navegador (servicio de push) o el servidor.
-        state.textContent = `No se han podido activar los avisos. Inténtalo de nuevo. Detalle: ${e?.message || e?.name || "desconocido"}.`;
+        const msg = String(e?.message ?? "");
+        // «Registration failed - push service error»: el navegador no llega a su servicio de avisos
+        // (Brave con el push de Google desactivado, móviles sin servicios de Google, Play Services…).
+        state.textContent = /AbortError|push service/i.test(msg)
+          ? "Tu navegador no ha podido conectar con su servicio de avisos. Si usas Brave, activa «Usar los servicios de Google para la mensajería push» en brave://settings/privacy y reinícialo. Si tu móvil no tiene servicios de Google (por ejemplo, Huawei), prueba con Firefox. Mientras tanto, los avisos te seguirán llegando por correo."
+          : `No se han podido activar los avisos. Inténtalo de nuevo. Detalle: ${msg || e?.name || "desconocido"}.`;
       } finally {
         on.removeAttribute("aria-busy");
       }
