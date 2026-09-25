@@ -317,7 +317,7 @@ export const notices = sqliteTable(
   {
     id: text("id").primaryKey(),
     userId: text("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
-    tipo: text("tipo", { enum: ["colonia_alta", "colonia_miembro", "colonia_responsable", "colonia_baja"] }).notNull(),
+    tipo: text("tipo", { enum: ["colonia_alta", "colonia_miembro", "colonia_responsable", "colonia_baja", "colonia_censo", "carnet_caduca", "prueba"] }).notNull(),
     titulo: text("titulo").notNull(),
     texto: text("texto").notNull(),
     url: text("url"),
@@ -339,4 +339,20 @@ export const demoOutbox = sqliteTable(
     createdAt: integer("created_at", { mode: "timestamp_ms" }).notNull(),
   },
   (t) => [index("demo_outbox_to").on(t.to, t.createdAt)],
+);
+
+/** Suscripciones a notificaciones push (una por navegador o móvil en el que la persona las activa). */
+export const pushSubscriptions = sqliteTable(
+  "push_subscriptions",
+  {
+    id: text("id").primaryKey(),
+    userId: text("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+    endpoint: text("endpoint").notNull().unique(),
+    p256dh: text("p256dh").notNull(),
+    auth: text("auth").notNull(),
+    userAgent: text("user_agent"),
+    createdAt: integer("created_at", { mode: "timestamp_ms" }).notNull(),
+    lastOkAt: integer("last_ok_at", { mode: "timestamp_ms" }),
+  },
+  (t) => [index("push_subscriptions_user").on(t.userId)],
 );

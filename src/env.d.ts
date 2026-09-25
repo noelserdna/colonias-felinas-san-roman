@@ -16,6 +16,12 @@ declare namespace Cloudflare {
     DEMO_CODE?: string;
     /** Token para reiniciar la demo desde fuera (POST /api/demo/reset). */
     DEMO_RESET_TOKEN?: string;
+    /** Dirección pública de la web (enlaces de los avisos enviados desde el cron). */
+    APP_ORIGIN?: string;
+    /** Clave pública VAPID de las notificaciones push (base64url, sin comprimir). */
+    VAPID_PUBLIC_KEY?: string;
+    /** Clave privada VAPID en formato JWK (secreto). */
+    VAPID_PRIVATE_KEY?: string;
     TYPESAFE_API_KEY?: string;
     /** Clave para cifrar los secretos guardados desde el panel (mín. 16 caracteres). */
     APP_SECRET?: string;

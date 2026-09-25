@@ -1,7 +1,7 @@
 import { and, desc, eq, inArray, isNull } from "drizzle-orm";
 import type { DB } from "./db";
 import * as schema from "./db/schema";
-import { noticeFor, type NoticeKind } from "./notice-text";
+import { noticeFor, type NoticeKind, type NoticeText } from "./notice-text";
 
 export { noticeFor, type NoticeKind } from "./notice-text";
 
@@ -9,10 +9,45 @@ type Ctx = { origin: string; ayuntamiento: string };
 
 const uuid = () => crypto.randomUUID();
 
+type Destinatario = { id: string; email: string };
+
 /**
- * Avisa a una o varias personas de un cambio en una colonia: lo guarda como aviso en la aplicación
- * y envía un correo. Un fallo del correo no deshace el cambio ni el aviso (se registra en el log).
+ * Entrega avisos: los guarda en la aplicación y los envía por correo y como notificación push a los
+ * dispositivos en los que la persona las ha activado. Un fallo del correo o del push no deshace el aviso.
  */
+export async function deliverNotices(db: DB, ctx: Ctx, items: { user: Destinatario; kind: NoticeKind; n: NoticeText }[]) {
+  if (items.length === 0) return;
+  const now = new Date();
+  await db.batch(
+    items.map(({ user, kind, n }) =>
+      db.insert(schema.notices).values({ id: uuid(), userId: user.id, tipo: kind, titulo: n.titulo, texto: n.parrafos.join(" "), url: n.url, createdAt: now }),
+    ) as [any, ...any[]],
+  );
+  const [{ sendNoticeEmail }, { pushToUsers, unreadNoticeCount }] = await Promise.all([import("./email"), import("./push")]);
+  const badges = new Map(await Promise.all(items.map(async ({ user }) => [user.id, await unreadNoticeCount(db, user.id)] as const)));
+  const [mails] = await Promise.all([
+    Promise.allSettled(
+      items.map(({ user, n }) =>
+        sendNoticeEmail(user.email, {
+          ayuntamiento: ctx.ayuntamiento,
+          titulo: n.titulo,
+          parrafos: [n.saludo, ...n.parrafos],
+          boton: n.url ? { url: new URL(n.url, ctx.origin).href, texto: n.boton } : undefined,
+        }),
+      ),
+    ),
+    pushToUsers(
+      db,
+      items.map(({ user, kind, n }) => ({
+        userId: user.id,
+        message: { title: n.titulo, body: n.parrafos[0], url: n.url ?? "/", tag: kind, badge: badges.get(user.id) },
+      })),
+    ),
+  ]);
+  mails.forEach((r, i) => r.status === "rejected" && console.error(`Aviso por correo a ${items[i].user.id} no enviado:`, r.reason));
+}
+
+/** Avisa a una o varias personas de un cambio en una colonia. */
 export async function notifyColony(db: DB, ctx: Ctx, colonyId: string, userIds: string[], kind: NoticeKind, extra: { motivo?: string | null } = {}) {
   const ids = [...new Set(userIds)].filter(Boolean);
   if (ids.length === 0) return;
@@ -25,28 +60,14 @@ export async function notifyColony(db: DB, ctx: Ctx, colonyId: string, userIds: 
       .where(and(eq(schema.colonyMembers.colonyId, colonyId), isNull(schema.colonyMembers.until))),
   ]);
   if (!colony) return;
-  const now = new Date();
-  const items = users.map((u) => {
-    const rol = members.find((m) => m.userId === u.id)?.rol ?? null;
-    return { u, n: noticeFor(kind, { colonia: colony, rol, nombre: u.nombre, motivo: extra.motivo ?? null }) };
-  });
-  await db.batch(
-    items.map(({ u, n }) =>
-      db.insert(schema.notices).values({ id: uuid(), userId: u.id, tipo: kind, titulo: n.titulo, texto: n.parrafos.join(" "), url: n.url, createdAt: now }),
-    ) as [any, ...any[]],
+  await deliverNotices(
+    db,
+    ctx,
+    users.map((u) => {
+      const rol = members.find((m) => m.userId === u.id)?.rol ?? null;
+      return { user: u, kind, n: noticeFor(kind, { colonia: colony, rol, nombre: u.nombre, motivo: extra.motivo ?? null }) };
+    }),
   );
-  const { sendNoticeEmail } = await import("./email");
-  const results = await Promise.allSettled(
-    items.map(({ u, n }) =>
-      sendNoticeEmail(u.email, {
-        ayuntamiento: ctx.ayuntamiento,
-        titulo: n.titulo,
-        parrafos: [n.saludo, ...n.parrafos],
-        boton: n.url ? { url: new URL(n.url, ctx.origin).href, texto: n.boton } : undefined,
-      }),
-    ),
-  );
-  results.forEach((r, i) => r.status === "rejected" && console.error(`Aviso por correo a ${items[i].u.id} no enviado:`, r.reason));
 }
 
 export async function listUnreadNotices(db: DB, userId: string) {

@@ -1,6 +1,7 @@
 ---
 import Layout from "../layouts/Layout.astro";
 import Icon from "../components/Icon.astro";
+import PushToggle from "../components/PushToggle.astro";
 import { getDb } from "../lib/db";
 import { getActiveCarnet } from "../lib/carnet";
 const user = Astro.locals.user!;
@@ -67,6 +68,7 @@ const invalid = (empty: boolean) => (error && empty ? "true" : undefined);
       <button class="btn primary block" style="margin-top:1rem" type="submit">Guardar</button>
     </form>
   </section>
+  <PushToggle />
   <section class="card spread" aria-labelledby="sesion-h">
     <div>
       <h2 id="sesion-h" class="mt-0 mb-0">Sesión</h2>

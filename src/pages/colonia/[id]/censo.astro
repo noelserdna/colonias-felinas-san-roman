@@ -1,6 +1,7 @@
 ---
 import Layout from "../../../layouts/Layout.astro";
 import ColonyHeader from "../../../components/ColonyHeader.astro";
+import Notices from "../../../components/Notices.astro";
 import { ZodError } from "zod";
 import { loadColony } from "../../../lib/colony-page";
 import { addCensus, censusFromCats, ColonyError, listCats, listCensuses } from "../../../lib/colonies";
@@ -36,6 +37,7 @@ const fields: [string, string][] = [
 <Layout title={`Censo · ${colony!.nombre}`}>
   <ColonyHeader colony={colony!} />
   <h1>Actualizar el censo</h1>
+  <Notices here={`/colonia/${colony!.id}/censo`} />
   <p class="muted">Cuenta los gatos varios días y a distintas horas. El total aparecerá en tu carnet como gatos que atiendes.</p>
   {error && <div class="alert bad" role="alert" id="censo-error" tabindex="-1" data-focus-on-load>{error}</div>}
   {cats.length > 0 && !useCats && (

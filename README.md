@@ -58,6 +58,17 @@ El Cron (`*/5 * * * *`) reintenta la corrección de exámenes que quedaron pendi
 - **Carnet**: mantiene la pantalla encendida mientras se enseña (Screen Wake Lock).
 - **Fotos de los gatos**: botón «Hacer una foto» que abre la cámara trasera en el móvil (`capture`).
 - **Anexos en PDF**: además de descargarlos, se pueden compartir (WhatsApp, correo…) con Web Share.
+- **Notificaciones push**: se activan en el perfil (o desde la invitación del inicio). Cada aviso
+  (alta de colonia, cambio de rol, baja, censo pendiente, carnet a punto de caducar) llega a la vez en la
+  app, por correo y como notificación. Implementación sin dependencias con WebCrypto (`src/lib/webpush.ts`:
+  cifrado RFC 8291 y VAPID); solo se envía a servicios de push conocidos. En iPhone requiere iOS 16.4 y la
+  app instalada. Al cerrar sesión se cancelan en ese dispositivo.
+- **Número en el icono** (Badging API): avisos sin leer.
+- **Recordatorios** (cron diario 08:00 UTC, `src/lib/reminders.ts`): censo de más de seis meses a la persona
+  responsable (no se repite en 30 días) y carnet que caduca en 30 días (no se repite en 45).
+
+Claves VAPID: `node scripts/vapid-keys.mjs` genera el par; la pública va en `VAPID_PUBLIC_KEY`
+(`wrangler.jsonc`) y la privada, como JSON, en el secreto `VAPID_PRIVATE_KEY` (y en `.dev.vars` en local).
 
 ## Instancia de pruebas y demostración
 

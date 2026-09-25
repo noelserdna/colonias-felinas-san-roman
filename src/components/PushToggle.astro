@@ -1,0 +1,133 @@
+---
+// Activar o desactivar las notificaciones push en este dispositivo.
+// - completo (perfil): muestra el estado, prueba y desactivar;
+// - compacto (inicio): solo invita a activarlas y se puede descartar durante 30 días.
+import { vapidConfig } from "../lib/push";
+
+interface Props {
+  compact?: boolean;
+}
+const { compact = false } = Astro.props;
+const vapid = vapidConfig();
+---
+{vapid && (
+  <section class:list={["card", "push-card", { compact }]} data-push data-key={vapid.publicKey} data-compact={compact ? "1" : undefined} hidden={compact} aria-labelledby={compact ? "push-h-c" : "push-h"}>
+    <h2 id={compact ? "push-h-c" : "push-h"}>{compact ? "¿Te avisamos en el móvil?" : "Avisos en este dispositivo"}</h2>
+    <p class="mt-0 text-sm muted">
+      Recibe al momento el alta de tu colonia, cuándo toca actualizar el censo y cuándo caduca tu carnet. También te llegan por correo.
+    </p>
+    <p class="push-state" role="status" data-push-state></p>
+    <div class="row">
+      <button type="button" class="btn small primary" data-push-on hidden>Activar avisos</button>
+      <button type="button" class="btn small" data-push-test hidden>Enviar un aviso de prueba</button>
+      <button type="button" class="btn small ghost" data-push-off hidden>Desactivar en este dispositivo</button>
+      {compact && <button type="button" class="btn small ghost" data-push-later>Ahora no</button>}
+    </div>
+  </section>
+)}
+<script>
+  const KEY = "push-dismissed";
+  const b64ToBytes = (s: string) => {
+    const b = atob(s.replace(/-/g, "+").replace(/_/g, "/") + "=".repeat((4 - (s.length % 4)) % 4));
+    return Uint8Array.from(b, (c) => c.charCodeAt(0));
+  };
+  const standalone = () => matchMedia("(display-mode: standalone)").matches || (navigator as any).standalone === true;
+  const isIOS = () => /iPhone|iPad|iPod/.test(navigator.userAgent) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+  const dismissed = () => {
+    try {
+      return Date.now() - Number(localStorage.getItem(KEY) ?? 0) < 30 * 86_400_000;
+    } catch {
+      return false;
+    }
+  };
+
+  async function setup(card: HTMLElement) {
+    if (card.dataset.ready) return;
+    card.dataset.ready = "1";
+    const compact = card.dataset.compact === "1";
+    const state = card.querySelector<HTMLElement>("[data-push-state]")!;
+    const on = card.querySelector<HTMLButtonElement>("[data-push-on]")!;
+    const off = card.querySelector<HTMLButtonElement>("[data-push-off]")!;
+    const test = card.querySelector<HTMLButtonElement>("[data-push-test]")!;
+    const later = card.querySelector<HTMLButtonElement>("[data-push-later]");
+    const show = (els: HTMLElement[]) => [on, off, test].forEach((b) => (b.hidden = !els.includes(b)));
+
+    const supported = "serviceWorker" in navigator && "PushManager" in window && "Notification" in window;
+    if (!supported) {
+      // En iPhone solo funcionan con la app instalada en la pantalla de inicio (iOS 16.4 o posterior).
+      if (compact) return;
+      state.textContent = isIOS() && !standalone()
+        ? "En iPhone y iPad, instala primero la aplicación (Compartir → «Añadir a pantalla de inicio») y actívalos desde ella."
+        : "Este navegador no permite recibir avisos.";
+      return show([]);
+    }
+    const reg = await navigator.serviceWorker.ready;
+    const render = async () => {
+      const sub = await reg.pushManager.getSubscription();
+      if (Notification.permission === "denied") {
+        if (compact) return void (card.hidden = true);
+        state.textContent = "Has bloqueado los avisos de esta web. Puedes permitirlos en los ajustes del navegador o del móvil.";
+        return show([]);
+      }
+      if (sub) {
+        if (compact) return void (card.hidden = true);
+        state.textContent = "Activados: te avisaremos en este dispositivo.";
+        return show([test, off]);
+      }
+      if (compact && dismissed()) return void (card.hidden = true);
+      state.textContent = compact ? "" : "Desactivados en este dispositivo.";
+      card.hidden = false;
+      show([on]);
+    };
+
+    on.addEventListener("click", async () => {
+      on.setAttribute("aria-busy", "true");
+      try {
+        // Debe pedirse tras un toque de la persona (lo exige iOS).
+        const perm = await Notification.requestPermission();
+        if (perm !== "granted") return void (await render());
+        const sub = await reg.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: b64ToBytes(card.dataset.key!) });
+        const res = await fetch("/api/push/suscripcion", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(sub.toJSON()) });
+        if (!res.ok) {
+          await sub.unsubscribe();
+          throw new Error();
+        }
+        if (compact) {
+          card.querySelector("h2")!.textContent = "Avisos activados";
+          state.textContent = "Te avisaremos en este móvil. Puedes cambiarlo en tu perfil.";
+          return show([]);
+        }
+        await render();
+      } catch {
+        state.textContent = "No se han podido activar los avisos. Inténtalo de nuevo.";
+      } finally {
+        on.removeAttribute("aria-busy");
+      }
+    });
+    off.addEventListener("click", async () => {
+      const sub = await reg.pushManager.getSubscription();
+      if (sub) {
+        await fetch("/api/push/suscripcion", { method: "DELETE", headers: { "content-type": "application/json" }, body: JSON.stringify({ endpoint: sub.endpoint }) }).catch(() => {});
+        await sub.unsubscribe();
+      }
+      await render();
+    });
+    test.addEventListener("click", async () => {
+      test.setAttribute("aria-busy", "true");
+      const res = await fetch("/api/push/prueba", { method: "POST" }).catch(() => null);
+      test.removeAttribute("aria-busy");
+      state.textContent = res?.ok ? "Aviso de prueba enviado: debería llegarte en unos segundos." : "No se ha podido enviar el aviso de prueba.";
+    });
+    later?.addEventListener("click", () => {
+      try {
+        localStorage.setItem(KEY, String(Date.now()));
+      } catch {}
+      card.hidden = true;
+    });
+    await render();
+  }
+
+  document.addEventListener("astro:page-load", () => {
+    document.querySelectorAll<HTMLElement>("[data-push]").forEach((c) => setup(c).catch(() => {}));
+  });
+</script>

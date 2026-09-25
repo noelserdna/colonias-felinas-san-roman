@@ -1,28 +1,55 @@
 // Textos de los avisos sobre colonias (en la aplicación y por correo). Módulo puro, sin base de datos.
 
-export type NoticeKind = "colonia_alta" | "colonia_miembro" | "colonia_responsable" | "colonia_baja";
+export type NoticeKind = "colonia_alta" | "colonia_miembro" | "colonia_responsable" | "colonia_baja" | "colonia_censo" | "carnet_caduca" | "prueba";
 
 type Datos = {
-  colonia: { id: string; numero: number | string; nombre: string };
+  colonia?: { id: string; numero: number | string; nombre: string } | null;
   rol: "responsable" | "colaborador" | null;
   nombre?: string | null;
   motivo?: string | null;
+  /** Último censo (colonia_censo) o caducidad del carnet (carnet_caduca). */
+  fecha?: Date | null;
 };
+
+const fmtFecha = (d: Date) => new Intl.DateTimeFormat("es-ES", { day: "numeric", month: "long", year: "numeric", timeZone: "Europe/Madrid" }).format(d);
 
 export type NoticeText = { titulo: string; saludo: string; parrafos: string[]; url: string | null; boton: string };
 
 const ROL = { responsable: "persona cuidadora responsable", colaborador: "persona colaboradora" } as const;
 
 export function noticeFor(kind: NoticeKind, d: Datos): NoticeText {
-  const col = `«${d.colonia.nombre}» (n.º ${d.colonia.numero})`;
   const saludo = d.nombre?.trim() ? `Hola, ${d.nombre.trim()}:` : "Hola:";
+  // Avisos que no dependen de una colonia.
+  if (kind === "carnet_caduca") {
+    return {
+      titulo: "Tu carnet caduca pronto",
+      saludo,
+      parrafos: [
+        `Tu carnet de cuidador/a de colonias felinas caduca el ${d.fecha ? fmtFecha(d.fecha) : "próximamente"}.`,
+        "Para renovarlo, vuelve a hacer el examen final desde la aplicación antes de esa fecha.",
+      ],
+      url: "/carnet",
+      boton: "Ver mi carnet",
+    };
+  }
+  if (kind === "prueba") {
+    return {
+      titulo: "Avisos activados",
+      saludo,
+      parrafos: ["Así te llegarán los avisos de tu colonia y de tu carnet en este dispositivo."],
+      url: "/perfil",
+      boton: "Abrir la aplicación",
+    };
+  }
+  if (!d.colonia) throw new Error(`El aviso ${kind} necesita una colonia`);
+  const col = `«${d.colonia.nombre}» (n.º ${d.colonia.numero})`;
   const url = `/colonia/${d.colonia.id}`;
   const rol = d.rol ? ROL[d.rol] : "persona cuidadora";
   const tareas =
     d.rol === "responsable"
       ? "Como persona responsable, eres el contacto con el Ayuntamiento. Desde la aplicación puedes llevar el censo, las fichas de los gatos y las observaciones."
       : "Desde la aplicación puedes consultar la colonia y añadir fichas de los gatos y observaciones.";
-  switch (kind) {
+  switch (kind as Exclude<NoticeKind, "carnet_caduca" | "prueba">) {
     case "colonia_alta":
       return {
         titulo: "Tu colonia ya está registrada",
@@ -49,6 +76,17 @@ export function noticeFor(kind: NoticeKind, d: Datos): NoticeText {
         ],
         url,
         boton: "Ver la colonia",
+      };
+    case "colonia_censo":
+      return {
+        titulo: "Toca actualizar el censo de tu colonia",
+        saludo,
+        parrafos: [
+          `El censo de la colonia ${col} se actualiza cada seis meses${d.fecha ? ` y el último es del ${fmtFecha(d.fecha)}` : ""}.`,
+          "Cuenta los gatos y anótalo en la aplicación: así el Ayuntamiento puede planificar las esterilizaciones.",
+        ],
+        url: `${url}/censo`,
+        boton: "Actualizar el censo",
       };
     case "colonia_baja":
       return {

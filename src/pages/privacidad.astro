@@ -28,6 +28,11 @@ const b = Astro.locals.branding;
         persona que se queda a cargo si tú lo indicas. La conserva el Ayuntamiento para organizar el cuidado de la colonia.
       </li>
       <li>
+        <strong>Avisos en el móvil (notificaciones push):</strong> si los activas, guardamos la dirección de notificaciones que
+        genera tu navegador para ese dispositivo. Sirve para avisarte del alta de tu colonia, del censo pendiente o de la
+        caducidad de tu carnet. Puedes desactivarlos en tu perfil; al cerrar sesión se cancelan en ese dispositivo.
+      </li>
+      <li>
         <strong>Comunicaciones de accesibilidad:</strong> el texto de la comunicación y, si los facilitas, tu nombre y correo, para
         tramitarla y responderte.
       </li>
@@ -52,7 +57,12 @@ const b = Astro.locals.branding;
     <h2>Quién más interviene (encargados del tratamiento)</h2>
     <ul>
       <li><strong>Cloudflare:</strong> alojamiento de la aplicación y de sus datos.</li>
-      <li><strong>El proveedor de envío de correo:</strong> envío de los enlaces de acceso.</li>
+      <li><strong>El proveedor de envío de correo:</strong> envío de los enlaces de acceso y de los avisos.</li>
+      <li>
+        <strong>El servicio de notificaciones de tu navegador</strong> (Google, Apple, Mozilla o Microsoft, según el
+        dispositivo), solo si activas los avisos: entrega las notificaciones, que van cifradas de extremo a extremo y
+        no puede leer.
+      </li>
       <li>
         <strong>TypeSafe (corrección automática con JEV):</strong> recibe el texto de tus respuestas escritas del examen final y el de la
         explicación cuando dejas de colaborar en una colonia, para valorarlos. No se le envían tu nombre, tu correo ni tu carnet; solo

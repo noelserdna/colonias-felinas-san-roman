@@ -15,6 +15,7 @@ const db = getDb();
 const notices = user ? await listUnreadNotices(db, user.id) : [];
 if (user && here && notices.some((n) => n.url === here)) await markNoticesRead(db, user.id, { url: here });
 const back = Astro.url.pathname + Astro.url.search;
+const label = (url: string) => (url.endsWith("/censo") ? "Actualizar el censo" : url.startsWith("/carnet") ? "Ver mi carnet" : url.startsWith("/colonia") ? "Ver la colonia" : "Abrir");
 ---
 {notices.length > 0 && (
   <section class="notices" aria-label="Avisos">
@@ -26,7 +27,7 @@ const back = Astro.url.pathname + Astro.url.search;
           <p class="mt-0 mb-0">{n.texto}</p>
           {n.url !== here && (
             <div class="row notice-actions">
-              {n.url && <a class="btn small primary" href={n.url}>Ver la colonia</a>}
+              {n.url && <a class="btn small primary" href={n.url}>{label(n.url)}</a>}
               <form method="post" action="/api/avisos/leido">
                 <input type="hidden" name="id" value={n.id} />
                 <input type="hidden" name="next" value={back} />

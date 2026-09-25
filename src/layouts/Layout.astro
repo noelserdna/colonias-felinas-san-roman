@@ -7,6 +7,8 @@ import "../styles/global.css";
 import Icon, { type IconName } from "../components/Icon.astro";
 import { isDemo } from "../lib/demo";
 import DemoPanel from "../components/DemoPanel.astro";
+import { getDb } from "../lib/db";
+import { unreadNoticeCount } from "../lib/push";
 
 interface Props {
   title: string;
@@ -16,6 +18,8 @@ interface Props {
 }
 const { title, wide = false, readingProgress = false } = Astro.props;
 const demo = isDemo();
+// Avisos sin leer: número en el icono de la app instalada (Badging API).
+const unread = Astro.locals.user ? await unreadNoticeCount(getDb(), Astro.locals.user.id) : 0;
 const user = Astro.locals.user;
 const branding = Astro.locals.branding;
 const path = Astro.url.pathname;
@@ -68,7 +72,7 @@ const active = (n: (typeof nav)[number]) => n.match(path);
       });
     </script>
   </head>
-  <body class:list={{ "has-tabbar": nav.length > 0 }}>
+  <body class:list={{ "has-tabbar": nav.length > 0 }} data-unread={user ? unread : undefined}>
     <a class="skip" href="#main">Saltar al contenido</a>
     {demo && (
       <p class="demo-banner" role="note">
@@ -132,6 +136,12 @@ const active = (n: (typeof nav)[number]) => n.match(path);
         document.addEventListener("astro:before-swap", () => removeEventListener("scroll", update), { once: true });
       }
       document.addEventListener("astro:page-load", trackReading);
+      // Número del icono de la app = avisos sin leer (se borra al leerlos o al salir).
+      document.addEventListener("astro:page-load", () => {
+        const n = document.body.dataset.unread;
+        if (n === undefined || !("setAppBadge" in navigator)) return;
+        (Number(n) > 0 ? navigator.setAppBadge(Number(n)) : navigator.clearAppBadge()).catch(() => {});
+      });
       document.addEventListener("astro:page-load", () => {
         document.querySelectorAll("table.responsive").forEach((t) => {
           t.setAttribute("role", "table");
