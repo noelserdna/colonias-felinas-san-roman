@@ -67,5 +67,12 @@
     "descripcion": "Modelo orientativo de la autorización expresa que exige la ordenanza (apartado 7.1.4) cuando la colonia está en un terreno privado. Lo firma la persona propietaria y se presenta con el Anexo I.",
     "url": "/docs/autorizacion-propietario-terreno.pdf",
     "orden": 3
+  },
+  {
+    "titulo": "Instancia General (sede electrónica)",
+    "categoria": "formulario",
+    "descripcion": "Trámite de la sede electrónica del Ayuntamiento para presentar por internet la solicitud de registro de la colonia (Anexo I), el alta como colaborador/a (Anexo II) y la autorización de la persona propietaria. Necesitas Cl@ve, certificado digital o DNI electrónico.",
+    "url": "https://sanromandelosmontes.sedelectronica.es/catalog/t/5161fa8d-970e-4b48-a506-b2ac34ceafe5",
+    "orden": 4
   }
 ]

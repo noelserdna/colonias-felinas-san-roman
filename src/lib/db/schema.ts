@@ -310,3 +310,19 @@ export const photos = sqliteTable(
   },
   (t) => [index("photos_cat").on(t.catId), index("photos_note").on(t.noteId)],
 );
+
+/** Avisos a una persona dentro de la aplicación (alta de colonia, cambios de rol…). También se envían por correo. */
+export const notices = sqliteTable(
+  "notices",
+  {
+    id: text("id").primaryKey(),
+    userId: text("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+    tipo: text("tipo", { enum: ["colonia_alta", "colonia_miembro", "colonia_responsable", "colonia_baja"] }).notNull(),
+    titulo: text("titulo").notNull(),
+    texto: text("texto").notNull(),
+    url: text("url"),
+    createdAt: integer("created_at", { mode: "timestamp_ms" }).notNull(),
+    readAt: integer("read_at", { mode: "timestamp_ms" }),
+  },
+  (t) => [index("notices_user").on(t.userId, t.readAt)],
+);

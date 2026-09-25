@@ -13,7 +13,10 @@
     "db:migrate:remote": "wrangler d1 migrations apply colonias --remote",
     "db:seed:local": "node scripts/build-seed.mjs && wrangler d1 execute colonias --local --file=seed/seed.sql",
     "db:seed:remote": "node scripts/build-seed.mjs && wrangler d1 execute colonias --remote --file=seed/seed.sql",
-    "deploy": "astro build && wrangler deploy"
+    "deploy": "astro build && wrangler deploy",
+    "db:migrate:demo": "wrangler d1 migrations apply colonias-demo --remote --env demo",
+    "db:seed:demo": "node scripts/build-seed.mjs && wrangler d1 execute colonias-demo --remote --env demo --file=seed/seed.sql",
+    "deploy:demo": "CLOUDFLARE_ENV=demo astro build && wrangler deploy"
   },
   "dependencies": {
     "@astrojs/cloudflare": "^14.3.3",

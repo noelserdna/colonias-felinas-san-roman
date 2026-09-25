@@ -48,6 +48,21 @@ Si hay fotos antiguas guardadas en D1 (versiones anteriores), se pasan a R2 con
 
 El Cron (`*/5 * * * *`) reintenta la corrección de exámenes que quedaron pendientes si JEV no respondió.
 
+## Instancia de pruebas y demostración
+
+`demo.colonia.dev` es una copia para pruebas y presentaciones, con los mismos contenidos de San Román pero con
+su propia base de datos (`colonias-demo`) y su propio bucket de fotos (`colonias-fotos-demo`). Con `DEMO=1`
+la web muestra un aviso en todas las páginas, los carnets llevan la marca «DEMO · SIN VALIDEZ» (y el prefijo
+`DEMO-SRM`), los correos salen con «[Demo]» en el asunto y los buscadores no la indexan.
+
+```sh
+npm run db:migrate:demo   # migraciones
+npm run db:seed:demo      # temario, preguntas y documentos
+npm run deploy:demo       # compila con CLOUDFLARE_ENV=demo y despliega
+```
+
+Los secretos (`ADMIN_EMAILS`, `TYPESAFE_API_KEY`, `APP_SECRET`) se configuran aparte con `wrangler secret put … --env demo`.
+
 ## Administración (`/admin`)
 
 Los correos de `ADMIN_EMAILS` obtienen rol de administrador al entrar. Desde el panel se gestionan:

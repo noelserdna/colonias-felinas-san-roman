@@ -10,6 +10,8 @@ declare namespace Cloudflare {
     ADMIN_EMAILS: string;
     JEV_MOCK: string;
     MAIL_MOCK: string;
+    /** "1" en la instancia de pruebas y demostración. */
+    DEMO?: string;
     TYPESAFE_API_KEY?: string;
     /** Clave para cifrar los secretos guardados desde el panel (mín. 16 caracteres). */
     APP_SECRET?: string;

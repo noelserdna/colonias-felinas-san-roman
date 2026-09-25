@@ -5,6 +5,7 @@ import "@fontsource/atkinson-hyperlegible/700.css";
 import "@fontsource/atkinson-hyperlegible/400-italic.css";
 import "../styles/global.css";
 import Icon, { type IconName } from "../components/Icon.astro";
+import { isDemo } from "../lib/demo";
 
 interface Props {
   title: string;
@@ -13,6 +14,7 @@ interface Props {
   readingProgress?: boolean;
 }
 const { title, wide = false, readingProgress = false } = Astro.props;
+const demo = isDemo();
 const user = Astro.locals.user;
 const branding = Astro.locals.branding;
 const path = Astro.url.pathname;
@@ -53,11 +55,17 @@ const active = (n: (typeof nav)[number]) => n.match(path);
     <link rel="apple-touch-icon" href="/icons/icon-192.png" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-    <title>{title} · Cuidadores de Colonias Felinas</title>
+    {demo && <meta name="robots" content="noindex, nofollow" />}
+    <title>{demo ? "[Demo] " : ""}{title} · Cuidadores de Colonias Felinas</title>
     <ClientRouter />
   </head>
   <body class:list={{ "has-tabbar": nav.length > 0 }}>
     <a class="skip" href="#main">Saltar al contenido</a>
+    {demo && (
+      <p class="demo-banner" role="note">
+        <strong>Entorno de pruebas y demostración.</strong> Los datos y los carnets de esta web no tienen validez.
+      </p>
+    )}
     <header class="topbar">
       <a href="/" class="brand">
         <img src="/icons/icon.svg" alt="" width="36" height="36" />

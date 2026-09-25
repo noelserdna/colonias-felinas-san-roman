@@ -1,4 +1,5 @@
 ---
+import { isDemo } from "../lib/demo";
 // Carnet (anverso/reverso, reloj en directo y giro). Se usa en /carnet y como pantalla principal.
 import Icon from "./Icon.astro";
 import { getDb } from "../lib/db";
@@ -12,6 +13,7 @@ const colonias = carnet ? await getUserColonies(getDb(), Astro.locals.user!.id) 
 const status = carnet ? carnetStatus(carnet) : null;
 const branding = Astro.locals.branding;
 const escudo = branding.escudo;
+const demo = isDemo();
 ---
   {!carnet ? (
     <div class="card end-cta">
@@ -26,7 +28,8 @@ const escudo = branding.escudo;
     <>
       <div class:list={["carnet-flip", { invalid: status !== "vigente" }]} data-carnet-flip data-flipped="false">
         {/* ---------- Anverso ---------- */}
-        <section class="carnet face front" role="group" aria-label="Carnet de cuidador/a de colonias felinas, anverso">
+        <section class="carnet face front" role="group" aria-label={`Carnet de cuidador/a de colonias felinas${demo ? " de demostración, sin validez" : ""}, anverso`}>
+          {demo && <span class="carnet-demo" aria-hidden="true">DEMO · SIN VALIDEZ</span>}
           <div class="c-side">
             <img src={escudo.src} srcset={escudo.srcset} alt={`Escudo del ${branding.ayuntamiento}`} width="78" height="100" />
           </div>
@@ -60,6 +63,7 @@ const escudo = branding.escudo;
 
         {/* ---------- Reverso ---------- */}
         <section class="carnet face back" role="group" aria-label="Carnet de cuidador/a de colonias felinas, reverso" aria-hidden="true">
+          {demo && <span class="carnet-demo">DEMO · SIN VALIDEZ</span>}
           <div class="c-main">
             <div class="c-head">Programa de Gestión de Colonias Felinas</div>
             <p class="c-text">

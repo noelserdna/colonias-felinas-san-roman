@@ -1,0 +1,41 @@
+---
+// Avisos pendientes de leer (alta de colonia, cambios de rol…). En la página a la que lleva un aviso,
+// se muestra una última vez y queda marcado como leído.
+import Icon from "./Icon.astro";
+import { getDb } from "../lib/db";
+import { listUnreadNotices, markNoticesRead } from "../lib/notices";
+
+interface Props {
+  /** Página actual: sus avisos se muestran sin enlace y se marcan como leídos. */
+  here?: string;
+}
+const { here } = Astro.props;
+const user = Astro.locals.user;
+const db = getDb();
+const notices = user ? await listUnreadNotices(db, user.id) : [];
+if (user && here && notices.some((n) => n.url === here)) await markNoticesRead(db, user.id, { url: here });
+const back = Astro.url.pathname + Astro.url.search;
+---
+{notices.length > 0 && (
+  <section class="notices" aria-label="Avisos">
+    {notices.map((n) => (
+      <div class="card notice">
+        <span class="step-icon" aria-hidden="true"><Icon name="check" size={22} /></span>
+        <div class="grow">
+          <h2 class="notice-title">{n.titulo}</h2>
+          <p class="mt-0 mb-0">{n.texto}</p>
+          {n.url !== here && (
+            <div class="row notice-actions">
+              {n.url && <a class="btn small primary" href={n.url}>Ver la colonia</a>}
+              <form method="post" action="/api/avisos/leido">
+                <input type="hidden" name="id" value={n.id} />
+                <input type="hidden" name="next" value={back} />
+                <button class="btn small ghost" type="submit">Entendido<span class="sr-only">: {n.titulo}</span></button>
+              </form>
+            </div>
+          )}
+        </div>
+      </div>
+    ))}
+  </section>
+)}

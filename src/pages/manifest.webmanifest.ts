@@ -1,10 +1,11 @@
+import { isDemo } from "../lib/demo";
 import type { APIRoute } from "astro";
 
 export const GET: APIRoute = ({ locals }) => {
   const b = locals.branding;
   const manifest = {
-    name: `Cuidadores de Colonias Felinas · ${b.municipio}`,
-    short_name: "Colonias Felinas",
+    name: `Cuidadores de Colonias Felinas · ${b.municipio}${isDemo() ? " (demo)" : ""}`,
+    short_name: isDemo() ? "Colonias (demo)" : "Colonias Felinas",
     description: `Formación, examen y carnet de cuidador de colonias felinas del ${b.ayuntamiento}.`,
     lang: "es",
     start_url: "/",

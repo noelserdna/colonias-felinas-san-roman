@@ -2,6 +2,7 @@
 import Layout from "../../../layouts/Layout.astro";
 import Icon from "../../../components/Icon.astro";
 import ColonyHeader from "../../../components/ColonyHeader.astro";
+import Notices from "../../../components/Notices.astro";
 import { loadColony } from "../../../lib/colony-page";
 import { activeMembers, CAT_ESTADOS, censusDue, censusTotal, listCats, listCensuses, SEXOS } from "../../../lib/colonies";
 import { formatDate } from "../../../lib/util";
@@ -20,6 +21,7 @@ const nombre = (u: { nombre: string | null; apellidos: string | null; email: str
 <Layout title={colony!.nombre}>
   <ColonyHeader colony={colony!} back={false} />
   <h1>{colony!.nombre}</h1>
+  <Notices here={`/colonia/${colony!.id}`} />
   {q.has("censo") && <div class="alert ok" role="status" tabindex="-1" data-focus-on-load>Censo guardado. Tu carnet ya muestra {total} gatos.</div>}
   {q.has("gato") && <div class="alert ok" role="status" tabindex="-1" data-focus-on-load>Ficha guardada.</div>}
   <div class="meta">

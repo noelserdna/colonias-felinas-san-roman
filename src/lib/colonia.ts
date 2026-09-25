@@ -13,7 +13,7 @@ export const DEFAULT_COLONIA_GUIDE = `Para que una colonia felina entre en el Pl
 ## Consigue tu acreditación
 Cada colonia registrada tiene una **persona cuidadora responsable**, que es quien trata con el Ayuntamiento, y puede tener otras personas colaboradoras. Todas deben estar acreditadas: haber superado esta formación y tener el carné de cuidador o cuidadora.
 
-Si todavía no lo has hecho, solicita tu alta como persona colaboradora con el **Anexo II** de la ordenanza («Solicitud de alta como colaborador o colaboradora del proyecto CER»), acompañado de una fotocopia de tu DNI.
+Si todavía no lo has hecho, solicita tu alta como persona colaboradora con el **Anexo II** de la ordenanza («Solicitud de alta como colaborador o colaboradora del proyecto CER»), acompañado de una fotocopia de tu DNI. Se presenta igual que la solicitud de la colonia: por la Instancia General de la sede electrónica o en el registro del Ayuntamiento (paso 4).
 
 <p class="row"><a class="btn small" href="/colonia/solicitud?anexo=ii">Rellenar el Anexo II</a> <a class="btn small ghost" href="/docs/anexo-ii-solicitud-alta-colaborador.pdf" download>Descargar en blanco (PDF)</a></p>
 
@@ -50,7 +50,14 @@ Puedes **rellenar la solicitud aquí** y descargar el PDF listo para firmar (tus
 <p class="row"><a class="btn small primary" href="/colonia/solicitud">Rellenar el Anexo I</a> <a class="btn small ghost" href="/docs/anexo-i-solicitud-registro-colonia.pdf" download>Descargar en blanco (PDF)</a></p>
 
 ## Presenta la solicitud al Ayuntamiento
-Entrega el Anexo I cumplimentado y firmado a la **Concejalía con competencias en Bienestar Animal**, en el registro del Ayuntamiento o a través de la [sede electrónica](/documentos#otro). Si el terreno es privado, adjunta la [autorización firmada por la persona propietaria](/colonia/solicitud?anexo=aut) y una fotocopia de su DNI.
+La solicitud va dirigida a la **Concejalía con competencias en Bienestar Animal**. Puedes presentarla de dos formas:
+
+- **Por internet**, con la [Instancia General de la sede electrónica](https://sanromandelosmontes.sedelectronica.es/catalog/t/5161fa8d-970e-4b48-a506-b2ac34ceafe5). Necesitas Cl@ve, certificado digital o DNI electrónico. Pulsa «Iniciar tramitación electrónica», indica como asunto «Solicitud de registro de colonia felina (Anexo I)» y adjunta el PDF del Anexo I. Al presentarla la firmas electrónicamente.
+- **En persona**, en el registro del Ayuntamiento, con el Anexo I impreso y firmado.
+
+Si el terreno es privado, adjunta también la [autorización de la persona propietaria](/colonia/solicitud?anexo=aut), firmada por ella (a mano y escaneada, o con su certificado digital), y una fotocopia de su DNI.
+
+<p class="row"><a class="btn small primary" href="https://sanromandelosmontes.sedelectronica.es/catalog/t/5161fa8d-970e-4b48-a506-b2ac34ceafe5" target="_blank" rel="noopener">Ir a la Instancia General<span class="sr-only"> (se abre en una ventana nueva)</span></a></p>
 
 ## Visita e informe municipal
 El Ayuntamiento estudiará la solicitud, **visitará la ubicación**, hará las consultas necesarias y emitirá un **informe** que justifique si la colonia se registra o no.

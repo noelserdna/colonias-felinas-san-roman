@@ -449,9 +449,19 @@ test("alta de colonia, censo, fichas, carnet y baja validada con JEV", async ({ 
   await admin.getByRole("button", { name: "Registrar colonia" }).click();
   await expect(admin.getByText(/Colonia n\.º \d+ registrada/)).toBeVisible();
 
-  // Aparece en su carnet: solo nombre y gatos declarados.
+  // Aparece en su carnet: solo nombre y gatos declarados. Y un aviso de que la colonia está registrada.
   await page.goto("/");
   await expect(page.locator(".carnet.front .carnet-colonias")).toContainText(`${nombreColonia} · 7 gatos`);
+  const aviso = page.locator(".notice", { hasText: "Tu colonia ya está registrada" });
+  await expect(aviso).toContainText(nombreColonia);
+  await expect(aviso).toContainText("persona cuidadora responsable");
+
+  // «Ver la colonia» lleva a su gestión; el aviso se muestra por última vez y queda leído.
+  await aviso.getByRole("link", { name: "Ver la colonia" }).click();
+  await expect(page.getByRole("heading", { level: 1 })).toHaveText(nombreColonia);
+  await expect(page.locator(".notice")).toContainText("Tu colonia ya está registrada");
+  await page.goto("/");
+  await expect(page.locator(".notice")).toHaveCount(0);
 
   // «Mi colonia» pasa a ser la gestión de la colonia.
   await page.getByRole("link", { name: "Colonia", exact: true }).filter({ visible: true }).click();

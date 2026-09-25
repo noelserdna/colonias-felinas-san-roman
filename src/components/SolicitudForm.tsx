@@ -172,7 +172,7 @@ export default function SolicitudForm({ anexo, municipio, escudoSrc, nombre = ""
             ? "PDF generado. La persona propietaria debe firmarlo; preséntalo con el Anexo I y una fotocopia de su DNI."
             : incluirAut
             ? "PDF generado con dos páginas: el Anexo I, que firmas tú, y la autorización, que completa y firma la persona propietaria."
-            : "PDF generado. Imprímelo, fírmalo y preséntalo en el Ayuntamiento.",
+            : "PDF generado. Preséntalo por la Instancia General de la sede electrónica, o impreso y firmado en el registro del Ayuntamiento.",
       });
     } catch {
       setStatus({ ok: false, msg: "No se ha podido generar el PDF. Inténtalo de nuevo o descarga el formulario en blanco." });

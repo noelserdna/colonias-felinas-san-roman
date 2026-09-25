@@ -64,6 +64,13 @@
       "when": 1790257234611,
       "tag": "0008_fotos_r2",
       "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "6",
+      "when": 1790325438036,
+      "tag": "0009_avisos",
+      "breakpoints": true
     }
   ]
 }

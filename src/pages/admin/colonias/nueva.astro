@@ -4,6 +4,7 @@ import AdminNav from "../../../components/AdminNav.astro";
 import { ZodError } from "zod";
 import { getDb } from "../../../lib/db";
 import { ColonyError, createColony, listCaretakers } from "../../../lib/colonies";
+import { notifyColony } from "../../../lib/notices";
 
 const db = getDb();
 let error: string | null = null;
@@ -14,7 +15,9 @@ if (Astro.request.method === "POST") {
   form = Object.fromEntries([...f.entries()].filter(([k]) => k !== "colaboradores").map(([k, v]) => [k, String(v)]));
   colaboradores = f.getAll("colaboradores").map(String);
   try {
-    const { numero } = await createColony(db, { colony: form, responsableId: form.responsable ?? "", colaboradores, census: form });
+    const { id, numero } = await createColony(db, { colony: form, responsableId: form.responsable ?? "", colaboradores, census: form });
+    // Aviso en la aplicación y por correo a todas las personas cuidadoras de la nueva colonia.
+    await notifyColony(db, { origin: Astro.url.origin, ayuntamiento: Astro.locals.branding.ayuntamiento }, id, [form.responsable ?? "", ...colaboradores], "colonia_alta");
     return Astro.redirect(`/admin/colonias?creada=${numero}`, 303);
   } catch (e) {
     error = e instanceof ZodError ? e.issues.map((i) => i.message).join(". ") : e instanceof ColonyError ? e.message : "No se pudo registrar la colonia.";

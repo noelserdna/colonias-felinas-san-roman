@@ -2,6 +2,7 @@
 import Layout from "../layouts/Layout.astro";
 import Icon from "../components/Icon.astro";
 import CarnetView from "../components/CarnetView.astro";
+import Notices from "../components/Notices.astro";
 import { getDb } from "../lib/db";
 import { getProgress } from "../lib/exam";
 import { getActiveCarnet } from "../lib/carnet";
@@ -30,6 +31,7 @@ const steps = [
   {user && Astro.locals.hasCarnet ? (
     <section class="carnet-home">
       <h1>{user.nombre ? `Hola, ${user.nombre}` : "Mi carnet"}</h1>
+      <Notices />
       <CarnetView />
       <a class="card end-cta" href="/temario">
         <span class="step-icon"><Icon name="book" size={26} /></span>

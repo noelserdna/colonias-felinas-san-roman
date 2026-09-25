@@ -1,6 +1,7 @@
 ---
 import Layout from "../layouts/Layout.astro";
 import Icon from "../components/Icon.astro";
+import Notices from "../components/Notices.astro";
 import { getDb } from "../lib/db";
 import { getColoniaGuide, splitSteps } from "../lib/colonia";
 import { renderMarkdown } from "../lib/markdown";
@@ -16,6 +17,7 @@ const { intro, steps } = splitSteps(markdown);
 const hasCarnet = Astro.locals.hasCarnet;
 ---
 <Layout title="Mi colonia" readingProgress>
+  <Notices />
   {bajaOk && (
     <div class="alert ok" role="status" tabindex="-1" data-focus-on-load>
       Has dejado de colaborar en la colonia. El Ayuntamiento ha recibido tu explicación. Gracias por tu ayuda.

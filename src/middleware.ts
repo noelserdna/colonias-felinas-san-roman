@@ -1,3 +1,4 @@
+import { isDemo } from "./lib/demo";
 import { defineMiddleware } from "astro:middleware";
 import { getDb } from "./lib/db";
 import { getSessionUser, SESSION_COOKIE } from "./lib/auth";
@@ -27,6 +28,7 @@ export const onRequest = defineMiddleware(async (ctx, next) => {
 
   const res = await next();
   // Las páginas con datos personales no se guardan en cachés compartidas.
+  if (isDemo()) res.headers.set("x-robots-tag", "noindex, nofollow");
   if (ctx.locals.user && !res.headers.has("cache-control") && !path.startsWith("/branding/")) res.headers.set("cache-control", "private, no-store");
   return res;
 });

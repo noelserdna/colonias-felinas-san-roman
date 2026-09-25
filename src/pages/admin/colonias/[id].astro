@@ -6,6 +6,7 @@ import { ZodError } from "zod";
 import { getDb, schema } from "../../../lib/db";
 import { activeMembers, addMember, ColonyError, listCaretakers, listCats, listCensuses, removeMemberByAdmin, setResponsable, updateColony, censusTotal } from "../../../lib/colonies";
 import { formatDate } from "../../../lib/util";
+import { notifyColony } from "../../../lib/notices";
 
 const db = getDb();
 const id = Astro.params.id!;
@@ -13,14 +14,29 @@ let msg: { ok: boolean; text: string } | null = null;
 if (Astro.request.method === "POST") {
   const f = await Astro.request.formData();
   const d = Object.fromEntries([...f.entries()].map(([k, v]) => [k, String(v)]));
+  const avisar = (userIds: string[], kind: Parameters<typeof notifyColony>[4], extra = {}) =>
+    notifyColony(db, { origin: Astro.url.origin, ayuntamiento: Astro.locals.branding.ayuntamiento }, id, userIds, kind, extra);
+  const memberUser = async (memberId: string) =>
+    (await db.query.colonyMembers.findFirst({ where: eq(schema.colonyMembers.id, memberId) }))?.userId ?? "";
   try {
     if (d.action === "datos") { await updateColony(db, id, d, d.estado === "baja" ? "baja" : undefined); msg = { ok: true, text: "Datos guardados." }; }
     if (d.action === "reactivar") { await db.update(schema.colonies).set({ estado: "activa", updatedAt: new Date() }).where(eq(schema.colonies.id, id)); msg = { ok: true, text: "Colonia reactivada." }; }
-    if (d.action === "add") { await addMember(db, id, d.userId, d.rol === "responsable" ? "responsable" : "colaborador"); msg = { ok: true, text: "Persona añadida a la colonia." }; }
-    if (d.action === "responsable") { await setResponsable(db, id, d.memberId); msg = { ok: true, text: "Persona responsable actualizada." }; }
+    if (d.action === "add") {
+      await addMember(db, id, d.userId, d.rol === "responsable" ? "responsable" : "colaborador");
+      await avisar([d.userId], "colonia_miembro");
+      msg = { ok: true, text: "Persona añadida a la colonia. Le hemos avisado en la aplicación y por correo." };
+    }
+    if (d.action === "responsable") {
+      await setResponsable(db, id, d.memberId);
+      await avisar([await memberUser(d.memberId)], "colonia_responsable");
+      msg = { ok: true, text: "Persona responsable actualizada. Le hemos avisado en la aplicación y por correo." };
+    }
     if (d.action === "remove") {
+      const removed = await memberUser(d.memberId);
       const promoted = await removeMemberByAdmin(db, id, d.memberId, d.motivo || null);
-      msg = { ok: true, text: `Persona dada de baja en la colonia.${promoted ? ` ${promoted.nombre} pasa a ser la persona responsable.` : ""}` };
+      await avisar([removed], "colonia_baja", { motivo: d.motivo || null });
+      if (promoted) await avisar([promoted.id], "colonia_responsable");
+      msg = { ok: true, text: `Persona dada de baja en la colonia.${promoted ? ` ${promoted.nombre} pasa a ser la persona responsable.` : ""} Les hemos avisado por correo.` };
     }
   } catch (e) {
     msg = { ok: false, text: e instanceof ZodError ? e.issues.map((i) => i.message).join(". ") : e instanceof ColonyError ? e.message : "No se pudo guardar." };
