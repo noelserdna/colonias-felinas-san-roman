@@ -98,7 +98,7 @@ const vapid = vapidConfig();
         }
         const res = await fetch("/api/push/suscripcion", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(sub.toJSON()) });
         if (!res.ok) {
-          const detail = await res.json().catch(() => ({}));
+          const detail: { error?: string } = await res.json().catch(() => ({}));
           await sub.unsubscribe();
           throw new Error(`servidor: ${res.status}${detail?.error ? ` (${detail.error})` : ""}`);
         }
