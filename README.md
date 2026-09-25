@@ -155,3 +155,14 @@ temario o contar con los permisos correspondientes. Para desplegar una instancia
 - `public/img/temario/`: las imágenes que referencian los temas, y `public/img/hero.jpg` / `hero-640.jpg` (portada).
 
 Los temas y las preguntas también se pueden crear y editar desde el panel de administración.
+
+## Licencia
+
+El código se publica con la **[Licencia Pública de la Unión Europea (EUPL) v1.2](LICENSE)**, la licencia de software
+libre de la Comisión Europea pensada para administraciones públicas: cualquier ayuntamiento u organización puede usar,
+estudiar, modificar y redistribuir la aplicación, siempre que comparta con la misma licencia las mejoras que
+distribuya o ofrezca como servicio. La EUPL es compatible con otras licencias libres (GPL, AGPL, MPL…) y tiene
+versión oficial en español en [joinup.ec.europa.eu](https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12).
+
+La licencia cubre el código, no el contenido formativo (ver «Contenido formativo»), ni el escudo ni la identidad del
+Ayuntamiento de San Román de los Montes.
