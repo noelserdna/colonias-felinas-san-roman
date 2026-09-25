@@ -19,6 +19,10 @@ Documentación: [README.md](README.md) (visión general y costes) · [docs/TECNI
 
 ## 1. Datos que hay que pedir a la persona
 
+0. **Tamaño**: número de habitantes y de colonias (aproximado). La aplicación, tal como está, se recomienda para
+   municipios de **hasta unos 5.000 habitantes y unas 20 colonias**. Si los supera, explícale que necesitará
+   mantenimiento profesional y que puede escribir a **andres@colonia.dev**; continúa solo si, sabiéndolo, quiere
+   instalarla igualmente (por ejemplo, para probarla).
 1. Nombre del **municipio** y **provincia**.
 2. **Correo de administración** (quien gestionará el panel). Puede haber varios, separados por comas.
 3. **Plan de Cloudflare**: para el uso real hace falta **Workers Paid (5 USD/mes)**. El plan gratuito limita cada

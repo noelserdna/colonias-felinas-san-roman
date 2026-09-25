@@ -33,6 +33,11 @@ seis meses… normalmente en papel.
 Esta aplicación lo pone todo en el móvil. Se ha desarrollado para el **Ayuntamiento de San Román de los Montes
 (Toledo)** y se comparte como software libre para que **cualquier otro ayuntamiento** la pueda usar o adaptar.
 
+> [!IMPORTANT]
+> **Recomendada, tal como está, para municipios de hasta unos 5.000 habitantes y unas 20 colonias.** Para municipios
+> más grandes necesita mantenimiento profesional: escríbenos a **andres@colonia.dev** (más detalles en
+> «¿Para qué municipios es adecuada?», más abajo).
+
 ## ✨ Qué hace
 
 **Para las personas cuidadoras**
@@ -65,7 +70,7 @@ en unos minutos. El acceso es con un enlace privado: pídelo abriendo un
 
 ## 💶 Cuánto cuesta
 
-Unos **5 $ al mes** (unos 4,5 €) para casi cualquier municipio:
+Para un municipio pequeño, unos **5 $ al mes** (unos 4,5 €):
 
 | Servicio | Para qué | Coste |
 |---|---|---|
@@ -90,28 +95,34 @@ rurales que en las grandes ciudades (Barcelona tiene entre
 por cada 2.500). Según el [estudio de las Jornadas Felinas Nacionales](https://jornadasfelinasnacionales.com/wp-content/uploads/2022/09/Situacio%CC%81n-colonias-felinas-Espan%CC%83a_JFN2021.pdf),
 el 40 % de las personas cuidadoras trabaja sola y la mayoría atiende una o dos colonias.
 
-Con esas cifras, y las 1–2 personas cuidadoras por colonia de esa encuesta, esto es lo que necesitaría cada municipio:
+Con esas cifras, y las 1–2 personas cuidadoras por colonia de esa encuesta, esto es lo que supondría cada tamaño de
+municipio:
 
-| Habitantes | Colonias (estimación) | Personas cuidadoras | Correos al mes | Fotos al año | Coste | ¿Adecuada? |
-|---|---|---|---|---|---|---|
-| Menos de 5.000 | 2 – 12 | hasta 25 | menos de 30 | < 0,3 GB | 5 $/mes | ✅ Ideal |
-| 5.000 – 20.000 | 8 – 50 | 10 – 100 | hasta 100 | < 1 GB | 5 $/mes | ✅ Ideal |
-| 20.000 – 100.000 | 40 – 250 | 60 – 500 | 100 – 500 | 1 – 5 GB | 5 $/mes | ✅ Muy adecuada |
-| 100.000 – 300.000 | 120 – 750 | 200 – 1.500 | 300 – 1.500 | 3 – 15 GB | 5 – 6 $/mes | 🟡 Funciona; conviene añadir paginación y filtros al panel |
-| Más de 300.000 | cientos o miles | miles | más de 1.500 | 15 GB o más | 6 – 10 $/mes | 🟠 Técnicamente escala, pero necesitaría adaptaciones (distritos, varios equipos, mapa) |
+| Habitantes | Colonias (estimación) | Personas cuidadoras | Recomendación |
+|---|---|---|---|
+| **Hasta 5.000** | **hasta unas 20** | **hasta unas 40** | ✅ **Úsala tal como está**, con la instalación de este README |
+| Más de 5.000 o más de 20 colonias | decenas o cientos | cientos | 🛠️ **Necesita mantenimiento profesional**: contacta con **andres@colonia.dev** |
 
-- **Correos**: cada sesión dura 90 días, así que cada persona recibe pocos enlaces de acceso; lo demás son avisos
-  (alta de la colonia, censo cada seis meses, caducidad del carnet). Hasta 3.000 al mes están incluidos.
-- **Fotos**: la app las reduce en el móvil (unos 0,3 MB cada una); con unas 4 fotos por gato al año, son unos
-  20 MB por colonia y año. Los primeros 10 GB son gratis.
-- **Peticiones**: incluso el municipio más grande queda muy lejos de los 10 millones al mes incluidos.
+**Por qué este límite.** Técnicamente la plataforma aguanta mucho más (Cloudflare escala sin problema y el coste
+apenas sube). Lo que cambia con el tamaño es todo lo demás:
 
-**En resumen**: es ideal para municipios de **hasta unos 100.000 habitantes**, que son el **99 % de los 8.132
-municipios de España** (solo 68 superan esa cifra, [INE 2025](https://www.ine.es/dyngs/Prensa/CensoVariables2025.htm)),
-por unos 5 $ al mes. Por encima funciona, pero el panel de administración está pensado para decenas o cientos de
-colonias, no para miles.
+- **El panel de administración** está pensado para pocas colonias: los listados de personas, colonias y carnés no
+  tienen paginación ni filtros, y con cientos de filas se vuelven incómodos.
+- **La operación diaria**: más personas en formación a la vez, más correos (y más riesgo de que acaben en spam), más
+  fotos, bajas y relevos que revisar, y más consultas de las personas cuidadoras.
+- **Las actualizaciones**: la aplicación depende de servicios y librerías que cambian (Cloudflare, Astro, JEV…).
+  Un municipio pequeño puede convivir con alguna incidencia puntual; uno grande necesita a alguien que la mantenga,
+  la actualice y responda si algo falla.
+- **La adaptación**: los municipios grandes suelen necesitar distritos, varios equipos en el ayuntamiento, mapas o
+  conexión con otros sistemas municipales.
+
+Si tu municipio supera ese tamaño y te interesa la aplicación, escribe a **andres@colonia.dev**: te ayudamos a
+valorar qué adaptaciones necesitaría y cómo mantenerla.
 
 ## 🚀 Instálala para tu municipio
+
+> Antes de empezar: esta instalación está pensada para municipios de **hasta unos 5.000 habitantes y 20 colonias**.
+> Si el tuyo es más grande, escribe a **andres@colonia.dev**.
 
 ### Opción recomendada: con ayuda de una IA
 
