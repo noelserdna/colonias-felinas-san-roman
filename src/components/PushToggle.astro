@@ -86,11 +86,21 @@ const vapid = vapidConfig();
         // Debe pedirse tras un toque de la persona (lo exige iOS).
         const perm = await Notification.requestPermission();
         if (perm !== "granted") return void (await render());
-        const sub = await reg.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: b64ToBytes(card.dataset.key!) });
+        let sub: PushSubscription;
+        try {
+          sub = await reg.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: b64ToBytes(card.dataset.key!) });
+        } catch (e: any) {
+          // Una suscripción anterior con otra clave impide crear la nueva: se cancela y se reintenta.
+          const old = await reg.pushManager.getSubscription();
+          if (!old) throw new Error(`navegador: ${e?.name ?? "Error"}${e?.message ? ` (${e.message})` : ""}`);
+          await old.unsubscribe();
+          sub = await reg.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: b64ToBytes(card.dataset.key!) });
+        }
         const res = await fetch("/api/push/suscripcion", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(sub.toJSON()) });
         if (!res.ok) {
+          const detail = await res.json().catch(() => ({}));
           await sub.unsubscribe();
-          throw new Error();
+          throw new Error(`servidor: ${res.status}${detail?.error ? ` (${detail.error})` : ""}`);
         }
         if (compact) {
           card.querySelector("h2")!.textContent = "Avisos activados";
@@ -98,8 +108,9 @@ const vapid = vapidConfig();
           return show([]);
         }
         await render();
-      } catch {
-        state.textContent = "No se han podido activar los avisos. Inténtalo de nuevo.";
+      } catch (e: any) {
+        // El detalle técnico ayuda a saber si falla el navegador (servicio de push) o el servidor.
+        state.textContent = `No se han podido activar los avisos. Inténtalo de nuevo. Detalle: ${e?.message || e?.name || "desconocido"}.`;
       } finally {
         on.removeAttribute("aria-busy");
       }
