@@ -19,9 +19,9 @@ desinfectante tiene que ser eficaz contra ambos, y muchas ordenanzas y programas
 
 | Producto | ¿Sirve en la colonia? |
 |---|---|
-| Lejía doméstica 1:32 (≈ un vaso de 150 ml en 5 l de agua), 10 min | Sí: es la opción de referencia. |
+| Lejía doméstica 1:32 (≈ un vaso de 150 ml en 5 l de agua), 10 min | Sí: es la opción de referencia. Usa lejía normal, no geles ni limpiadores «con lejía». |
 | Peroximonosulfato potásico (desinfectante veterinario) | Sí, como alternativa; sigue la etiqueta. |
-| Alcohol, gel hidroalcohólico, amonios cuaternarios | No contra la panleucopenia. |
+| Alcohol, gel hidroalcohólico, amonios cuaternarios | No contra la panleucopenia (y los amonios cuaternarios son tóxicos para los gatos). |
 | Fenoles, desinfectantes «de pino», aceites esenciales | No: son **tóxicos para los gatos**. |
 
 > **Importante:** nunca mezcles lejía con amoníaco, vinagre ni otros limpiadores: desprende gases peligrosos.
@@ -70,11 +70,11 @@ consulta a tu médico.
 
 > **Qué hacer si te muerde o te araña un gato**
 >
-> 1. Lava la herida con agua corriente y jabón al menos 5 minutos; pon un antiséptico y cúbrela.
+> 1. Lava la herida con agua corriente y jabón al menos 5 minutos (mejor 10-15); pon un antiséptico y cúbrela.
 > 2. Si es una **mordedura** o un arañazo profundo, ve al centro de salud **ese mismo día** (muchas se infectan en
 >    horas por la bacteria *Pasteurella*). Di que fue un gato de colonia y revisa tu vacuna del tétanos.
-> 3. Comunica la mordedura según te indiquen tu ayuntamiento o los servicios sanitarios (muchas ordenanzas piden
->    hacerlo con el parte médico) y di qué gato fue: las autoridades deciden si hay que capturarlo y observarlo.
+> 3. Comunica la mordedura al ayuntamiento (muchas ordenanzas piden hacerlo con el parte médico) y di qué gato fue:
+>    las autoridades deciden si hay que capturarlo y observarlo (14 días, donde indique el ayuntamiento).
 > 4. Si en los días siguientes aparece hinchazón, pus, fiebre o un ganglio inflamado, vuelve al médico.
 
 ## Zoonosis: cuáles hay y qué riesgo suponen
@@ -86,7 +86,7 @@ consulta a tu médico.
 | Tiña | Contacto con gatos con calvas o con sus pelos | Guantes; ropa a 60 °C; médico si sale una mancha redonda |
 | Toxoplasmosis | Heces de más de un día en tierra o verduras | Recoger heces a diario con guantes; lavar verduras |
 | *Toxocara* (lombriz) | Tierra o areneros con huevos; sobre todo niños | Desparasitar, recoger heces, lavarse las manos |
-| Esporotricosis (hongo) | Arañazo de un gato con llagas que no curan | Guantes; avisar al veterinario |
+| Esporotricosis (hongo; rara en Europa) | Arañazo de un gato con llagas que no curan | Guantes; avisar al veterinario |
 | Rabia | Mordedura de un animal infectado | Vacuna del gato; no tocar a un gato con conducta extraña |
 
 **Toxoplasmosis.** Preocupa mucho y da poco motivo. Un gato elimina el parásito solo **1-3 semanas en toda su vida**,
@@ -95,8 +95,8 @@ el riesgo. La mayoría de las personas se contagia por **carne poco hecha o verd
 
 <div class="gallery"><figure><img src="/img/curso/higiene-y-zoonosis/ciclo-toxoplasmosis.jpg" alt="Esquema del ciclo de la toxoplasmosis: el gato elimina ooquistes en las heces, que infectan a roedores, ovejas y cerdos; las personas se contagian por los ooquistes del ambiente o por los quistes de la carne, y una embarazada puede transmitirlo al feto" loading="lazy" width="700" height="918"><figcaption>Dos vías de contagio: heces del gato en el ambiente y carne con quistes. La segunda es la más frecuente. <small>CDC / Alexander J. da Silva y Melanie Moser (PHIL 3421); versión en español en Commons · Dominio público · vía Wikimedia Commons</small></figcaption></figure><figure><img src="/img/curso/higiene-y-zoonosis/tina-lesion-brazo.jpg" alt="Mancha redonda, rojiza y descamada, con el borde más marcado, en la piel de un brazo" loading="lazy" width="700" height="496"><figcaption>Tiña en la piel de una persona: mancha redonda de borde rojo. Tiene tratamiento; consulta al médico. <small>CDC / Dr. Lucille K. Georg (PHIL 2938) · Dominio público · vía Wikimedia Commons</small></figcaption></figure></div>
 
-**Rabia.** La España peninsular está libre desde 1978, y en algunas comunidades autónomas la vacuna de los gatos es
-obligatoria (allí se pone también en el CER). Aun así, un gato con agresividad repentina, babeo o parálisis no se toca: avisa.
+**Rabia.** La España peninsular y las islas están libres de rabia en animales terrestres desde 1978 (algunos murciélagos portan virus parecidos: no toques uno caído), y en algunas comunidades autónomas la vacuna de los gatos es
+obligatoria (tu programa te dirá si se pone en el CER). Aun así, un gato con agresividad repentina, babeo o parálisis no se toca: avisa.
 
 ## Restos y cadáveres
 
@@ -104,7 +104,8 @@ Si encuentras un **gato muerto**, no lo cojas con las manos: usa guantes y una b
 contenedor ni lo entierres: avisa al ayuntamiento, que comprueba el microchip y se ocupa de la recogida (tema 11). En
 las ciudades suele encargarse un servicio municipal de recogida de animales muertos, al que se llega por el teléfono
 de atención ciudadana o de limpieza; en la calzada, no te pongas en peligro por el tráfico. Después desinfecta la zona
-y los comederos. Si aparecen **varios gatos enfermos o muertos a la vez**, o aves muertas cerca, no toques nada y avisa enseguida: puede ser un brote, gripe aviar o un envenenamiento.
+y los comederos. Si aparecen **varios gatos enfermos o muertos a la vez**, o aves muertas cerca, no toques nada y avisa enseguida al ayuntamiento, que lo traslada a quien corresponda: puede
+ser un brote, gripe aviar o un envenenamiento. Las enfermedades de declaración obligatoria las comunica el veterinario.
 
 ## Para saber más
 

@@ -107,20 +107,22 @@ La técnica es la misma, pero hay más colonias, más gente y más imprevistos.
 - **Horario y seguridad.** Elige horas tranquilas, cuando comen; ve **acompañada** de noche o en zonas aisladas, con
   el teléfono cargado y la acreditación a mano.
 - **Personas que interfieren.** Hay quien abre las jaulas, da de comer justo antes de capturar o increpa. No
-  discutas: explica con calma y enseña tu acreditación; si hay amenazas o dañan el material, apártate y avisa a la
-  policía local. Quien deja gatos en una colonia los está abandonando: comunícalo.
+  discutas: explica con calma y enseña tu acreditación; si hay amenazas o dañan el material, apártate y llama al
+  112 (o a la policía local, donde la haya). Quien deja gatos en una colonia los está abandonando: comunícalo.
 - **Avisar antes.** Una nota en el portal o una palabra con el conserje o el administrador de la finca evitan
   sustos; en capturas grandes o en sitios concurridos, el ayuntamiento puede avisar a la policía local.
 
 ## En la clínica
 
 1. El veterinario **lee el microchip**. Si el gato tiene uno a nombre de un particular, no es de la colonia: se para el
-   CER y se trata como perdido o abandonado.
+   CER y se trata como perdido o abandonado: se avisa a su dueño y, mientras, queda donde indique el ayuntamiento (en las
+   ciudades, el centro de protección animal).
 2. **Explora** al gato y lo **opera** con anestesia general (ovarios, o ovarios y útero, en hembras; testículos en
    machos), con la técnica menos invasiva posible.
 3. **Vacuna y desparasita**: lo habitual es la trivalente (panleucopenia, herpesvirus y calicivirus) y, en las
    comunidades autónomas donde es obligatoria, la antirrábica; otras, según criterio veterinario.
-4. **Marca la oreja**, pone el **microchip** a nombre del ayuntamiento y rellena la **ficha**.
+4. **Marca la oreja**, pone el **microchip** a nombre del ayuntamiento (obligatorio en **cada** esterilización, Ley
+   7/2023, art. 38.2) y rellena la **ficha**.
 
 El riesgo es **muy bajo**: del orden de **1 gato por cada 1.000 o menos** en programas bien organizados. Se puede
 esterilizar desde las **8 semanas y alrededor de 1 kg**, si el veterinario lo ve adecuado.
@@ -141,8 +143,9 @@ comunitario de otra colonia.
 ## Recuperación y retorno
 
 El gato se recupera **en su jaula tapada**, en un lugar templado: la anestesia le impide regular bien la temperatura.
-**Cuándo vuelve lo decide el veterinario**; lo habitual es entre 24 y 48 horas (machos antes, hembras después). Muchos
-programas fijan además un máximo (por ejemplo, 72 horas) según el sexo, la salud, las complicaciones y el tiempo.
+**Cuándo vuelve lo decide el veterinario**, y cuanto antes mejor: lo ideal es en unas 24 horas, algo más si tarda en
+recuperarse (las hembras suelen necesitar más que los machos) o hace mucho frío. Muchos programas fijan además un
+máximo (por ejemplo, 72 horas) según el sexo, la salud, las complicaciones y el tiempo.
 
 > **Paso a paso: devolver al gato a la colonia**
 >
@@ -161,7 +164,7 @@ sangrado, vómitos, apatía o que no come, y anota la esterilización en su fich
 |---|---|
 | Gata gestante | Normalmente se esteriliza igual; lo decide el veterinario. |
 | Gata lactante | Mejor no capturarla. Si cae, se opera con prioridad y vuelve cuanto antes con sus crías; **nunca** se confina a una madre no socializada. |
-| Gatitos | Con edad de socializar, a adopción (idealmente hacia las 6-8 semanas); mayores de 4 meses sin contacto humano, a CER. |
+| Gatitos | Con edad de socializar, a adopción: se retiran idealmente hacia las 6-8 semanas y se entregan desde las 8. Mayores de 4 meses sin contacto humano, a CER. |
 | Gato ya marcado | Si está bien, se suelta enseguida; si parece enfermo, consulta con la clínica. |
 | Gato herido o enfermo | Avisa al ayuntamiento y no intentes cogerlo; el veterinario decide tratamiento, retorno o, si sufre sin remedio, eutanasia. |
 | Gato sociable | Se valora la adopción; en la duda, se trata como no socializado. |

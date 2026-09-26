@@ -24,7 +24,7 @@ El microchip es un pequeño **transpondedor** (una cápsula sin batería que res
 
 Tener el chip puesto no basta: el veterinario debe **darlo de alta en el registro** de identificación de tu comunidad autónoma (en Castilla-La Mancha, por ejemplo, **SIIA-CLM**); un chip sin alta no identifica a nadie. La edad máxima para identificar a un gato la fija la ley de cada comunidad (en Castilla-La Mancha, 3 meses). Todos los registros están conectados en la red nacional **REIAC**, que localiza un chip de cualquier parte de España.
 
-Los gatos comunitarios deben llevar microchip y registrarse **a nombre del ayuntamiento** y asociados a su colonia (Ley 7/2023, art. 38.2); tú nunca figuras como titular. Si uno se adopta, avisa al ayuntamiento para que el chip pase a nombre de la persona adoptante.
+Los gatos comunitarios deben llevar microchip y registrarse **a nombre del ayuntamiento** y asociados a su colonia (Ley 7/2023, art. 38.2): se implanta **en cada esterilización**, sin excepciones, aunque la ordenanza lo presente como recomendación. Tú nunca figuras como titular. Si uno se adopta, avisa al ayuntamiento para que el chip pase a nombre de la persona adoptante.
 
 ## La marca en la oreja
 
@@ -34,11 +34,11 @@ Durante la esterilización, con el gato anestesiado, el veterinario corta en rec
 
 <div class="gallery"><figure><img src="/img/curso/diagramas/marcaje-oreja.svg" alt="Dos cabezas de gato dibujadas: una con la punta de la oreja izquierda cortada en recto, rotulada macho, y otra con la punta de la derecha cortada, rotulada hembra" loading="lazy" width="800" height="834"><figcaption>Ejemplo: izquierda machos, derecha hembras, regla habitual en muchos municipios españoles. <small>Esquema: elaboración propia · CC BY-SA 4.0</small></figcaption></figure><figure><img src="/img/curso/identificacion-y-censo/gata-oreja-izquierda-marcada.jpg" alt="Primer plano de una gata tricolor, blanca, gris y canela, con la punta de su oreja izquierda cortada en recto" loading="lazy" width="602" height="651"><figcaption>Gata de Nueva York con la oreja izquierda marcada: allí se marca esa oreja a todos. <small>Foto: Nprocaccini · CC BY-SA 4.0 · vía Wikimedia Commons</small></figcaption></figure></div>
 
-> **Importante:** la oreja marcada no sustituye al microchip. Un gato marcado sin chip se identificará la próxima vez que haya que capturarlo por otro motivo.
+> **Importante:** la oreja marcada no sustituye al microchip. A un gato marcado sin chip no se le suele capturar solo para ponérselo: se le pondrá la próxima vez que haya que capturarlo por otro motivo.
 
 ## El pasaporte
 
-El **pasaporte europeo** es la cartilla oficial del animal y sirve sobre todo para **viajar** a otro país. Desde abril de 2026 hay un modelo nuevo (Reglamento de Ejecución (UE) 2026/705); los anteriores siguen valiendo. Los gatos de colonia normalmente no lo necesitan.
+El **pasaporte europeo** es la cartilla oficial del animal y sirve sobre todo para **viajar** a otro país. Desde abril de 2026 hay un modelo nuevo (Reglamento de Ejecución (UE) 2026/705); los anteriores siguen valiendo. Para un gato de colonia su utilidad es otra: algunas comunidades autónomas lo vinculan a la identificación, y en ellas el gato comunitario recibe también pasaporte **a nombre del ayuntamiento**, igual que el microchip, donde el veterinario anota las vacunas (por ejemplo, la antirrábica). Tu programa te dirá si es tu caso.
 
 <figure><img src="/img/curso/identificacion-y-censo/pasaporte-europeo.jpg" alt="Mano que sostiene un pasaporte azul para animales de compañía con las estrellas de la Unión Europea; al fondo, desenfocado, un perro sentado junto a una maleta" loading="lazy" width="812" height="1200"><figcaption>Pasaporte europeo para animales de compañía. <small>Foto: Comisión Europea – Servicio Audiovisual; foto: Jennifer Jacquemart · CC BY 4.0 · vía Wikimedia Commons</small></figcaption></figure>
 
@@ -49,14 +49,14 @@ La ficha individual se lleva en la aplicación, con **Añadir ficha de un gato**
 - nombre o apodo, sexo y edad aproximada;
 - **descripción** para reconocerlo: color y dibujo del pelo, cola, manchas, cicatrices;
 - si está esterilizado, si tiene la oreja marcada y el número de chip, si lo sabes;
-- su **situación**: en la colonia, adoptado, fallecido, desaparecido o trasladado;
+- su **situación**: en la colonia, adoptado, devuelto a su dueño, fallecido, desaparecido o trasladado;
 - una **foto**, las **observaciones** que vayas haciendo y las **intervenciones** veterinarias (fecha, motivo, clínica y notas).
 
 Si un gato deja la colonia, no borres su ficha: cambia su situación.
 
 ## El censo periódico
 
-Cada programa fija cada cuánto se actualiza el censo; lo habitual es **cada tres o seis meses**. La aplicación te avisa cuando toca y, en tu colonia, se marca «Toca actualizarlo».
+Cada programa fija cada cuánto se actualiza el censo; lo habitual es **cada tres o seis meses**. La aplicación te avisa cuando toca y, en tu colonia, se marca «Toca actualizarlo». Si tu ayuntamiento usa esta aplicación, su censo es el **registro oficial**: no hay que repetirlo en papel y, si el ayuntamiento lo pide, la aplicación genera un **PDF del censo** con esos datos.
 
 > **Paso a paso: hacer el censo**
 >
@@ -64,7 +64,7 @@ Cada programa fija cada cuánto se actualiza el censo; lo habitual es **cada tre
 > 2. Revisa las fichas: da de alta a los gatos nuevos y cambia la situación de los que ya no están.
 > 3. En **Actualizar el censo**, usa «Rellenar a partir de las fichas» y corrige lo que no cuadre.
 > 4. Indica cuántos son adoptables y cuántos están enfermos.
-> 5. En observaciones, anota camadas, síntomas o peligros de la zona.
+> 5. Si tu programa lo pide, rellena los **movimientos** desde el censo anterior (nacidos, llegados, fallecidos, adoptados…). En observaciones, anota camadas, síntomas o peligros de la zona.
 
 No esperes al censo para avisar si aparecen **gatitos** o **varios gatos nuevos**: el ayuntamiento necesita saberlo cuanto antes.
 
@@ -75,7 +75,7 @@ En barrios con muchos gatos, contar bien cuesta más:
 - **Colonias grandes.** Con veinte o treinta gatos es fácil contar alguno dos veces. Cuenta con las **fichas y sus fotos** delante, fijándote en señas que no cambian (manchas, cola, cicatrices, oreja).
 - **Gatos que van y vienen.** Entre colonias próximas, algunos comen en dos puntos: que cada uno conste en **una sola** ficha, anotando dónde más se le ve.
 - **Varias personas cuidadoras.** Repartid días y tareas, pero que el censo lo cierre **una sola persona** con los datos de todos; contad a la misma hora y con el mismo recorrido para poder comparar.
-- **Gatos con dueño que salen.** En barrios de casas con patio o jardín, muchos «merodeadores» (gatos con casa que pasean por la calle) se acercan a la comida: suelen estar limpios, llevar collar o ser muy confiados, y no vienen a diario. No los cuentes como de la colonia; anótalos aparte y avisa si crían o se quedan.
+- **Gatos con dueño que salen.** En barrios de casas con patio o jardín, muchos «merodeadores» (gatos con casa que pasean por la calle) se acercan a la comida: suelen estar limpios, llevar collar o ser muy confiados, y no vienen a diario. No los cuentes como de la colonia; anótalos en las observaciones del censo y avisa si crían o se quedan.
 
 ## Aparece un gato nuevo
 

@@ -25,11 +25,11 @@ moscas y ratas. Por eso la directriz técnica estatal y muchas ordenanzas la res
 para el CER (funciona mejor como cebo si no la comen a diario), **dar medicación** o alimentar a gatos **enfermos** o
 **gatitos** cuando lo indique el veterinario. Si la pones, retira el plato en cuanto terminen.
 
-<figure><img src="/img/curso/diagramas/si-no-alimentacion.svg" alt="Esquema en dos columnas. A la izquierda, lo que sí: pienso seco para gatos y agua limpia. A la derecha, tachado, lo que no: leche, restos de comida, carne cruda y comida de perro" loading="lazy" width="800" height="866"><figcaption>Lo que sí y lo que no en el punto de comida. <small>Esquema: elaboración propia · CC BY-SA 4.0</small></figcaption></figure>
+<figure><img src="/img/curso/diagramas/si-no-alimentacion.svg" alt="Esquema en dos columnas. Lo que sí: pienso seco completo, agua limpia cambiada cada día, horario fijo, recoger lo que sobre a los 30 minutos y comederos limpios. Lo que no, tachado: leche, restos de comida, carne o pescado crudos, comida de perro y comida en el suelo. Nota: comida húmeda solo para medicar, capturar o si lo indica el veterinario" loading="lazy" width="800" height="866"><figcaption>Lo que sí y lo que no en el punto de comida. <small>Esquema: elaboración propia · CC BY-SA 4.0</small></figcaption></figure>
 
 ## Agua limpia, siempre
 
-Un gato de 4-5 kg necesita unos 200-250 ml de agua al día. Como el pienso seco apenas lleva agua, casi todo eso lo
+Un gato de 4-5 kg necesita unos 200-300 ml de agua al día. Como el pienso seco apenas lleva agua, casi todo eso lo
 tiene que beber. Por eso los programas piden **agua limpia y fresca de forma continuada**.
 
 - Cámbiala **cada día** en recipientes lisos y fáciles de lavar; el agua estancada cría mosquitos.
@@ -44,8 +44,9 @@ toque.
 
 **Ración ajustada.** Pon lo que la colonia se come en un rato, **unos 30 minutos**, y después **retira platos y
 sobras**. Si sobra mucho, reduce; si desaparece al momento y siguen buscando, aumenta
-un poco. Como orientación, un gato adulto come unos 50-70 g de pienso seco al día (mira la etiqueta). Dejar montañas
-de comida atrae a otros animales, a gatos de fuera y quejas.
+un poco. Como orientación, un gato adulto de unos 4 kg come unos 40-70 g de pienso seco al día, según el pienso y lo activo que sea (mira la etiqueta). Dejar montañas
+de comida atrae a otros animales, a gatos de fuera y quejas. Es lo que recomiendan la Directriz estatal y las guías
+de referencia, aunque alguna ordenanza hable de comida «a libre disposición»: en la duda, pregunta a tu programa.
 
 Excepción: si tu programa instala en la colonia una **tolva o caseta** cerrada con pienso continuo, sigue sus
 indicaciones.
@@ -62,13 +63,15 @@ comida.
 |---|---|
 | Leche de vaca | Los gatos adultos la digieren mal: diarreas. |
 | Restos de comida, huesos, sobras | Dieta desequilibrada; los huesos cocidos se astillan; ensucian y atraen ratas. |
-| Carne o vísceras crudas, leche cruda | Parásitos, bacterias y gripe aviar (H5N1), que ha matado gatos en Europa. Muchas ordenanzas sancionan dar despojos sin control sanitario. |
+| Carne o vísceras crudas, leche cruda | Parásitos, bacterias y gripe aviar (H5N1), que ha matado gatos en Europa. La Ley 7/2023 prohíbe dar despojos sin control sanitario (infracción grave). |
 | Pienso de perro | No lleva la taurina ni la proteína que el gato necesita. |
+| Cebolla y ajo (también en guisos y sobras) | Dañan los glóbulos rojos y causan anemia. |
 
 ## El punto de comida
 
-Lo habitual es que cada colonia tenga un **punto de alimentación conocido por el ayuntamiento** (en la app queda
-registrada su ubicación) y que esté prohibido **añadir puntos o cambiarlos de sitio sin autorización**.
+Lo habitual es que cada colonia tenga un **punto de alimentación conocido por el ayuntamiento** y que esté prohibido
+**añadir puntos o cambiarlos de sitio sin autorización**. Algunas ordenanzas piden un croquis del punto; lo que se
+busca es identificar el lugar, y eso ya lo hacen la dirección y las coordenadas de la colonia en la app.
 
 **Dónde.** Lo más discreto posible: lejos de paso de personas, portales, parques infantiles, ventanas y tráfico, y
 de donde los gatos hacen sus necesidades.
@@ -121,7 +124,8 @@ Tu objetivo no es denunciar, sino **sumar a esa persona**:
 > 1. Preséntate con tu carnet y explica con calma por qué se hace así: horario fijo, sin sobras, menos quejas.
 > 2. Invítale a acreditarse o a colaborar contigo en el mismo punto y horario (con turnos, si sois varios).
 > 3. Retira la comida inadecuada que haya dejado (sobras, comida en el suelo).
-> 4. Si no hay acuerdo o hay tensión, no discutas: comunícalo al ayuntamiento, que se encarga de mediar.
+> 4. Si no hay acuerdo o hay tensión, no discutas: comunícalo al ayuntamiento, que se encarga de mediar. Las quejas
+>    formales se presentan por escrito, con una instancia general en el registro municipal o la sede electrónica.
 
 ## Refugios: solo si hacen falta, discretos y autorizados
 
@@ -131,7 +135,7 @@ todo en invierno, se puede poner uno:
 
 - **con autorización municipal** en espacio público, o del propietario en terreno privado;
 - sencillo, lavable, elevado del suelo y que pase desapercibido;
-- relleno de **paja**, nunca mantas, toallas ni periódicos, que retienen humedad y frío y acumulan pulgas;
+- relleno de **paja** (no heno), que se cambia si se moja o se apelmaza; nunca mantas, toallas ni periódicos, que retienen humedad y frío y acumulan pulgas;
 - en verano, a la sombra y ventilado.
 
 Nunca animes a los gatos a meterse en bajos de edificios o alcantarillas: pueden quedar encerrados cuando alguien
@@ -146,6 +150,6 @@ cierra el hueco.
   Dirección General de Derechos de los Animales, 2024.
   [Ver en línea](https://www.dsca.gob.es/sites/default/files/publicaciones/directriz-tecnica-colonias-felinas.pdf)
 - *Guía de recomendaciones actuales para el manejo ético de las colonias urbanas felinas*. GEMFE-AVEPA, 2020.
-  [Ver en línea](https://gemfe.es/wp-content/uploads/2024/09/2020GUIA-DE-RECOMENDACIONES-colonias.pdf)
+  [Ver en línea](https://web.archive.org/web/20241205005204/https://gemfe.es/wp-content/uploads/2024/09/2020GUIA-DE-RECOMENDACIONES-colonias.pdf)
 - *Influenza virus infections in cats* (gripe aviar). ABCD, European Advisory Board on Cat Diseases.
   [Ver en línea](https://www.abcdcatsvets.org/guideline-for-influenza-virus-infections-in-cats/)

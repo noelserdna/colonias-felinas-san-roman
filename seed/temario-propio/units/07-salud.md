@@ -21,7 +21,7 @@ puede pasar a los demás. Lo que más protege a la colonia no es un medicamento,
 - **Vacunas y desparasitación** aprovechando la captura del CER.
 
 En la **ciudad** hay factores añadidos: más gatos y colonias muy próximas, entre las que los gatos se mueven y se
-contagian; más gatos domésticos abandonados, casi nunca vacunados, que llegan a la colonia; y más atropellos. Vigila a
+contagian; más gatos domésticos abandonados, a menudo sin vacunar, que llegan a la colonia; y más atropellos. Vigila a
 los recién llegados y coordínate con quien cuida las colonias vecinas.
 
 La higiene, los desinfectantes y las enfermedades que pasan a las personas (zoonosis) están en el tema 8.
@@ -37,7 +37,7 @@ tiene calvas o cojea, anótalo y coméntalo con el veterinario.
 - No come nada durante más de un día, o está apático y escondido.
 - Vómitos o diarrea con sangre, sobre todo en gatitos o si hay varios gatos afectados a la vez.
 - Respira con la boca abierta, jadea o hace esfuerzo para respirar.
-- Intenta orinar y no puede (sobre todo los machos): una obstrucción urinaria puede matarle en uno a tres días.
+- Intenta orinar y no puede (sobre todo los machos): una obstrucción urinaria puede matarle en uno o dos días.
 - Temblores, convulsiones, tambaleo o cabeza ladeada.
 - Encías muy pálidas o amarillentas; barriga hinchada en un gato que adelgaza.
 - Heridas que se hinchan o supuran; gatitos fríos o que no maman.
@@ -49,8 +49,8 @@ tiene calvas o cojea, anótalo y coméntalo con el veterinario.
 > **Qué hacer si ves un gato enfermo**
 >
 > 1. Obsérvalo sin acosarlo: anota qué ves, desde cuándo y si hay más gatos igual; haz una foto o un vídeo.
-> 2. Avisa al veterinario del programa o al ayuntamiento, según el protocolo de tu colonia; si es una alarma, el
->    mismo día.
+> 2. Avisa al ayuntamiento por teléfono, en horario de oficina, o al veterinario del programa; si es una alarma, el
+>    mismo día, y fuera de horario, si es urgente, al 112.
 > 3. No lo mediques por tu cuenta: paracetamol, ibuprofeno y antiparasitarios de perro son tóxicos para los gatos.
 > 4. Si no se deja coger, usa una jaula trampa (tema 9), nunca las manos desnudas; tápala con una tela y déjala
 >    en un sitio tranquilo, a la sombra o al abrigo según el tiempo.
@@ -62,7 +62,7 @@ tiene calvas o cojea, anótalo y coméntalo con el veterinario.
 camas y refugios, donde aguantan meses. Por eso tratar al gato no basta: cambia a menudo mantas y cartones. Las pulgas causan picor y costras, anemia en gatitos, y transmiten la tenia y la bartonela.
 
 **Garrapatas.** Más frecuentes en campo, matorral y parques con vegetación, en cabeza, orejas y cuello. Si quitas una
-(solo si el gato se deja), usa un gancho o pinzas finas, tira recto sin aplastarla y lávate las manos.
+(solo si el gato se deja), usa un gancho o pinzas finas, tira recto sin aplastarla, no le pongas aceite ni alcohol y lávate las manos.
 
 **Ácaros.** Los del oído (*Otodectes*) dan cerumen oscuro, picor y sacudidas de cabeza, y pasan con facilidad de un
 gato a otro. La sarna notoédrica deja costras gruesas en orejas y cara.
@@ -122,7 +122,7 @@ estresados, cambia dentro del gato y provoca la PIF (fiebre que no cede, adelgaz
 no pasa de un gato a otro.
 
 Durante años se consideró mortal, pero **hoy es tratable**: con antivirales prescritos por un veterinario se curan más
-de 80 de cada 100 gatos tratados. Si sospechas PIF, el veterinario te explicará las opciones legales; no compres
+de 80 de cada 100 gatos tratados. Si sospechas PIF, el veterinario te explicará las opciones legales (en la Unión Europea puede recetar remdesivir, un antiviral de uso humano, para tratarla); no compres
 productos sin control por internet.
 
 ### Tiña
@@ -151,10 +151,10 @@ para protegerlo; la anestesia no impide que la vacuna funcione. Qué vacunas se 
 veterinario.
 
 - **Vacunas.** Lo habitual es la trivalente (panleucopenia, herpesvirus y calicivirus). La antirrábica es obligatoria
-  en algunas comunidades autónomas, como Castilla-La Mancha, aunque la España peninsular no tiene rabia en animales
+  en algunas comunidades autónomas, como Castilla-La Mancha, aunque la España peninsular y las islas no tienen rabia en animales
   terrestres desde 1978. La de la leucemia (FeLV) se pone según el criterio veterinario.
 - **Desparasitación.** Interna y externa a la vez, con productos para gatos. Las guías europeas recomiendan al menos
-  cuatro al año en gatos que cazan (los gatitos, más a menudo); el veterinario te dirá cómo organizarlo.
+  cuatro al año en gatos que cazan (los gatitos, más a menudo). En una colonia se aprovecha la captura del CER y, cuando el manejo lo permite, se repite como indique el veterinario.
 
 **¿Por qué no se hace test de FIV y FeLV a todos?** Porque los recursos rinden más esterilizando más gatos, que es lo
 que frena los contagios. Se reserva para gatos enfermos, los que van a adopción o cuando el veterinario lo ve útil.

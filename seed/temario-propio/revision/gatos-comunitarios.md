@@ -1,31 +1,45 @@
-# Revisión · Unidad 1 «Gatos comunitarios y colonias felinas»
+# Validación · Tema 1 «Gatos comunitarios y colonias felinas»
 
-Afirmaciones que conviene validar antes de publicar. **V** = veterinario del programa; **S** = secretaría o concejalía
-(o quien valide el temario universal). Versión universal del 26/09/2026: lo propio de San Román y de Castilla-La Mancha
-está en `local/fragmentos/gatos-comunitarios.md` y se marca «(local)».
+Fecha de validación: 26/09/2026.
 
-| # | Dónde | Afirmación | Quién | Motivo |
-|---|---|---|---|---|
-| 1 | «Qué es un gato comunitario» | Paráfrasis de las definiciones de gato comunitario y colonia felina de la Ley 7/2023, art. 3 (letras u y ñ) | S | Comprobar que la paráfrasis no altera el sentido; las leyes autonómicas y las ordenanzas tienen sus propias definiciones (tema 2) |
-| 2 | Idem | «Su origen son gatos abandonados, perdidos o con dueño sin esterilizar» | V | Sigue a la Directriz DGDA y al tríptico DGDA 2024; es una generalización |
-| 3 | «Cómo se organiza» | Núcleo de hembras emparentadas que amamantan crías ajenas; rechazo a extraños | V | Crowell-Davis 2004; descripción general que no se cumple en todas las colonias |
-| 4 | «Por qué se gestiona» | Umbral del 70-75 % para que la colonia deje de crecer; «muchos programas municipales se marcan el 90 %» | V | Datos acordados de la versión universal (sección 9 de la guía) |
-| 5 | Idem | Campus de Florida: −85 % en 28 años de CER con adopción | — | Spehar y Wolf 2019 (continuación de Levy 2003). Dato comprobado en las notas; se cita como ejemplo |
-| 6 | «Dónde viven» | 1,8 millones de gatos, 125.000 colonias, más del 70 % en municipios rurales | — | Estimaciones de un modelo (Luzardo *et al.* 2025, base del PACF), no un censo; el texto dice «estima» |
-| 7 | Idem | «Donde más se concentran es en la periferia de las ciudades» | V | Directriz DGDA, apdo. 4.3.5 («las zonas periurbanas son las de mayor densidad de gatos comunitarios», citando a Boone 2022, estudio de Washington D. C.); no hay dato español directo |
-| 8 | «En la ciudad» | Lista de ubicaciones urbanas típicas (solares, parques, patios de manzana, garajes, hospitales, campus, mercados, cementerios, estaciones, aparcamientos, polígonos) y rasgos urbanos (densidad, actuar por zonas, más abandonos, más alimentadores espontáneos y quejas, espacios privados, zonas sensibles, tráfico, basura) | V | Síntesis propia a partir de la Directriz DGDA (apdos. 4.3.4 y 4.3.5) y de la sección 9 de la guía; no son cifras |
-| 9 | Idem | «Esterilizar una colonia y no la de al lado apenas sirve: hay que actuar por zonas» | V | Coherente con el CER de alta intensidad y la vigilancia de nuevos gatos (Directriz, tema 9); formulación divulgativa |
-| 10 | Idem | Ejemplos de grandes ciudades: gestión con cuidadores acreditados o a través de entidades de protección animal («el modelo de Barcelona») | S | Ajuntament de Barcelona (fuente A22 de las notas: ≈620 colonias gestionadas por 13 entidades con ayudas municipales, cifras sin verificar en la página; por eso el texto no da números). Se retiró el ejemplo de Zaragoza (más de 300 personas formadas) por extensión |
-| 11 | «En la periferia» | Urbanizaciones, extrarradios y polígonos con más densidad de gatos, mezclados con merodeadores | V | Directriz, apdos. 4.3.5.1 y 4.3.5.2 |
-| 12 | «En el pueblo y en el campo» | Priorizar el CER en zona rural; semipropiedad; residentes temporales | S | Directriz DGDA, apdo. 4.3.6; general, sin referirse a un municipio concreto |
-| 13 | Idem | Gato montés: felino silvestre protegido; rasgos (cola gruesa anillada de punta negra y roma); hibridación con gatos domésticos | V | Ficha MITECO del Inventario Español del Patrimonio Natural. Su presencia en cada término municipal y a quién avisar son **(local)** |
-| 14 | Toda la unidad | «Nunca sueltes un gato en una colonia» (se presenta como abandono) | S | Coherencia con el tema 2 (prohibiciones de la Ley 7/2023, art. 42) |
-| 15 | Imágenes | Fotos nuevas del Retiro (Madrid) y de La Vila Joiosa (Alicante) con pies neutros, sin nombrar el lugar | — | Comprobar que otros temas no usan las mismas fotos tras la revisión universal |
+## Resueltos con fuente
 
-## Pasado al suplemento local
+| N.º | Qué se comprobó | Conclusión | Fuente |
+|---|---|---|---|
+| 1 | Paráfrasis de las definiciones de gato comunitario y colonia felina (Ley 7/2023, art. 3.u y 3.ñ) | Correcta: recoge libertad, vínculo al territorio, baja o nula socialización y dependencia de las personas. Las letras son las buenas | [Ley 7/2023, art. 3 (BOE-A-2023-7936)](https://www.boe.es/buscar/act.php?id=BOE-A-2023-7936) |
+| 2 | «Su origen son gatos abandonados, perdidos o con dueño sin esterilizar» | Es la misma generalización que hace la fuente oficial | [DGDA, tríptico «Colonias felinas: guía rápida», 2024](https://www.dsca.gob.es/sites/default/files/derechos-sociales/triptico-colonias-felinas.pdf) |
+| 3 | Núcleo de hembras que crían en común; rechazo a extraños | Correcto, con un matiz: las hembras que se ayudan no siempre son parientes. **Texto corregido** («suelen ser hembras, a menudo emparentadas») | [Crowell-Davis *et al.* 2004, JFMS](https://pmc.ncbi.nlm.nih.gov/articles/PMC10822437); [AAFP/ISFM 2013](https://journals.sagepub.com/doi/10.1177/1098612X13477537) |
+| 4 | Umbral del 70-75 % y objetivo del 90 % | Correcto (los modelos dan 71-94 %). Faltaba el 80 % de la Directriz antes de pasar a otra colonia. **Texto corregido** | [Foley *et al.* 2005, JAVMA](https://doi.org/10.2460/javma.2005.227.1775); [Directriz técnica DGDA 2024, apdo. 4.2.2](https://www.dsca.gob.es/sites/default/files/publicaciones/directriz-tecnica-colonias-felinas.pdf) |
+| 5 | Campus de Florida: −85 % en 28 años | El programa duró 28 años; el −85 % se mide desde el censo de 1996. **Texto corregido** («tras 28 años… había bajado un 85 %») | [Spehar y Wolf 2019, *Animals*](https://doi.org/10.3390/ani9100768) |
+| 6 | 1,8 millones de gatos, 125.000 colonias, peso de lo rural | Coincide con el modelo (1,81 millones; 73,2 % en municipios de hasta 20.000 habitantes). El texto ya lo presenta como estimación | [Luzardo *et al.* 2025, *Animals*](https://doi.org/10.3390/ani15152278) |
+| 7 | «Donde más se concentran es en la periferia de las ciudades» | Lo afirma literalmente la Directriz (zonas periurbanas, también las industriales) | [Directriz técnica DGDA 2024, apdo. 4.3.5](https://www.dsca.gob.es/sites/default/files/publicaciones/directriz-tecnica-colonias-felinas.pdf) |
+| 8 | Ubicaciones y rasgos de la ciudad | Respaldados por la Directriz salvo el comparativo «más abandonos», sin fuente. **Texto corregido** («Abandonos: aparecen a menudo…») | [Directriz técnica DGDA 2024, apdos. 4.3.4 y 6.10.4](https://www.dsca.gob.es/sites/default/files/publicaciones/directriz-tecnica-colonias-felinas.pdf) |
+| 9 | «Esterilizar una colonia y no la de al lado apenas sirve» | El mensaje es correcto; se explica el porqué (siguen llegando gatos sin esterilizar). **Texto corregido** | [Directriz DGDA, apdo. 4.2.2](https://www.dsca.gob.es/sites/default/files/publicaciones/directriz-tecnica-colonias-felinas.pdf); [Gunther *et al.* 2022, PNAS](https://doi.org/10.1073/pnas.2119000119) |
+| 10 | Modelo de Barcelona (gestión con entidades) | Confirmado: gestión municipal con entidades protectoras y clínicas. El texto no da cifras, que es lo prudente | [Ajuntament de Barcelona, prescripcions tècniques 2021](https://w123.bcn.cat/APPS/egaseta/home.do?documentAdjunt=1&idDocumentum=09020152814ecdcc&publicacionsId=22448&reqCode=downloadFile) |
+| 11 | Periferia: más densidad y mezcla con merodeadores | Respaldado | [Directriz DGDA, apdos. 4.3.5-4.3.5.2](https://www.dsca.gob.es/sites/default/files/publicaciones/directriz-tecnica-colonias-felinas.pdf) |
+| 12 | Zona rural: priorizar el CER, semipropiedad, residentes temporales | Respaldado; el texto es general | [Directriz DGDA, apdo. 4.3.6](https://www.dsca.gob.es/sites/default/files/publicaciones/directriz-tecnica-colonias-felinas.pdf) |
+| 13 | Gato montés: protegido, rasgos, hibridación | Correcto, pero se confunde con un atigrado y los pesos se solapan. **Texto corregido** (aviso de confusión, «algo más robusto», dos o tres anillos) | [MITECO, ficha *Felis silvestris*](https://www.miteco.gob.es/content/dam/miteco/es/biodiversidad/temas/inventarios-nacionales/ieet_mami_felis_silvestris_tcm30-99805.pdf) |
+| 14 | «Nunca sueltes un gato en una colonia» como abandono | Coherente: la ley prohíbe el abandono en colonias y la suelta en colonias distintas a la de origen | [Ley 7/2023, art. 42.3 y 42.4](https://www.boe.es/buscar/act.php?id=BOE-A-2023-7936) |
+| 15 | Fotos del Retiro y de La Vila Joiosa repetidas en otros temas | No se repiten: solo aparecen en el tema 1 y en los créditos | Revisión de `units/*.md` y `creditos/*.md` |
+| L3 (local) | Segundas residencias en San Román | No hay datos y en poblaciones pequeñas es difícil tenerlos: el tema 1 lo presenta como algo que ocurre «donde hay segundas residencias» y el suplemento deja un consejo neutro (avisar de gatos nuevos tras las vacaciones) (respuesta del responsable del proyecto, 26/09/2026) | Respuesta del responsable del proyecto, 26/09/2026 |
+| L4 (local) | Gato montés: presencia y a quién avisar | No se afirman citas en el término. Aviso al Ayuntamiento, que lo comunica a los agentes medioambientales; si es urgente, 112. **Texto corregido** en el tema 1 («en algunas zonas de monte») y en el suplemento (respuesta del responsable del proyecto, 26/09/2026) | Respuesta del responsable del proyecto, 26/09/2026 |
 
-- Castilla-La Mancha, unos 7 gatos comunitarios por 100 habitantes **(local)**.
-- Objetivo del 90 % del programa de San Román (ordenanza, apdo. 4) **(local)**.
-- Descripción de San Román como pueblo rural con segundas residencias **(local)**: confirmar con el Ayuntamiento.
-- Presencia del gato montés en el término y aviso a los agentes medioambientales de la Junta **(local)**.
-- Pie de foto «Gato de pueblo en Noblejas (Toledo)» **(local)**.
+## Pendiente de consulta
+
+Ninguna. Queda una comprobación local (L4, abajo).
+
+## Local (suplemento de San Román)
+
+- **L1** · Castilla-La Mancha, unos 7 gatos comunitarios por 100 habitantes. **Resuelto**: el modelo da 7,2 por 100
+  habitantes ([Luzardo *et al.* 2025](https://doi.org/10.3390/ani15152278)). Mantener el bloque como está.
+- **L2** · Objetivo del 90 % de San Román. **Resuelto**: ordenanza, BOP Toledo n.º 122/2024, apdo. 4. Se puede añadir
+  que la Directriz estatal pide al menos el 80 % antes de pasar a otra colonia, así que el 90 % municipal va más allá.
+- **L3** · Segundas residencias. **Resuelto** (respuesta del responsable del proyecto, 26/09/2026): consejo neutro en
+  el suplemento, sin afirmar datos del municipio.
+- **L4** · Gato montés. Circuito de aviso **resuelto** (respuesta del responsable del proyecto, 26/09/2026): al
+  Ayuntamiento, que avisa a los agentes medioambientales; si es urgente, 112. Sigue pendiente de comprobar: en Castilla-La Mancha figura como especie «de interés especial» en el Catálogo
+  Regional de Especies Amenazadas (Decreto 33/1998); comprobarlo en el texto consolidado del DOCM antes de publicarlo,
+  porque solo se ha visto en una base de datos jurídica privada.
+- **L5** · Pie de foto «Gato de pueblo en Noblejas (Toledo)». **Resuelto**: el pie es correcto, pero el fragmento
+  local apunta a `gato-calle-noblejas.jpg`, que no existe. El archivo es
+  `public/img/curso/gatos-comunitarios/gato-calle-pueblo.jpg`.

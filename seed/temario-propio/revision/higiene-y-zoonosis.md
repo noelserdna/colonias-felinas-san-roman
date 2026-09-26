@@ -1,57 +1,38 @@
-# Revisión · Unidad 8 · Higiene, bioseguridad y zoonosis
+# Validación · Tema 8 «Higiene, bioseguridad y zoonosis»
 
-Puntos que deben validar el veterinario (V), el médico o Salud Pública (M) o el ayuntamiento (A). Versión universal
-(revisión del 26/09/2026): lo propio de San Román y Castilla-La Mancha está en `local/fragmentos/higiene-y-zoonosis.md`;
-lo marcado **(local)** se valida para el suplemento.
+Fecha: 26/09/2026
 
-## Veterinario (V)
+## Resueltos con fuente
 
-1. **Lejía 1:32** (≈150 ml en 5 l), 10 minutos, aclarado: dato acordado. Las lejías domésticas españolas varían de
-   concentración (muchas tienen 35-40 g/l de cloro activo, frente al 5-6 % de las referencias de EE. UU.). ¿Hay que
-   decir que se use lejía «normal» y no «lejía con detergente» o diluida de fábrica?
-2. **Peroximonosulfato potásico**: se remite a la etiqueta (las notas dan 1-2 % y 10 min). Validar.
-3. **Lista de ineficaces/tóxicos**: alcohol, gel hidroalcohólico y amonios cuaternarios «no contra la panleucopenia»;
-   fenoles, «de pino» y aceites esenciales, tóxicos para gatos (ABCD 2025). Validar.
-4. **Frecuencia de desinfección**: «lavar a diario; desinfectar con regularidad y siempre que haya un gato enfermo».
-   ¿Conviene fijar una frecuencia de referencia (p. ej., semanal)? **(local)** La ordenanza de San Román (7.1.7) dice
-   solo «con regularidad».
-5. **Toxoplasmosis**: se usa el dato acordado «1-3 semanas en toda su vida» (CDC); la ABCD da días 4-11. Validar.
-6. **Rabia**: ahora «en algunas comunidades autónomas la vacuna de los gatos es obligatoria (allí se pone también en
-   el CER)». Confirmar la formulación (ver revisión de la unidad 7). **(local)** En CLM: ordenanza de tenencia de San
-   Román (art. 13) y Orden de 02/06/2014 (pendiente de verificar en el DOCM); confirmar que el programa CER la aplica
-   siempre.
-7. **Esporotricosis**: se incluye como zoonosis rara (casos esporádicos en España). Confirmar que merece estar en la
-   tabla para un curso básico.
-8. **Gato muerto**: «desinfecta después la zona y los comederos». Validar, y si procede, pedir necropsia o análisis
-   cuando haya varios muertos (sospecha de envenenamiento o brote).
+| N.º | Qué se comprobó | Conclusión | Fuente |
+|---|---|---|---|
+| 1 | Lejía 1:32 y concentración de las lejías españolas | Se mantiene 1:32 durante 10 minutos (dato acordado, de referencias con lejía al 6 %). En España «lejía» tiene por ley 35-60 g/l de cloro activo; los geles y «limpiadores con lejía» no lo son. Se precisa que sea lejía normal. **Texto corregido**. Nota para el veterinario: con lejía de unos 40 g/l la dilución queda algo más floja; puede preferir 1:20 | [RD 3360/1983, arts. 2 y 3 (consolidado)](https://www.boe.es/buscar/pdf/1984/BOE-A-1984-2215-consolidado.pdf); [Manual Merck, panleucopenia](https://www.merckvetmanual.com/digestive-system/infectious-diseases-of-the-gastrointestinal-tract-in-small-animals/feline-panleukopenia); [ABCD, desinfectantes 2025](https://www.abcdcatsvets.org/guideline-for-disinfectant-choice-in-feline-veterinary-hospitals-shelters-and-cat-households/) |
+| 2 | Peroximonosulfato potásico: remitir a la etiqueta | Correcto: eficaz incluso contra el parvovirus con 10 minutos; contra la tiña al 2 % y no al 1 %; la concentración depende del producto. Sin cambios | [ABCD, desinfectantes 2025](https://www.abcdcatsvets.org/guideline-for-disinfectant-choice-in-feline-veterinary-hospitals-shelters-and-cat-households/) |
+| 3 | Ineficaces o tóxicos: alcohol, amonios cuaternarios, fenoles, pino, aceites esenciales | Confirmado; faltaba decir que los amonios cuaternarios son también tóxicos para los gatos. **Texto corregido** | [ABCD, desinfectantes 2025](https://www.abcdcatsvets.org/guideline-for-disinfectant-choice-in-feline-veterinary-hospitals-shelters-and-cat-households/) |
+| 4 | Frecuencia de desinfección (¿fijar «semanal»?) | Ninguna guía oficial fija una frecuencia para colonias («higienización periódica», «limpieza frecuente»); no se inventa. Sin cambios | [Directriz DGDA 2024, Anexo V](https://www.dsca.gob.es/sites/default/files/publicaciones/directriz-tecnica-colonias-felinas.pdf); Ordenanza de colonias de San Román, 7.1.7 ([BOP Toledo n.º 122/2024](http://bop.diputoledo.es/webEbop/csv.jsp)) |
+| 5 | Toxoplasmosis: «1-3 semanas en toda su vida» frente a días 4-11 | Compatibles (CDC 1-3 semanas; ABCD días 4-11, rara vez hasta el 18); 1-5 días para ser infectantes (CDC). Sin cambios | [CDC DPDx, toxoplasmosis](https://www.cdc.gov/dpdx/toxoplasmosis/index.html); [ABCD, *Toxoplasma gondii*](https://www.abcdcatsvets.org/category/guidelines/) |
+| 6 | Formulación de la rabia | Oficialmente «territorio peninsular e islas… libre de rabia terrestre»; hay casos en murciélagos. La vacuna del gato es obligatoria en 5 de 17 comunidades, pero no está documentado que se ponga siempre en el CER: se remite al programa. **Texto corregido** | [MAPA, Rabia](https://www.mapa.gob.es/es/ganaderia/temas/sanidad-animal-higiene-ganadera/sanidad-animal/enfermedades/rabia/rabia); [MAPA, nota junio 2026](https://www.mapa.gob.es/es/dam/jcr:2ee5a018-22bd-4f40-b4c8-9bcbc2ea4d8c/Nota%20diferencia%20vacunaci%C3%B3n%20FT%20y%20normativa%20MAPA-AEMPS.pdf) |
+| 7 | Esporotricosis en la tabla de un curso básico | Se mantiene (quien maneja gatos con lesiones corre un riesgo alto) pero se indica que es rara en Europa. **Texto corregido** | [ABCD, esporotricosis](https://www.abcdcatsvets.org/guideline-for-sporotrichosis/) |
+| 8 | Gato muerto: desinfectar después; necropsia si hay varios muertos | Correcto: el parvovirus aguanta meses en el ambiente; el texto ya pide no tocar y avisar si hay varios muertos, y la necropsia no la decide la persona cuidadora. Sin cambios | [ABCD, panleucopenia](https://www.abcdcatsvets.org/category/guidelines/); Ordenanza de colonias de San Román, 7.2.6 ([BOP Toledo n.º 122/2024](http://bop.diputoledo.es/webEbop/csv.jsp)) |
+| 9 | Protocolo de mordedura: lavado, antiséptico, centro de salud, tétanos | Confirmado por el Plan de contingencia, que da «unos cinco minutos» en el tratamiento local y 10-15 minutos en la pauta general. Se añade «(mejor 10-15)». **Texto corregido** | [Plan de contingencia de la rabia 2023](https://www.sanidad.gob.es/areas/alertasEmergenciasSanitarias/preparacionRespuesta/docs/Plan_contingencia_Rabia_2023.pdf) |
+| 10 | Embarazadas o inmunodeprimidas: delegar heces y gatos con lesiones de piel | Correcto: la ABCD pide que eviten el contacto con la arena del gato. Sin cambios | [ABCD, *Toxoplasma gondii*](https://www.abcdcatsvets.org/category/guidelines/) |
+| 11 | Tiña: ropa a 60 °C y médico si sale una mancha redonda | Correcto: lavado a 60 °C como mínimo; las esporas de *M. canis* son infectantes cerca de un año. Sin cambios | [ABCD, desinfectantes 2025](https://www.abcdcatsvets.org/guideline-for-disinfectant-choice-in-feline-veterinary-hospitals-shelters-and-cat-households/); [ABCD, dermatofitosis](https://www.abcdcatsvets.org/category/guidelines/) |
+| 12 | Comunicación de mordeduras (parte universal) | Correcto: las agresiones se detectan sobre todo por notificación de atención primaria y hospitales, y el animal agresor se observa 14 días. Sin cambios. Queda la parte local (ver abajo) | [Plan de contingencia de la rabia 2023, 6.1](https://www.sanidad.gob.es/areas/alertasEmergenciasSanitarias/preparacionRespuesta/docs/Plan_contingencia_Rabia_2023.pdf) |
+| 13 | Cadáveres: ni contenedor ni enterrar; aviso al ayuntamiento; servicio de recogida | Correcto: los animales de compañía muertos son material de categoría 1, y el servicio municipal de protección o recogida retira los animales muertos en la vía pública y los identifica. Sin cambios | [Reglamento (CE) 1069/2009, art. 8.a.iii](https://eur-lex.europa.eu/legal-content/ES/TXT/?uri=CELEX:32009R1069); [Directriz DGDA 2024, agentes implicados](https://www.dsca.gob.es/sites/default/files/publicaciones/directriz-tecnica-colonias-felinas.pdf) |
+| 14 | Heces y residuos: bolsa cerrada al contenedor de resto; nunca inodoro, compost ni orgánico | Coherente: arena en bolsas cerradas (ABCD) y heces como residuo urbano para incinerar (ESCCAP). Sin cambios | [ABCD, *Toxoplasma gondii*](https://www.abcdcatsvets.org/category/guidelines/); [ESCCAP, Guía n.º 1: vermes](https://www.esccap.es/guias-esccap/) |
+| 15 | Sección urbana: contenedores, limpieza viaria, alcorques, areneros, patios | La DGDA respalda lo esencial (zonas infantiles con areneros, coordinación con residuos, limpieza viaria y parques). No hay fuente sobre dónde tirar el agua con lejía: bien no dar un destino. Sin cambios | [Directriz DGDA 2024](https://www.dsca.gob.es/sites/default/files/publicaciones/directriz-tecnica-colonias-felinas.pdf) |
+| 12 (consulta) | Mordedura en San Román: centro de la observación de 14 días y dónde se comunica | La observación se hace donde indique el Ayuntamiento, y la lesión se le comunica con el parte médico por el cauce habitual (teléfono en horario de oficina). **Texto corregido** en el tema 8 y en el suplemento (respuesta del responsable del proyecto, 26/09/2026) | Respuesta del responsable del proyecto, 26/09/2026 |
+| 13 (local) | Cauce para avisar de un gato muerto | Aviso al Ayuntamiento, que organiza la retirada. Recogido en el suplemento (respuesta del responsable del proyecto, 26/09/2026) | Respuesta del responsable del proyecto, 26/09/2026; [Web del Ayuntamiento](https://www.sanromandelosmontes.es) (teléfonos 925 887002 y 925 887115; atención de 9 a 14 h de lunes a viernes) |
 
-## Médico / Salud Pública (M)
+## Pendiente de consulta
 
-9. **Protocolo de mordedura**: lavar 5 minutos con agua y jabón, antiséptico, centro de salud el mismo día, revisar
-   tétanos, vigilar signos de infección. Validar con Atención Primaria.
-10. **Personas embarazadas o inmunodeprimidas**: se recomienda delegar heces y gatos con lesiones de piel y consultar
-    al médico. Validar el alcance del mensaje.
-11. **Tiña**: «ropa a 60 °C» y «médico si sale una mancha redonda». Validar.
+Ninguna.
 
-## Ayuntamiento (A)
+## Local (suplemento de San Román)
 
-12. **Comunicación de mordeduras**: el texto dice ahora «comunícala según te indiquen tu ayuntamiento o los servicios
-    sanitarios (muchas ordenanzas piden hacerlo con el parte médico)». Validar con Salud Pública que es la pauta
-    general (en muchas comunidades la comunicación la hace también el centro sanitario). **(local)** Ordenanza de
-    tenencia de San Román, art. 14.1 y 14.5: confirmar cómo se aplica a un gato de colonia y dónde se hace la
-    observación.
-13. **Cadáveres**: se dice que no se tiren al contenedor ni se entierren por cuenta propia, que el ayuntamiento
-    comprueba el microchip y se ocupa de la recogida y que en las ciudades suele haber un servicio municipal de
-    recogida de animales muertos (teléfono de atención ciudadana o de limpieza). Confirmar que es correcto como
-    pauta general (gestión como subproducto animal, Reglamento (CE) 1069/2009) y coordinarlo con la unidad 11.
-    **(local)** Procedimiento de San Román: apartado 7.2.6 de la ordenanza de colonias (aviso al Ayuntamiento o al
-    servicio de recogida, incineración, necropsia en el centro colaborador).
-14. **Heces y residuos**: «bien cerrado al contenedor de resto; las heces, nunca al inodoro, al compost ni al
-    contenedor orgánico» (ESCCAP). Confirmar que no choca con las normas de residuos habituales (algunos municipios
-    admiten arena de gato en el orgánico; aquí se desaconseja por las heces) y usar «resto» o el nombre local.
-15. **Nuevo (urbano): sección «En la calle y en espacios compartidos».** Validar con un ayuntamiento (servicios de
-    limpieza y parques): usar contenedores y no papeleras; retirar comederos antes del paso de la limpieza viaria;
-    **no verter agua con lejía en alcorques, jardineras ni tierra de parques** (¿dónde se debe tirar? se ha evitado
-    dar un destino concreto); si el servicio de limpieza retira material, hablar con el ayuntamiento; no poner
-    comederos cerca de zonas infantiles y areneros (Toxocara, toxoplasma) y avisar a parques si hay heces en un
-    arenero; en patios de comunidades, acordar el punto con la comunidad o el administrador de fincas.
+- **4** · Frecuencia de desinfección · Ninguno: el fragmento recoge el 7.1.7 de la ordenanza de colonias («con regularidad»).
+- **6** · Antirrábica · Quitar «pendiente de verificar en el DOCM» y citar la Orden de 02/06/2014, DOCM n.º 110, de 10/06/2014, art. 4 (vacunación anual de los gatos mayores de tres meses), junto al art. 13 de la ordenanza de tenencia (BOP Toledo n.º 61/2024). No afirmar que el CER de San Román la pone hasta que se responda la consulta 2 del tema 7.
+- **8** · Gato muerto · Ninguno de contenido: el fragmento reproduce bien el 7.2.6. Se puede quitar la nota en cursiva «No estaba citado en el tema original…».
+- **12** · Mordeduras · El fragmento es fiel al art. 14 de la ordenanza de tenencia (14.1 parte médico a los servicios municipales; 14.2 comunicación de los centros sanitarios; 14.5 captura y observación en el centro de acogida). Recogido: la observación dura 14 días (Plan de contingencia 2023), donde indique el Ayuntamiento (respuesta del responsable del proyecto, 26/09/2026).
+- **13** · Cadáveres · Ninguno de contenido: el fragmento reproduce bien el 7.2.6 (aviso al Ayuntamiento o al servicio de recogida para incineración; necropsia en el centro colaborador). Cauce **resuelto**: aviso al Ayuntamiento (respuesta del responsable del proyecto, 26/09/2026).
+- **14** · Residuos · Si en San Román el contenedor de resto tiene otro nombre («gris», «de restos»), indicarlo.

@@ -1,70 +1,51 @@
-# Revisión · Unidad 6 · Alimentación y puntos de comida
+# Validación · Tema 6 «Alimentación y puntos de comida»
 
-Puntos que deben validar el veterinario (V) o el ayuntamiento (A) antes de publicar.
+Fecha de validación: 26/09/2026.
 
-Versión universal (26/09/2026): el texto ya no cita la ordenanza de San Román ni la de tenencia; las referencias se han
-generalizado («muchas ordenanzas», «tu programa») y el detalle se ha pasado a `local/fragmentos/alimentacion.md`. Lo
-marcado **(local)** es para el suplemento de San Román, no para el tema universal.
+## Resueltos con fuente
 
-## Para el ayuntamiento (A)
+| N.º | Qué se comprobó | Conclusión | Fuente |
+|---|---|---|---|
+| 2 | Despojos sin control sanitario («muchas ordenanzas sancionan…») | Lo prohíbe la propia ley estatal y es infracción grave. **Texto corregido** («La Ley 7/2023 prohíbe…») | [Ley 7/2023, arts. 25.i y 74.n](https://www.boe.es/buscar/act.php?id=BOE-A-2023-7936) |
+| 3 | «En la app queda registrada su ubicación» (del punto de comida) | La app guarda la dirección y las coordenadas de la colonia, no del punto. **Texto corregido** («la ubicación de la colonia»). Lo del croquis sigue como consulta local | `src/lib/db/schema.ts` (tabla `colonies`); [Directriz DGDA, apdo. 6](https://www.dsca.gob.es/sites/default/files/publicaciones/directriz-tecnica-colonias-felinas.pdf) |
+| 4 | Fauna en el punto de comida: «anótalo y avisa, no intentes ahuyentarlos» | Vale con carácter general: mover o cambiar el punto se acuerda con el programa, y no hay que acercarse a jabalíes o perros sueltos | [Directriz DGDA, apdo. 6.10.4](https://www.dsca.gob.es/sites/default/files/publicaciones/directriz-tecnica-colonias-felinas.pdf); [Alley Cat Allies, Colony Care Guide](https://www.alleycat.org/resources/colony-care-guide/) |
+| 5 | Alimentadores espontáneos: acreditarse, turnos, mediación | Respaldado: la Directriz prevé la mediación a través de la coordinación municipal | [Directriz DGDA, apdo. 4.3.4](https://www.dsca.gob.es/sites/default/files/publicaciones/directriz-tecnica-colonias-felinas.pdf) |
+| 6 | Refugios: autorización municipal o del propietario | Respaldado: los elementos autorizados los respetan los servicios de limpieza; en privado, acuerdo con el propietario | [Directriz DGDA, anexo III y apdo. 6.10.9](https://www.dsca.gob.es/sites/default/files/publicaciones/directriz-tecnica-colonias-felinas.pdf) |
+| 7 | Punto de comida en la ciudad (parques, limpieza, zonas sensibles, solares) | El circuito coincide con la Directriz | [Directriz DGDA, apdos. 5.2.1, 6.10.4, 6.10.9 y anexo III](https://www.dsca.gob.es/sites/default/files/publicaciones/directriz-tecnica-colonias-felinas.pdf) |
+| 8 | Cebos raticidas e intoxicación secundaria | Riesgo real, sobre todo con los anticoagulantes de segunda generación | [US EPA, restricciones de rodenticidas](https://www.epa.gov/rodenticides/restrictions-rodenticide-products) |
+| 9 | Cantidad: 50-70 g de pienso al día | Algo alto para un gato castrado y tranquilo (35-45 kcal/kg). **Texto corregido**: 40-70 g para un gato de unos 4 kg, según pienso y actividad | [FEDIAF 2024, tabla VII-9](https://europeanpetfood.org/self-regulation/nutrition/) |
+| 10 | Regla de la ración: 30 minutos frente a GEMFE (15 min / 1 h) | El texto ya combina las dos: ración de unos 30 min y ajustar si sobra o si desaparece enseguida | [Alley Cat Allies](https://www.alleycat.org/resources/colony-care-guide/); [GEMFE-AVEPA 2020](https://web.archive.org/web/20241205005204/https://gemfe.es/wp-content/uploads/2024/09/2020GUIA-DE-RECOMENDACIONES-colonias.pdf) |
+| 11 | Comida húmeda «cuando lo indique el veterinario» | Concreción prudente de la Directriz (capturas, medicación con prescripción «u otros») | [Directriz DGDA, anexo V.2](https://www.dsca.gob.es/sites/default/files/publicaciones/directriz-tecnica-colonias-felinas.pdf) |
+| 12 | Taurina: ceguera y enfermedad del corazón | Simplificación correcta (degeneración de retina y miocardiopatía dilatada) | [FEDIAF 2024, anexo 7.3](https://europeanpetfood.org/self-regulation/nutrition/) |
+| 13 | Agua: 200-250 ml/día (45-55 ml/kg) | La referencia del NRC es 50-60 ml/kg. **Texto corregido**: 200-300 ml para 4-5 kg | [Revisión de alcance, *J Anim Sci* 2025 (PMC12893781)](https://pmc.ncbi.nlm.nih.gov/articles/PMC12893781/); [Cornell Feline Health Center](https://www.vet.cornell.edu/departments-centers-and-institutes/cornell-feline-health-center/health-information/feline-health-topics/feeding-your-cat) |
+| 14 | Tabla «lo que no se les da» y fila de cebolla, ajo, chocolate y uvas | Filas actuales respaldadas (leche, H5N1 y carne cruda, pienso de perro). Se añade solo cebolla y ajo (anemia con cuerpos de Heinz documentada en gatos); chocolate y uvas no tienen fuente felina. **Texto corregido** | [FEDIAF 2024, anexo 7.7.3](https://europeanpetfood.org/self-regulation/nutrition/); [Cornell](https://www.vet.cornell.edu/departments-centers-and-institutes/cornell-feline-health-center/health-information/feline-health-topics/feeding-your-cat); [ABCD, gripe en gatos](https://www.abcdcatsvets.org/guideline-for-influenza-virus-infections-in-cats/) |
+| 15 | Paja como relleno en climas húmedos y fríos | Sirve: la paja (no el heno) resiste la humedad; se precisa cambiarla si se moja. **Texto corregido** | [Alley Cat Allies, Colony Care Guide](https://www.alleycat.org/resources/colony-care-guide/) |
+| 16 | «Un gato bien alimentado sigue cazando» frente a la unidad 11 | Respaldado y coherente con la unidad 11 | [AAFP/ISFM 2013, pilar 3](https://journals.sagepub.com/doi/10.1177/1098612X13477537) |
+| 17 | `alt` del esquema `si-no-alimentacion.svg` | Se quedaba corto frente a lo dibujado. **Texto corregido** (el `alt` describe todos los elementos) | Elemento `<desc>` del propio SVG |
+| 18 | URL de la Directriz DGDA | La usada responde (200, PDF) y es la Rev. 01 | [Directriz DGDA 2024](https://www.dsca.gob.es/sites/default/files/publicaciones/directriz-tecnica-colonias-felinas.pdf) |
+| 19 | Enlace a la guía GEMFE-AVEPA 2020 | gemfe.es da error 522; la copia de archive.org funciona. **Texto corregido** (enlace a la copia archivada) | [GEMFE-AVEPA 2020 (copia archivada)](https://web.archive.org/web/20241205005204/https://gemfe.es/wp-content/uploads/2024/09/2020GUIA-DE-RECOMENDACIONES-colonias.pdf) |
+| 3 (local) | Croquis del punto de comida (anexo III.II) | El croquis es anacrónico: lo que se busca es identificar el lugar, y eso lo cubren la dirección y las coordenadas de la colonia en la app. **Texto corregido** en el tema 6 y en el suplemento (respuesta del responsable del proyecto, 26/09/2026) | Respuesta del responsable del proyecto, 26/09/2026 |
+| 5 (local) | Vía para presentar las quejas por escrito | En cualquier ayuntamiento, por escrito con una **Instancia General** en el registro municipal o la sede electrónica. **Texto corregido** en el tema 6 y en el suplemento, con el enlace a la sede de San Román (respuesta del responsable del proyecto, 26/09/2026) | Respuesta del responsable del proyecto, 26/09/2026; [Sede electrónica](https://sanromandelosmontes.sedelectronica.es) |
+| 1 (local) | «Acceso constante» (7.1.5.a) frente a hora fija y retirada | El texto sigue la documentación oficial: ración a hora fija y retirada de platos y sobras; las ordenanzas pueden contradecirlo. El suplemento da esa buena práctica y menciona brevemente el «acceso constante» del 7.1.5.a (contradicción recogida en el informe de incongruencias). Tema 6: nota breve sobre ordenanzas que dicen otra cosa (respuesta del responsable del proyecto, 26/09/2026) | Respuesta del responsable del proyecto, 26/09/2026; [Directriz DGDA](https://www.dsca.gob.es/sites/default/files/publicaciones/directriz-tecnica-colonias-felinas.pdf) |
 
-1. **(local)** **Contradicción interna de la ordenanza (BOP 122/2024).** El apartado 7.1.5.a dice que «tanto el agua
-   como el pienso se mantendrán con acceso constante», mientras que el 7.1.6 y el Anexo III.II piden un **horario
-   regular** y retirar restos a diario, y el Anexo III.V pide retirar los platos vacíos. El tema universal enseña la
-   regla de la Directriz DGDA (ración a hora fija, retirar platos y sobras a los ~30 min) y admite el acceso continuo
-   **solo** en tolvas o casetas cerradas que instale el programa. Confirmar que es la lectura que quiere el ayuntamiento.
-2. **(local)** **Infracciones** (ordenanza de tenencia, BOP 61/2024): arts. 7.b, 21.2.b (leve) y 22.n (grave). En el
-   tema universal queda «en muchas ordenanzas es infracción; las personas acreditadas están exceptuadas» y «muchas
-   ordenanzas sancionan dar despojos sin control sanitario». Confirmar la redacción del suplemento.
-3. **(local)** **Croquis del punto de comida** (Anexo III.II) y prohibición de añadir o mover puntos sin autorización
-   (final del 7.1.5): confirmar si el croquis se sustituye por la ubicación registrada en la app. El tema universal
-   dice que «en la app queda registrada su ubicación»: comprobar que la app lo hace así para todos los municipios.
-4. **Fauna en el punto de comida**: se nombran jabalíes, zorros, garduñas y perros sueltos «en zonas rurales y
-   urbanizaciones junto al monte», y ratas y palomas como queja urbana más frecuente. Instrucción: «anótalo en la app y
-   avisa al ayuntamiento, no intentes ahuyentarlos». Confirmar que vale con carácter general.
-5. **Alimentadores espontáneos**: el paso a paso invita a acreditarse, propone turnos si hay varias personas y remite
-   al ayuntamiento para la mediación. **(local)** En San Román, quejas por escrito según la ordenanza: confirmar el canal.
-6. **Refugios**: se dice que en espacio público necesitan autorización municipal y en terreno privado la del
-   propietario. **(local)** En San Román el ayuntamiento puede instalar casetas cerradas (7.1.5, párrafo final).
-7. **Nuevo · punto de comida en la ciudad** (subapartado «En la ciudad»): coordinación con el servicio de parques y
-   jardines (zonas infantiles, riegos, podas, desbroces, cierre nocturno), permiso de propietario o comunidad de
-   vecinos en solares y patios de manzana (mejor por escrito y a través del programa), horario compatible con barrido
-   y baldeo, y zonas sensibles (colegios, centros de salud, hospitales) con comida fuera de las horas de entrada y
-   salida. Basado en la Directriz DGDA (5.2.1 departamentos implicados; 6.10.4 zonas sensibles; Anexo III servicios de
-   limpieza; acuerdo con propietarios o comunidades). Validar que el circuito es el habitual.
-8. **Nuevo · cebos raticidas**: «si ves cebos para ratas cerca del punto, avisa: un gato puede comerse un roedor
-   envenenado». El riesgo de intoxicación secundaria por anticoagulantes existe pero no viene de las notas de
-   investigación. Validar (V y servicio de control de plagas).
+## Pendiente de consulta
 
-## Para el veterinario (V)
+Ninguna.
 
-9. **Cantidad orientativa**: «un gato adulto come unos 50-70 g de pienso seco al día (mira la etiqueta)». Cálculo
-   propio a partir de ~200-250 kcal/día y piensos de ~350-400 kcal/100 g; no viene de las notas de investigación.
-   Validar o quitar.
-10. **Regla de la ración**: se usa «lo que se comen en unos 30 minutos» (Alley Cat Allies, dato acordado). GEMFE-AVEPA
-    da otra regla (si desaparece en 15 min, aumentar; si queda a la hora, reducir). Confirmar que basta con la de 30 min.
-11. **Comida húmeda**: se admite para capturar, medicar y para gatos enfermos o gatitos «cuando lo indique el
-    veterinario», atribuido a «la directriz técnica estatal y muchas ordenanzas». **(local)** La ordenanza de San Román
-    (7.1.6) exceptúa enfermos, cachorros y medicación sin exigir indicación veterinaria; el Anexo III.III habla de
-    «razones veterinarias».
-12. **Taurina**: «su falta produce ceguera y enfermedad del corazón» (degeneración de retina y miocardiopatía
-    dilatada, FEDIAF). Validar la simplificación.
-13. **Agua**: 200-250 ml/día en total para un gato de 4-5 kg (45-55 ml/kg, fuente B11). Validar.
-14. **Tabla «lo que no se les da»**: leche de vaca (diarrea), restos y huesos cocidos, carne/vísceras/leche crudas
-    (gripe aviar H5N1), pienso de perro (taurina y proteína insuficientes). Se quitó una fila con cebolla, ajo,
-    chocolate y uvas porque las notas la marcaban «pendiente de fuente veterinaria»; añadirla si el veterinario lo ve
-    útil.
-15. **Paja como relleno** de refugios (Alley Cat Allies; muchas ordenanzas solo desaconsejan textiles). Validar para
-    climas húmedos y fríos, no solo para el interior peninsular.
-16. **«Un gato bien alimentado sigue cazando»**: respaldado por iCatCare/B5; la unidad 11 trata fauna. Comprobar que no
-    se contradice con lo que diga esa unidad.
+## Local (suplemento de San Román)
 
-## Técnico
-
-17. El esquema `diagramas/si-no-alimentacion.svg` ya existe y sus medidas (800 × 866) coinciden con el `viewBox`;
-    comprobar solo que el `alt` corresponde a lo dibujado.
-18. Hay dos URL distintas para la Directriz DGDA en los catálogos de fuentes (A10: `/sites/default/files/publicaciones/…`;
-    B40: `/sites/default/files/derechos-sociales/derechos-animales/docs/…`). Se ha usado la de A10; comprobar que
-    funciona.
-19. «Para saber más»: se ha quitado la ordenanza de San Román (pasa al suplemento local) y se ha añadido la guía
-    GEMFE-AVEPA 2020 (URL del catálogo B43/D39); comprobar que el enlace funciona.
+- **1** · «Acceso constante» (7.1.5.a) frente a horario regular y retirada (7.1.6, anexo III.II y III.V). La
+  contradicción es real. La Directriz no fija «30 minutos» (eso es de Alley Cat Allies): admite tolvas autorizadas o
+  ración puntual con retirada. **Resuelto** (respuesta del responsable del proyecto, 26/09/2026): se sigue la
+  Directriz (hora fija y retirada) y se menciona la contradicción del 7.1.5.a.
+- **2** · Infracciones de la ordenanza de tenencia (BOP 61/2024, arts. 7.b, 21.2.b leve y 22.n grave). **Resuelto**: la
+  redacción del suplemento es fiel; añadir que el 22.n repite la Ley 7/2023 (arts. 25.i y 74.n).
+- **3** · Croquis del punto de comida (anexo III.II). **Resuelto** (respuesta del responsable del proyecto,
+  26/09/2026): lo sustituyen la dirección y las coordenadas de la colonia en la app. Recogido en el suplemento.
+- **5** · Quejas por escrito (ordenanza 9.2, no se admiten verbales). **Resuelto** (respuesta del responsable del
+  proyecto, 26/09/2026): Instancia General en el registro o en la sede electrónica. Recogido en el suplemento.
+- **6** · Refugios. **Resuelto**: en espacio público los autoriza el Ayuntamiento, que puede instalar casetas cerradas
+  con llave (7.1.5, párrafo final); los puntos no se aumentan ni se mueven sin su autorización.
+- **11** · Comida húmeda: 7.1.6 frente a anexo III.III. **Resuelto**: unificar en el suplemento como «solo para
+  capturar o medicar y, para gatos enfermos o cachorros, cuando haya razones veterinarias (7.1.6 y anexo III.III);
+  retira el recipiente al terminar».

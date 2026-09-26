@@ -18,12 +18,12 @@ Es más fácil distinguirlos en gatitos de pocas semanas, antes de que crezca el
 
 ## Celo, gestación y crianza
 
-- **Madurez**: las gatas suelen tener el primer celo entre los 4 y los 6 meses y pueden quedar preñadas **desde los 4 meses**. Los machos maduran algo más tarde.
+- **Madurez**: las gatas suelen tener el primer celo hacia los 6 meses, aunque varía mucho según la gata y la época del año, y algunas pueden quedar preñadas **desde los 4 meses**. Los machos maduran algo más tarde.
 - **Temporada**: los celos dependen de las horas de luz. En España hay más entre enero-febrero y septiembre, pero con comida y refugio puede haber camadas casi todo el año.
 - **Celo**: dura unos **5-7 días** y, si la gata no queda preñada, se repite cada **2-3 semanas**. Se nota porque maúlla sin parar, se revuelca, se frota con todo y levanta los cuartos traseros. Los machos acuden, se pelean y marcan con orina.
-- **Ovulación inducida**: la gata ovula por el estímulo de la monta, así que casi cada celo con machos cerca acaba en gestación. Si se cruza con varios machos, los gatitos de una misma camada pueden tener padres distintos.
+- **Ovulación inducida**: la gata ovula casi siempre por el estímulo de la monta, así que casi cada celo con machos cerca acaba en gestación. Si se cruza con varios machos, los gatitos de una misma camada pueden tener padres distintos.
 - **Gestación**: unos **63-65 días** (entre 58 y 70). La barriga se nota a partir de la tercera o cuarta semana.
-- **Parto**: la gata busca un sitio escondido y tranquilo. Tras unas horas de inquietud, los gatitos nacen con intervalos de hasta una o dos horas.
+- **Parto**: la gata busca un sitio escondido y tranquilo. Tras unas horas de inquietud, los gatitos nacen con intervalos de hasta una o dos horas. Si la ves empujando más de una hora sin que nazca ninguno, o muy decaída, avisa a tu programa, pero no la toques.
 - **Lactancia**: los gatitos nacen con los ojos cerrados y dependen del todo de la madre, que los alimenta, les da calor y los lame para que orinen y defequen. Empiezan a comer sólido hacia las **3-4 semanas** y se destetan hacia las **6-8**. La gata puede volver a entrar en celo poco después.
 
 <figure><img src="/img/curso/reproduccion-y-gatitos/gatas-gestantes-calle.jpg" alt="Dos gatas de colonia con el vientre abultado, una tumbada y otra sentada, sobre un empedrado de calle" loading="lazy" width="1200" height="820"><figcaption>Dos gatas gestantes en una colonia: el abdomen se ensancha en la segunda mitad de la gestación. <small>Foto: Rosino · CC BY-SA 2.0 · Wikimedia Commons</small></figcaption></figure>
@@ -32,7 +32,7 @@ Es más fácil distinguirlos en gatitos de pocas semanas, antes de que crezca el
 
 En la calle, una gata tiene de media algo menos de **una camada y media al año**, con **unos 3 gatitos** por camada. De ellos, **unos tres de cada cuatro no llegan a los 6 meses**: mueren atropellados, por infecciones, frío, depredadores o malformaciones. Sin exagerar: cada gata sin esterilizar produce varios gatitos al año y la mayoría muere pronto.
 
-Los que sobreviven tendrán sus propias crías en pocos meses. Si además hay comida abundante y llegan gatos abandonados, la colonia crece año tras año. En la ciudad pesan más los **abandonos**: gatas sin esterilizar, a veces preñadas, y camadas enteras dejadas en cajas, sobre todo en primavera y verano. Por eso conviene **esterilizar antes del primer celo**: el veterinario puede hacerlo desde las **8 semanas y alrededor de 1 kg** de peso. La captura y la cirugía las verás en el tema 9.
+Los que sobreviven tendrán sus propias crías en pocos meses. Si además hay comida abundante y llegan gatos abandonados, la colonia crece año tras año. En la ciudad pesan más los **abandonos**: gatas sin esterilizar, a veces preñadas, y camadas enteras dejadas en cajas, sobre todo en la época de camadas (primavera y verano). Por eso conviene **esterilizar antes del primer celo**: el veterinario puede hacerlo desde las **8 semanas y alrededor de 1 kg** de peso. La captura y la cirugía las verás en el tema 9.
 
 ## La socialización: una ventana corta
 
@@ -54,7 +54,7 @@ Después de las 8 semanas cuesta mucho más. Un gato de **más de 4 meses** que 
 > 2. **Observa desde lejos** unas horas. Si los gatitos están limpios, juntos y tranquilos, la madre los está atendiendo.
 > 3. **Calcula la edad** con la tabla de abajo.
 > 4. **Con madre y menos de 6 semanas**: déjalos con ella. Pon agua y comida cerca, pero no encima del nido, y avisa a tu programa para planificar la adopción de los gatitos y la esterilización de la madre.
-> 5. **Hacia las 6-8 semanas**, si se dejan tocar, es el momento de retirarlos para darlos en adopción.
+> 5. **Hacia las 6-8 semanas**, si se dejan tocar, es el momento de retirarlos para darlos en adopción (la entrega a una familia, nunca antes de las 8 semanas).
 > 6. **Si son mayores y huyen**, lo habitual será CER y retorno.
 
 | Edad aproximada | Cómo es el gatito |
@@ -67,7 +67,7 @@ Después de las 8 semanas cuesta mucho más. Un gato de **más de 4 meses** que 
 
 > **Qué hacer si la madre no vuelve o los gatitos están en peligro**
 >
-> Si los gatitos lloran sin parar durante horas, están fríos, mojados, sucios o débiles, o el nido corre peligro (tráfico, obras, lluvia), avisa enseguida por el cauce de tu programa: según el municipio, el servicio de protección animal, la protectora que colabora con el ayuntamiento o el veterinario. Los gatitos pequeños sin madre necesitan calor y leche para gatitos cada pocas horas, día y noche. **Nunca les des leche de vaca.**
+> Si los gatitos lloran sin parar durante horas, están fríos, mojados, sucios o débiles, o el nido corre peligro (tráfico, obras, lluvia), avisa enseguida al ayuntamiento (por teléfono, en horario de oficina), que lo coordina con el veterinario y, donde las haya, con protectoras o casas de acogida. Los gatitos pequeños sin madre necesitan calor y leche para gatitos cada pocas horas, día y noche. **Nunca les des leche de vaca.**
 
 No se retiran de la colonia **gatas gestantes o lactantes no socializadas**: el encierro les causa un estrés enorme. Se planifica su esterilización cuando lo indique el veterinario.
 
@@ -79,11 +79,11 @@ En la ciudad las gatas paren en **patios de manzana**, solares, **obras**, trast
 
 ## Gatos adoptables
 
-Deben salir de la colonia, si es posible, los **gatitos sociables** en edad de adopción y los **adultos sociables**: suelen ser gatos abandonados o perdidos que no saben vivir en la calle. Antes, el veterinario comprueba si llevan microchip, por si tienen dueño. Todo gato se entrega **identificado y esterilizado**.
+Deben salir de la colonia, si es posible, los **gatitos sociables** en edad de adopción y los **adultos sociables**: suelen ser gatos abandonados o perdidos que no saben vivir en la calle. Antes, el veterinario comprueba si llevan microchip, por si tienen dueño. Todo gato se entrega **identificado** con microchip y **esterilizado** o, si aún es muy pequeño, con el compromiso de esterilizarlo. La ley no permite entregar gatitos de menos de 8 semanas, y la adopción la tramita un centro público o una entidad de protección registrada.
 
 Un gato sociable que se retira para adopción **no debe volver** a la colonia aunque no encuentre casa: devolverlo sería abandonarlo.
 
-Por eso, antes de retirarlo, tiene que haber **un sitio donde ir**: una protectora, una casa de acogida (alguien que lo cuida en su casa hasta la adopción) o el centro municipal. En las ciudades suele haber varias protectoras y redes de acogida, aunque también más gatos esperando; en los pueblos hay menos y a veces se recurre a entidades de la comarca. Tu programa te dirá con quién colabora.
+Por eso, antes de retirarlo, tiene que haber **un sitio donde ir**. En las ciudades suele haber protectoras, casas de acogida (alguien que lo cuida en su casa hasta la adopción) o un centro municipal, aunque también más gatos esperando. En los pueblos pequeños es raro contar con ellos: lo coordinan el ayuntamiento y el veterinario, a veces con entidades de la comarca o la provincia. Tu programa te dirá cómo se hace.
 
 <figure><img src="/img/curso/reproduccion-y-gatitos/camada-cinco-gatitos.jpg" alt="Cinco gatitos de distintos colores sentados juntos sobre el césped mirando a la cámara" loading="lazy" width="1200" height="667"><figcaption>Gatitos sociables en edad de adopción. <small>Foto: Jan-Mallander · CC0 · Wikimedia Commons</small></figcaption></figure>
 

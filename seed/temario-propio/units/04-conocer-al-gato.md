@@ -63,11 +63,11 @@ La agresión de un gato de colonia casi siempre es **defensiva**: ataca cuando s
 
 ### En la ciudad y en el pueblo
 
-En la ciudad, el **ruido y el tráfico** (motos, sirenas, obras, camiones de basura) estresan de forma continua: muchos gatos se vuelven más nocturnos y asustadizos. Si uno cambia de escondite o deja de acudir, quizá huye de una obra, no solo está enfermo.
+En la ciudad, el **ruido y el tráfico** (motos, sirenas, obras, camiones de basura) hacen el entorno menos seguro, y los gatos sin dueño suelen moverse sobre todo de noche, cuando hay menos gente y coches. Si uno cambia de escondite o deja de acudir, quizá huye de una obra, no solo está enfermo.
 
 Se esconden en **bajos de coches** y aparcamientos (en invierno buscan el calor del motor), **patios de manzana**, solares, setos de parques y huecos de obras, donde pueden quedar encerrados. En el pueblo, en leñeras, naves y matorral.
 
-Un gato de parque o de mercado que ve pasar a cientos de personas puede comer a un metro de ti. Eso es **habituación** (está acostumbrado a la gente), no socialización: si intentas tocarlo, reaccionará como cualquier gato no socializado.
+Un gato de parque o de mercado que ve pasar a cientos de personas puede comer a un metro de ti. Eso es **habituación** (está acostumbrado a la gente), no necesariamente socialización: si intentas tocarlo, lo normal es que reaccione como un gato no socializado.
 
 <figure><img src="/img/curso/conocer-al-gato/gato-negro-hojarasca-parque.jpg" alt="Gato negro sentado entre la hojarasca y los troncos de un parque, mirando a la cámara desde la distancia" loading="lazy" width="1200" height="900"><figcaption>En un parque de ciudad, el gato vigila desde la vegetación: a la vista de todos, pero a su distancia. <small>Foto: Ricardo Ricote Rodríguez · CC BY 3.0 · vía Wikimedia Commons</small></figcaption></figure>
 
@@ -75,9 +75,9 @@ Un gato de parque o de mercado que ve pasar a cientos de personas puede comer a 
 
 ## Dolor y enfermedad: lo que delata el comportamiento
 
-Los gatos esconden el dolor, y tu mejor herramienta es **observar a diario** y notar los cambios. La *escala de muecas felina* (Universidad de Montreal) se fija en cinco rasgos de la cara:
+Los gatos esconden el dolor, y tu mejor herramienta es **observar a diario** y notar los cambios. La *escala de muecas felina* (Universidad de Montreal), creada para la clínica veterinaria, te sirve de orientación. Se fija en cinco rasgos de la cara:
 
-- orejas separadas y caídas hacia los lados;
+- orejas separadas y giradas hacia fuera;
 - ojos entrecerrados;
 - hocico tenso, de aspecto ovalado;
 - bigotes rectos y dirigidos hacia delante;
@@ -92,7 +92,7 @@ Otras señales de alarma:
 
 > **Qué hacer si ves un gato con dolor**
 >
-> No intentes cogerlo. Anota qué ves y desde cuándo, hazle una foto si puedes y avisa por el cauce que marque tu programa (el veterinario que colabora con él, el servicio municipal de protección animal o el ayuntamiento). En los temas 7 y 11 verás cómo actuar según el caso.
+> No intentes cogerlo. Anota qué ves y desde cuándo, hazle una foto si puedes y avisa al ayuntamiento por teléfono, en horario de oficina (fuera de horario, si es urgente, al 112), o al veterinario del programa. En los temas 7 y 11 verás cómo actuar según el caso.
 
 ## Juego, caza y acicalamiento
 
@@ -113,7 +113,7 @@ Tu objetivo no es hacerte amigo de los gatos, sino que te acepten como parte tra
 > 5. No lo persigas ni lo acorrales, y déjale siempre un camino de huida.
 > 6. No intentes tocarlo ni cogerlo.
 
-> **Importante:** si un gato te muerde o te araña, lava la herida con agua y jabón y acude al médico (tema 8).
+> **Importante:** si un gato te muerde o te araña, lava enseguida la herida con agua abundante y jabón y acude al médico ese mismo día (tema 8).
 
 ## Para saber más
 

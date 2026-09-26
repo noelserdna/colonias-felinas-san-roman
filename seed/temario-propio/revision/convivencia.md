@@ -1,67 +1,61 @@
-# Revisión · Unidad 11 · Convivencia y situaciones difíciles
+# Validación · Tema 11 «Convivencia y situaciones difíciles»
 
-(V) = veterinario; (A) = ayuntamiento que adopte el temario (servicio de bienestar animal, secretaría, policía local).
-«(local)» = pasa al suplemento local de San Román (`local/fragmentos/convivencia.md`).
+Fecha: 26/09/2026
 
-Versión universal (26/09/2026): sin citas a la ordenanza de San Román; se añade el apartado «En la ciudad» y se amplían
-redes sociales y obras urbanas.
+## Resueltos con fuente
 
-## Procedimientos municipales
+| N.º | Qué se comprobó | Conclusión | Fuente |
+|---|---|---|---|
+| 1 | Quejas «por el cauce que fije tu ayuntamiento» y mediación municipal | Correcto: cada entidad local decide quién media y cómo se contacta con ese servicio. El detalle de San Román va al suplemento local | [Directriz técnica DGDA (2024), apdo. 6.8](https://www.dsca.gob.es/sites/default/files/publicaciones/directriz-tecnica-colonias-felinas.pdf) |
+| 2 | Cartel identificativo que valora y coloca el ayuntamiento | Correcto: cada ayuntamiento estandariza el modelo; en San Román lo valora el personal técnico (7.1.5.e) | [Protocolo marco C. Valenciana (DOGV n.º 10212, 2025), 6.2.4](https://dogv.gva.es/datos/2025/10/10/pdf/2025_42068_es.pdf); [Ordenanza San Román (BOP Toledo 122/2024)](https://bop.diputoledo.es/webEbop/DocGet?id=24065992%3B0&insert_number=3274&insert_year=2024) |
+| 3 | Gato herido: ayuntamiento y, si es urgente, policía local | Pauta correcta (protocolo de heridos con la policía local o municipal), pero muchos municipios pequeños no tienen policía local. **Texto corregido**: «(donde no la haya, al 112 o a la Guardia Civil)» | [Directriz DGDA, Anexo V.6](https://www.dsca.gob.es/sites/default/files/publicaciones/directriz-tecnica-colonias-felinas.pdf); [Ayto. San Román, teléfonos de interés](https://sanromandelosmontes.org/telefonos-de-interes/) |
+| 4 | Gato muerto: aviso para retirada y lectura del chip; no a la basura ni enterrarlo | Correcto: la recogida e identificación de animales muertos en la vía pública es función del servicio de protección animal; enterrar exige autorización de la autoridad competente | [Directriz DGDA, apdo. 6.2](https://www.dsca.gob.es/sites/default/files/publicaciones/directriz-tecnica-colonias-felinas.pdf); [Reglamento (CE) 1069/2009, art. 19.1.a](https://eur-lex.europa.eu/legal-content/ES/TXT/?uri=CELEX:32009R1069) |
+| 5 | Sospecha de veneno o maltrato: avisar también a la policía | Correcto: avisar a la unidad coordinadora y a la policía, no tocar nada sospechoso, revisar agua y comida | [Directriz DGDA, Anexo V.6](https://www.dsca.gob.es/sites/default/files/publicaciones/directriz-tecnica-colonias-felinas.pdf); [Protocolo marco C. Valenciana (2025)](https://dogv.gva.es/datos/2025/10/10/pdf/2025_42068_es.pdf) |
+| 6 | Protocolo de emergencias coordinado con protección civil | Correcto: el programa debe incluir coordinación y contactos de emergencias y protección civil | [Directriz DGDA, apdo. 6.10.10](https://www.dsca.gob.es/sites/default/files/publicaciones/directriz-tecnica-colonias-felinas.pdf); [Protocolo marco Andalucía (2023), apdo. 9](https://www.juntadeandalucia.es/sites/default/files/inline-files/2023/11/Protocolo%20Marco%20colonias%20felinas.pdf) |
+| 7 | Obras: consulta en cada licencia, ningún gato dentro al cerrar, comederos fuera, no alimentar dentro | Contenido práctico correcto; la Directriz es una guía técnica, no una norma. **Texto corregido**: «pide al ayuntamiento» → «recomienda que el ayuntamiento compruebe» | [Directriz DGDA, apdo. 6.10.5 y anexo de obras](https://www.dsca.gob.es/sites/default/files/publicaciones/directriz-tecnica-colonias-felinas.pdf) |
+| 8 | Desplazamiento del comedero: al menos dos semanas entre pasos | Cifra correcta. Faltaba el matiz legal: mover el comedero unos metros no es trasladar la colonia, pero el desplazamiento a otra zona exige supervisión veterinaria e informe autonómico. **Texto corregido** | [Directriz DGDA, anexo XI](https://www.dsca.gob.es/sites/default/files/publicaciones/directriz-tecnica-colonias-felinas.pdf); [Ley 7/2023, art. 42.7-8](https://www.boe.es/buscar/act.php?id=BOE-A-2023-7936); [Ordenanza San Román, 7.1.5.b](https://bop.diputoledo.es/webEbop/DocGet?id=24065992%3B0&insert_number=3274&insert_year=2024) |
+| 9 | Reubicación: supuestos, requisitos y «varias semanas» en recinto cerrado | Correcto: supuestos del art. 42.7, supervisión veterinaria e informe autonómico del 42.8; confinamiento de 6 a 8 semanas (4 en casos extraordinarios) según la DGDA y al menos 4 según Andalucía | [Ley 7/2023, art. 42](https://www.boe.es/buscar/act.php?id=BOE-A-2023-7936); [Directriz DGDA, anexo XII.5](https://www.dsca.gob.es/sites/default/files/publicaciones/directriz-tecnica-colonias-felinas.pdf); [Protocolo marco Andalucía (2023)](https://www.juntadeandalucia.es/sites/default/files/inline-files/2023/11/Protocolo%20Marco%20colonias%20felinas.pdf) |
+| 10 | Faldón protector en troncos con nidos | Correcto: medida preventiva citada expresamente; al ser un elemento fijo en espacio público, «de acuerdo con el ayuntamiento» es lo adecuado | [Directriz DGDA, IX.2](https://www.dsca.gob.es/sites/default/files/publicaciones/directriz-tecnica-colonias-felinas.pdf); [Protocolo marco Andalucía (2023)](https://www.juntadeandalucia.es/sites/default/files/inline-files/2023/11/Protocolo%20Marco%20colonias%20felinas.pdf) |
+| 11 | «Alimentar sin autorización en muchas ordenanzas es infracción» | Correcto como generalización: las ordenanzas lo prohíben (p. ej., San Román, salvo a cuidadores acreditados) y la Directriz prevé mediación o sanción | [Ordenanza de tenencia de San Román (BOP Toledo n.º 61/2024)](https://bop.diputoledo.es/webEbop/DocGet?id=24034171%3B0&insert_number=1450&insert_year=2024); [Directriz DGDA, Anexo V.6](https://www.dsca.gob.es/sites/default/files/publicaciones/directriz-tecnica-colonias-felinas.pdf) |
+| 12 | Comunidades de propietarios; la propiedad que se niega se considera titular | Correcto y bien atribuido a la Directriz (no a la ley); no requiere asesoría jurídica para el temario | [Directriz DGDA, apdo. 6.10.9](https://www.dsca.gob.es/sites/default/files/publicaciones/directriz-tecnica-colonias-felinas.pdf); [Protocolo marco C. Valenciana (2025), 6.3.8](https://dogv.gva.es/datos/2025/10/10/pdf/2025_42068_es.pdf) |
+| 13 | Parques: lejos de zonas infantiles, areneros y zonas de perros | Correcto; lo de riego, podas y cierres es criterio práctico coherente | [Directriz DGDA, apdo. 4 (zona urbana)](https://www.dsca.gob.es/sites/default/files/publicaciones/directriz-tecnica-colonias-felinas.pdf) |
+| 14 | Zonas sensibles: contacto, horarios, CER prioritario, desplazamiento | Coincide con el protocolo de zonas sensibles; los mercados encajan en «u otros» | [Directriz DGDA, apdo. 6.10.4](https://www.dsca.gob.es/sites/default/files/publicaciones/directriz-tecnica-colonias-felinas.pdf) |
+| 15 | Servicios municipales detectan problemas y respetan lo autorizado | Correcto; que cada municipio informe a sus servicios es tarea del programa, no del temario | [Directriz DGDA, Anexo III](https://www.dsca.gob.es/sites/default/files/publicaciones/directriz-tecnica-colonias-felinas.pdf); [Protocolo marco C. Valenciana (2025), 4.4.4](https://dogv.gva.es/datos/2025/10/10/pdf/2025_42068_es.pdf) |
+| 16 | Redes sociales: ni ubicación exacta ni fotos de vecinos; capturas si hay amenazas | Criterio con respaldo: discreción sobre la ubicación de las colonias; publicar la imagen de una persona sin consentimiento es intromisión ilegítima | [Barcelona, Prescripcions tècniques (2021), 3.4.4](https://w123.bcn.cat/APPS/egaseta/home.do?documentAdjunt=1&idDocumentum=09020152814ecdcc&publicacionsId=22448&reqCode=downloadFile); [LO 1/1982, art. 7.5](https://www.boe.es/buscar/act.php?id=BOE-A-1982-11196) |
+| 17 | Seguridad personal y policía ante agresiones | Criterio prudente; como no todos los municipios tienen policía local, se nombra el 112. **Texto corregido**: «llama al 112 o a la policía» | [Protocolo marco C. Valenciana (2025), 4.4.4](https://dogv.gva.es/datos/2025/10/10/pdf/2025_42068_es.pdf); [Ayto. San Román, teléfonos de interés](https://sanromandelosmontes.org/telefonos-de-interes/) |
+| 18 | Gato montés «especie silvestre protegida» | Correcto: en el Listado estatal de protección especial (RD 139/2011) y, en Castilla-La Mancha, «de interés especial» (Decreto 33/1998) | [RD 139/2011](https://www.boe.es/buscar/act.php?id=BOE-A-2011-3582); [Decreto 33/1998 CLM (consolidado)](https://www.parcan.es/files/documentacion/dosieres/DOSS0166/DOSS0166DOC3058.PDF); [MITECO, ficha Felis silvestris](https://www.miteco.gob.es/content/dam/miteco/es/biodiversidad/temas/inventarios-nacionales/ieet_mami_felis_silvestris_tcm30-99805.pdf) |
+| 19 | Canarias: menos lagartos y más pequeños junto a las colonias | Confirmado: 22 colonias en Tenerife, estudio en *Biology Letters* (01/07/2026) | [Universidad de La Laguna, nota de prensa](https://www.ull.es/portal/noticias/2026/colonias-gatos-tenerife-reducen-poblaciones-lagarto-tizon/) |
+| 20 | Resumen de la postura conservacionista | La crítica al CER estaba bien resumida, pero faltaban sus peticiones centrales (gatos con dueño en casa; sin colonias en islas ni junto a especies amenazadas). **Texto corregido** | [SEO/BirdLife, Documento de posición (2022)](https://seo.org/gatos-y-biodiversidad/); [Comunicado SEO/BirdLife, SECEM, AHE, SECEMU y AEET (2022)](https://www.animalshealth.es/animaladas/sociedades-conservacionistas-piden-gatos-no-salgan-casa-y-poner-fin-colonias-felinas) |
+| 21 | Mito: los machos enteros contagian por mordeduras (FIV) | Correcto: los machos enteros son los más infectados, sobre todo por mordeduras en peleas; castrar reduce la agresividad y el contagio | [ABCD, Feline immunodeficiency virus](https://www.abcdcatsvets.org/guideline-for-feline-immunodeficiency-virus/) |
+| 22 | Refugio con paja, no mantas ni toallas | Correcto: la paja repele la humedad y las mantas la retienen; coincide con la ordenanza de San Román, 7.1.5.c | [Alley Cat Allies, Straw not hay](https://www.alleycat.org/community-cat-care/straw-not-hay-for-outdoor-cat-shelters/); [Ordenanza San Román, 7.1.5.c](https://bop.diputoledo.es/webEbop/DocGet?id=24065992%3B0&insert_number=3274&insert_year=2024) |
+| 23 | Jabalíes atraídos por las sobras | Tiene fuente y no es solo rural: en Barcelona había más jabalíes cerca de los puntos de alimentación de gatos (UAB y Universidad de Aveiro, 2010-2014). **Texto corregido** | [Agencia SINC](https://www.agenciasinc.es/Noticias/Los-jabalies-asaltan-la-ciudad-a-traves-de-zonas-verdes-en-busca-de-comida-para-gatos) |
+| 24 | Foto `gato-parque-urbano.jpg` | Ya no aplica: la foto no está en el tema ni en `public/img/curso/convivencia/`. Si vuelve, el pie debe recordar que refugios y comederos requieren autorización | Estado actual del repositorio |
+| 25 | Pie y `alt` de la foto del gato en la fuente | Pie neutro y `alt` sin «Toledo»; atribución correcta (amaianos, CC BY 2.0). Sin cambios en el tema | [Wikimedia Commons](https://commons.wikimedia.org/wiki/File:Gato_toledano_en_agosto_%287964408310%29.jpg) |
+| 3 (consulta) | Policía Local, gato herido en la calzada y horario del Ayuntamiento | Se avisa al Ayuntamiento por teléfono en horario de oficina (L-V, 9-14 h); fuera de horario, si es urgente, 112. Se retira la mención a la Policía Local. **Texto corregido** en el tema 11 y en el suplemento (respuesta del responsable del proyecto, 26/09/2026) | Respuesta del responsable del proyecto, 26/09/2026; [Web del Ayuntamiento](https://www.sanromandelosmontes.es) (teléfonos 925 887002 y 925 887115; atención de 9 a 14 h de lunes a viernes) |
+| 1 (local) | Canal escrito para las quejas | Instancia General en el registro municipal o la sede electrónica. **Texto corregido** en el tema 11 y en el suplemento (respuesta del responsable del proyecto, 26/09/2026) | Respuesta del responsable del proyecto, 26/09/2026; [Sede electrónica](https://sanromandelosmontes.sedelectronica.es) |
+| 26 (local) | Protocolo municipal de obras | No existe. El suplemento deja el consejo: avisar al Ayuntamiento en cuanto se sepa de obras (respuesta del responsable del proyecto, 26/09/2026) | Respuesta del responsable del proyecto, 26/09/2026 |
 
-1. **Quejas** «por el cauce que fije tu ayuntamiento (normalmente por escrito)» y mediación municipal (A): tabla
-   universal. En San Román, por escrito ante la Concejalía de Bienestar Animal, sin quejas verbales (ordenanza 8 y
-   9.2) (local). Cada municipio debe indicar su canal (registro, sede electrónica, formulario de la app).
-2. **Cartel identificativo** (A): «muchos programas prevén un cartel… lo valora y coloca el ayuntamiento». En San Román,
-   ordenanza 7.1.5.e (local).
-3. **Gato herido** (A): ayuntamiento y, si es urgente o en la calzada, policía local. Cada municipio debe dar teléfonos,
-   horario y qué hacer fuera de horario.
-4. **Gato muerto** (A/V): «avisar al ayuntamiento para que lo retire el servicio correspondiente y se lea su microchip»,
-   «no tirarlo a la basura ni enterrarlo» (prudente por la normativa de subproductos animales), guantes y bolsa si hay
-   que apartarlo. Incineración y necropsia en San Román: ordenanza 7.2.6 (local).
-5. **Sospecha de veneno o maltrato** (A): avisar también a la policía (criterio DGDA).
-6. **Protocolo de emergencias** (A): la DGDA pide que el programa municipal tenga uno coordinado con protección civil.
-7. **Obras** (A): protocolo DGDA (comprobar en cada licencia si hay colonias; comprobar que no queda ningún gato antes de
-   cerrar; comederos fuera del perímetro; no alimentar dentro). El texto dice que la DGDA «pide al ayuntamiento
-   comprobar en cada licencia de obra si hay colonias cerca»: la Directriz no es vinculante.
-8. **Desplazamiento del punto de comida**: «al menos dos semanas entre cada paso» (DGDA).
-9. **Reubicación**: «varias semanas en un recinto cerrado» (DGDA 6-8, mínimo 4; Andalucía ≥4; Neighborhood Cats e ICAM
-   2-3). Requisitos: estudio, informe de la comunidad autónoma y supervisión veterinaria. Requisitos de San Román
-   (7.1.8, asesoramiento profesional y Colegio de Veterinarios) (local).
-10. **Faldón protector en troncos con nidos**: «de acuerdo con el ayuntamiento».
-11. **Alimentar sin autorización** «en muchas ordenanzas es infracción» (tabla universal).
+## Pendiente de consulta
 
-## Apartado nuevo «En la ciudad»
+Ninguna.
 
-12. **Comunidades de propietarios** (A): acuerdo formalizado por el ayuntamiento con persona de contacto; «si la
-    propiedad se niega a la gestión, la Directriz la considera titular de los gatos» (DGDA, protocolo de ubicaciones
-    privadas). Es una interpretación de la DGDA, no un artículo de ley: validar con asesoría jurídica.
-13. **Parques y jardines** (A): comedero lejos de zonas infantiles, areneros de juego y zonas de perros (DGDA, zona
-    urbana); «respeta riego, podas y cierres nocturnos» (criterio práctico).
-14. **Zonas sensibles** (A): persona de contacto del centro, horarios fuera de las horas punta, CER prioritario y, si no
-    basta, desplazamiento (DGDA, protocolo de zonas sensibles). Se han añadido los mercados como ejemplo.
-15. **Servicios municipales** (A): limpieza, parques y obras detectan problemas y deben respetar los elementos
-    autorizados (DGDA, Anexo III). Comprobar que los municipios usuarios informan a esos servicios.
-16. **Redes sociales** (A): no publicar la ubicación exacta de la colonia ni fotos de vecinos; guardar capturas si hay
-    amenazas. Criterio prudente sin fuente específica; valorar con protección de datos.
-17. **Seguridad personal** (A): ir acompañada o a horas con gente, no entrar en solares o edificios abandonados,
-    policía local ante agresiones. Criterio prudente.
+## Local (suplemento de San Román)
 
-## Contenido
-
-18. **Gato montés** «especie silvestre protegida» (A/medio ambiente): comprobar su categoría en el Listado estatal y en
-    los catálogos autonómicos (varía). Referencia al entorno de San Román y a la administración ambiental de CLM (local).
-19. **Fauna**: «en Canarias junto a las colonias hay menos lagartos y más pequeños» (estudio de 2026 en Tenerife).
-20. **Postura conservacionista**: resumen abreviado de SEO/BirdLife (2022) y del manifiesto de SEO/BirdLife, SECEM, AHE,
-    SECEMU y AEET (2022). Revisar que siga siendo justo tras acortarlo.
-21. **Mito «los machos contagian por mordeduras»** (FIV) (V). El mito de «una camada antes de esterilizar» se ha retirado
-    de esta unidad por espacio (lo trata la unidad 5).
-22. **Refugio con paja, no mantas** (V). En San Román coincide con la ordenanza 7.1.5.c (local).
-23. **Jabalíes** atraídos por las sobras en zona rural: sentido común, sin fuente específica.
-
-## Imágenes
-
-24. Nueva foto `convivencia/gato-parque-urbano.jpg` (parque del Retiro, Madrid): el pie no nombra el lugar. Muestra un
-    refugio y un cuenco en el parque; comprobar que no transmite que cualquiera pueda instalarlos (el texto exige
-    autorización).
-25. Pie de la foto del gato en la fuente de Toledo neutralizado («En pleno verano…»); el `alt` mantiene «Toledo» porque
-    describe lo que se ve.
+- **1** · Quejas y mediación (apartados 8 y 9.2) · **Resuelto**: Instancia General en el registro o en la sede
+  electrónica (respuesta del responsable del proyecto, 26/09/2026).
+- **2** · Cartel (7.1.5.e) · Sin cambios: ya recoge la valoración técnica y la autorización previa.
+- **3** · Gato herido · **Resuelto** (respuesta del responsable del proyecto, 26/09/2026): teléfono del Ayuntamiento
+  (925 88 70 02 · 925 88 71 15, de lunes a viernes de 9 a 14 h) y, fuera de horario, si es urgente, 112.
+- **4** · Gato muerto (7.2.6) · Sin cambios: ya recoge incineración, necropsia en el centro colaborador y comunicación
+  al Ayuntamiento.
+- **9** · Reubicación (7.1.8) · Añadir que, además del asesoramiento profesional que pide la ordenanza, la Ley 7/2023
+  (art. 42.8) exige supervisión veterinaria e informe preceptivo de la Junta de Comunidades de Castilla-La Mancha,
+  tanto para reubicar como para desplazar.
+- **18** · Entorno rural y fauna · Precisar que el gato montés está en el Listado estatal de protección especial y, en
+  Castilla-La Mancha, catalogado «de interés especial» (Decreto 33/1998); nombrar a la Consejería de Desarrollo
+  Sostenible (agentes medioambientales) como administración ambiental.
+- **22** · Refugios (7.1.5.c) · Sin cambios: ya lo recoge.
+- **23** · Jabalíes · Sin cambios: el fragmento ya los menciona en zona rural.
+- **25** · Imagen · Corregir la ruta a `convivencia/gato-calor-fuente.jpg` (el fragmento cita
+  `gato-calor-fuente-toledo.jpg`, que no existe). El pie local sobre Toledo puede mantenerse.
+- **26** · Obras · **Resuelto** (respuesta del responsable del proyecto, 26/09/2026): no hay protocolo municipal; avisar al Ayuntamiento en cuanto se sepa.

@@ -1,53 +1,37 @@
-# Puntos a validar · Unidad 7 «La salud de la colonia»
+# Validación · Tema 7 «La salud de la colonia»
 
-Para un veterinario (y, donde se indica, el Colegio de Veterinarios o la autoridad sanitaria). Versión universal
-(revisión del 26/09/2026): lo propio de Castilla-La Mancha y San Román está en `local/fragmentos/salud.md`.
+Fecha: 26/09/2026
 
-## Legal / normativo
+## Resueltos con fuente
 
-1. **Tratamiento de la PIF en España.** El texto dice solo que «hoy es tratable» con antivirales prescritos por un
-   veterinario y que este informará de las opciones legales. Según FVE/FECAVA (2024), España permitía tratar con
-   remdesivir (Veklury) por la vía de la prescripción excepcional («cascada», arts. 112-114 del Reglamento (UE) 2019/6);
-   no hay en la UE ningún medicamento veterinario autorizado con GS-441524 y no se ha encontrado resolución de la AEMPS
-   específica sobre ese principio activo. **Confirmar con el Colegio de Veterinarios o la AEMPS** la situación a 2026
-   (remdesivir por cascada, fórmulas magistrales de GS-441524, importación desde Francia) antes de ampliar el texto.
-2. **Rabia por comunidades autónomas.** El texto dice ahora que la antirrábica es «obligatoria en algunas comunidades
-   autónomas, como Castilla-La Mancha». Confirmar que la frase es correcta a 2026 y qué comunidades la exigen hoy en gatos
-   (no se ha verificado la lista; el texto solo nombra CLM como ejemplo para no fijar una lista que cambia).
-   **(local)** Verificar en el DOCM la Orden de 02/06/2014 (Programa zoosanitario básico de CLM), su vigencia y cómo
-   se aplica a los gatos comunitarios (titularidad municipal; ¿vacuna de 1 o de 3 años si solo se capturan una vez?).
-3. Dato de contexto: España peninsular libre de rabia terrestre desde 1978 (MAPA/ISCIII). Correcto según fuentes
-   oficiales; confirmar que no se prefiere otra formulación.
+| N.º | Qué se comprobó | Conclusión | Fuente |
+|---|---|---|---|
+| 1 | Situación legal del tratamiento de la PIF en España (remdesivir, GS-441524) | Desde el 8/8/2026 el remdesivir solo puede usarse por la vía excepcional del art. 112 del Reglamento (UE) 2019/6 y para tratar la PIF: el veterinario puede recetarlo. No hay medicamento veterinario autorizado con GS-441524 ni resolución de la AEMPS sobre fórmulas magistrales. Se añade una aclaración breve. **Texto corregido** | [Reglamento de Ejecución (UE) 2024/1973, anexo](https://eur-lex.europa.eu/legal-content/ES/TXT/?uri=CELEX:32024R1973); [AEMPS, entrada en aplicación](https://www.aemps.gob.es/informa/la-aemps-informa-de-la-entrada-en-aplicacion-del-reglamento-de-ejecucion-ue-2024-1973-sobre-el-uso-de-determinados-antimicrobianos-en-animales/); [ABCD, PIF 2026](https://www.abcdcatsvets.org/category/guidelines/) |
+| 2 | Antirrábica «obligatoria en algunas comunidades autónomas, como Castilla-La Mancha» (parte universal) | Correcto: es voluntaria en gatos en 12 comunidades y obligatoria en el resto; en CLM lo es (Orden de 02/06/2014, art. 4). Sin cambios. Queda la parte local (ver abajo) | [MAPA, nota sobre revacunación antirrábica (junio 2026)](https://www.mapa.gob.es/es/dam/jcr:2ee5a018-22bd-4f40-b4c8-9bcbc2ea4d8c/Nota%20diferencia%20vacunaci%C3%B3n%20FT%20y%20normativa%20MAPA-AEMPS.pdf); [Plan de contingencia de la rabia 2023, Anexo IV](https://www.sanidad.gob.es/areas/alertasEmergenciasSanitarias/preparacionRespuesta/docs/Plan_contingencia_Rabia_2023.pdf) |
+| 3 | España libre de rabia terrestre desde 1978 | La formulación oficial es «territorio peninsular e islas», con un único caso importado de Marruecos (Toledo, 2013). Se añade «y las islas». **Texto corregido** | [MAPA, Rabia](https://www.mapa.gob.es/es/ganaderia/temas/sanidad-animal-higiene-ganadera/sanidad-animal/enfermedades/rabia/rabia); [MAPA, nota junio 2026](https://www.mapa.gob.es/es/dam/jcr:2ee5a018-22bd-4f40-b4c8-9bcbc2ea4d8c/Nota%20diferencia%20vacunaci%C3%B3n%20FT%20y%20normativa%20MAPA-AEMPS.pdf) |
+| 4 | Vacunas en el CER: trivalente, antirrábica donde es obligatoria, FeLV según criterio; la anestesia no impide la respuesta (parte universal) | Correcto: la WSAVA recomienda las vacunas esenciales en gatos de programas TNR, dice que anestesia y cirugía no reducen de forma significativa la respuesta y considera la FeLV esencial en menores de un año y en adultos con acceso al exterior. Sin cambios. Queda la pauta de la clínica (ver abajo) | [WSAVA 2024 (JSAP)](https://wsava.org/wp-content/uploads/2024/04/WSAVA-Vaccination-guidelines-2024.pdf) |
+| 5 | Desparasitación «al menos cuatro al año» en gatos que cazan y cómo se organiza en colonias | La cifra es de ESCCAP (1-3 veces al año no bastan). En colonias se desparasita en la captura del CER y se repite cuando el manejo lo permite. **Texto corregido** | [ESCCAP, desparasitación individual de gatos](https://www.esccap.org/uploads/docs/rqy58v3k_1272_ESCCAP_GL1_ES__Standalone_worming_flow_charts_v1_cats.pdf); Ordenanza de colonias de San Román, 7.2.1 ([BOP Toledo n.º 122/2024](http://bop.diputoledo.es/webEbop/csv.jsp)) |
+| 6 | Test FIV/FeLV opcional en el CER; un FIV positivo sano no se sacrifica | Correcto: las guías AAFP hacen una excepción con los gatos de TNR y la ABCD dice que un positivo sano no debe sacrificarse. Sin cambios | [AAFP y TNR (Million Cat Challenge)](https://www.millioncatchallenge.org/resources/return-to-field/tnr-and-the-aafp-feline-retrovirus-management-guidelines); [ABCD, FIV](https://www.abcdcatsvets.org/category/guidelines/) |
+| 7 | Umbrales de las señales de alarma | La obstrucción urinaria completa puede matar en menos de 24-48 horas: «uno a tres días» pasa a «uno o dos días». El parto (más de una hora empujando sin cría) es un umbral prudente; el resto coincide con VCA. **Texto corregido** | [Cornell Feline Health Center, FLUTD](https://www.vet.cornell.edu/departments-centers-and-institutes/cornell-feline-health-center/health-information/feline-health-topics/feline-lower-urinary-tract-disease); [Manual Merck, reproducción de gatos](https://www.merckvetmanual.com/cat-owners/reproductive-disorders-of-cats/management-of-reproduction-of-cats); [VCA, urgencias en gatos](https://vcahospitals.com/know-your-pet/emergencies-in-cats) |
+| 8 | Mortalidad de la panleucopenia sin cifra | Menos del 50 % sobrevive aun con cuidados intensivos (ABCD); supervivencia hospitalaria del 20-51 % (Merck). La frase actual es fiel. Sin cambios | [ABCD, panleucopenia](https://www.abcdcatsvets.org/category/guidelines/); [Manual Merck, panleucopenia](https://www.merckvetmanual.com/digestive-system/infectious-diseases-of-the-gastrointestinal-tract-in-small-animals/feline-panleukopenia) |
+| 9 | PIF: «se curan más de 80 de cada 100 gatos tratados» | Correcto: la ABCD 2026 da recuperación en más del 85 % con antivirales. Sin cambios | [ABCD, PIF 2026](https://www.abcdcatsvets.org/category/guidelines/) |
+| 10 | Garrapatas: si el cuidador debe quitarlas y cómo | Razonable «solo si el gato se deja»; ESCCAP desaconseja aceite, alcohol u otros irritantes. Se añade esa advertencia. **Texto corregido** | [ESCCAP, Guía n.º 3: ectoparásitos](https://www.esccap.es/guias-esccap/) |
+| 11 | Primeros auxilios limitados a no medicar, jaula trampa, tapar y lugar templado | Correcto: la DGDA manda retirar a los gatos enfermos o heridos para valoración veterinaria; el resto va en la unidad 11. Sin cambios | [Directriz DGDA 2024, 6.10.3](https://www.dsca.gob.es/sites/default/files/publicaciones/directriz-tecnica-colonias-felinas.pdf) |
+| 12 | Gripe aviar como señal de alarma (parte universal) | Correcto: no tocar animales enfermos o muertos y avisar. Sin cambios. Queda la parte local (ver abajo) | [CDC, prevención de la gripe aviar](https://www.cdc.gov/bird-flu/prevention/index.html) |
+| 13 | Párrafo urbano: densidad, contagio entre colonias, abandonos, atropellos | Mensaje correcto y no alarmista; «casi nunca vacunados» era absoluto y sin fuente: pasa a «a menudo sin vacunar». **Texto corregido** | [WSAVA 2024 (JSAP), refugios](https://wsava.org/wp-content/uploads/2024/04/WSAVA-Vaccination-guidelines-2024.pdf); [Directriz DGDA 2024, entorno urbano](https://www.dsca.gob.es/sites/default/files/publicaciones/directriz-tecnica-colonias-felinas.pdf) |
+| 14 | Esquema `ciclo-tenia-pulga.svg` | Existe (viewBox 0 0 800 900) y coincide con el Markdown; la relación pulga-*Dipylidium* está en ESCCAP. Sin cambios | [ESCCAP, Guía n.º 1: vermes](https://www.esccap.es/guias-esccap/) |
+| 12 (consulta) | Aves muertas y gatos con signos nerviosos o respiratorios: a quién se avisa | Se avisa al Ayuntamiento, que lo traslada; el veterinario comunica las enfermedades de declaración obligatoria. **Texto corregido** en los temas 7 y 8 y en el suplemento (respuesta del responsable del proyecto, 26/09/2026) | Respuesta del responsable del proyecto, 26/09/2026; Orden de 02/06/2014 (DOCM n.º 110), disposición adicional segunda |
 
-## Clínico (veterinario)
+## Pendiente de consulta
 
-4. **Pautas de vacunación en el CER.** Texto: «lo habitual es la trivalente (panleucopenia, herpesvirus, calicivirus);
-   antirrábica donde es obligatoria; FeLV según criterio veterinario; qué vacunas se ponen lo fija cada programa», y
-   que «la anestesia no impide que la vacuna funcione» (WSAVA 2024). **(local)** Confirmar la pauta real de la clínica
-   del programa (¿vacuna viva atenuada en dosis única?, ¿FeLV sí o no?,
-   ¿se revacuna si se recaptura?). La WSAVA 2024 considera FeLV esencial en menores de 1 año y adultos con acceso al
-   exterior donde el virus circula.
-5. **Desparasitación.** «Al menos cuatro al año para gatos que cazan» (ESCCAP). En colonias no es realista capturar
-   cuatro veces al año: ¿cómo lo organiza el programa (antiparasitario en comida, solo en la captura)? Ajustar la frase
-   si el veterinario prefiere otra pauta.
-6. **Test FIV/FeLV opcional en CER** (AAFP 2020, tomado de fuentes secundarias). Confirmar que es la política del
-   programa y qué se hace con un positivo (el texto dice que un FIV positivo sano no debe sacrificarse, según ABCD).
-7. **Lista de señales de alarma** (no come más de un día, obstrucción urinaria mortal en 1-3 días, parto de más de 1 h
-   sin cría, etc.). Recopilada de ABCD, Merck y VCA; validar umbrales y añadir o quitar según el criterio del programa.
-8. **Mortalidad de la panleucopenia**: se dice sin cifra («mata a muchos de los gatitos que enferman aun con
-   tratamiento»). Fuentes: 30-50 % de muertes en tratados (ABCD); supervivencia hospitalaria de gatitos 20-51 % (Merck).
-9. **PIF: «se curan más de 80 de cada 100 gatos tratados»** (ABCD 2026 >85 %; FVE ~84 %). Coincide con la tabla de
-   datos acordados (>80 %).
-10. **Garrapatas**: se explica cómo quitarlas (gancho o pinzas, tirar recto). Confirmar que el veterinario quiere que
-    el cuidador lo haga o prefiere que solo avise.
-11. **Primer auxilio en el bloque «Qué hacer»**: no medicar, jaula trampa, tapar, lugar templado. No se han incluido
-    pautas de heridas, golpe de calor ni intoxicación (van en la unidad 11, «gato herido o muy enfermo»).
-12. Gripe aviar H5N1: se menciona solo como señal de alarma (signos nerviosos o respiratorios graves con aves muertas
-    cerca). **(local)** Confirmar si el programa tiene un protocolo de aviso a la consejería competente.
-13. **Nuevo (urbano).** Párrafo sobre la ciudad: más densidad y colonias próximas → más contagio entre colonias; más
-    gatos domésticos abandonados sin vacunar; más atropellos. Formulado sin cifras; validar que el mensaje es
-    correcto y no alarmista.
+- **2** · Veterinario del programa · ¿El programa CER de San Román pone la vacuna antirrábica a los gatos de colonia en la esterilización (sí/no)? Si la pone: ¿solo una dosis, o se revacuna cada año a los gatos que se recapturan, como exige la Orden de 02/06/2014?
+- **4** · Veterinario del programa · En el CER de San Román, ¿qué vacunas se ponen en la esterilización (trivalente viva atenuada en dosis única; FeLV sí/no; antirrábica sí/no) y se revacuna a un gato cuando se recaptura (sí/no)?
 
-## Técnico
+## Local (suplemento de San Román)
 
-14. El esquema `ciclo-tenia-pulga.svg` ya existe (800 × 900) y coincide con el Markdown: resuelto.
+- **2** · Antirrábica en CLM · Quitar «pendiente de verificar en el DOCM» y citar la Orden de 02/06/2014, DOCM n.º 110, de 10/06/2014, art. 4: vacunación anual obligatoria de los gatos mayores de tres meses (al menos 12 semanas), primovacunación de dos dosis separadas como máximo un mes, y la revacunación cuenta como primovacunación si han pasado más de dos años. No afirmar que el CER de San Román pone la antirrábica hasta que responda el Ayuntamiento: la ordenanza de colonias (7.2.1) solo habla de la trivalente.
+- **3** · Contexto de la rabia · El único caso importado desde 1978 se declaró en 2013 en Toledo; por eso CLM extendió la vacunación obligatoria a gatos y hurones (preámbulo de la Orden de 02/06/2014).
+- **4** · Vacunas en el CER · Pauta de la ordenanza (7.2.1): trivalente en la esterilización y, si el manejo lo permite, revacunación al año y después cada 2-3 años. Completar con la respuesta de la clínica.
+- **5** · Desparasitación · Pauta de la ordenanza (7.2.1): interna y externa en la esterilización y, si el manejo lo permite, interna cada tres meses y externa cada mes (sobre todo en primavera y verano).
+- **6** · Test FIV/FeLV · La ordenanza (7.2.1) no recomienda hacer el test a todos los gatos de la colonia: es mejor dedicar los recursos a esterilizar, vacunar, alimentar y desparasitar, y un solo test no confirma la infección.
+- **12** · Gripe aviar · **Resuelto** (respuesta del responsable del proyecto, 26/09/2026): la persona cuidadora avisa al Ayuntamiento, que lo traslada. Los veterinarios deben comunicar las enfermedades de declaración obligatoria en 24 horas (Orden de 02/06/2014, disposición adicional segunda).

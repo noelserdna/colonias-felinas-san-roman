@@ -24,8 +24,9 @@ excusa de un conflicto anterior.
 | «Nos van a pegar enfermedades» | Miedo | La colonia está vacunada y desparasitada; con higiene, el riesgo es bajo |
 | «Que se los lleven» | Hartazgo | La ley no permite retirarlos sin más, y si se van, llegan otros; el CER hace que la colonia baje |
 
-Si el vecino no queda conforme, no discutas: la **queja formal** se presenta **por el cauce que fije tu
-ayuntamiento** (normalmente por escrito), y el ayuntamiento media entre las partes. Avisa tú también. Con los
+Si el vecino no queda conforme, no discutas: la **queja formal** se presenta **por escrito** al
+ayuntamiento, con una **instancia general** en el registro municipal o en la sede electrónica, y el ayuntamiento
+media entre las partes. Avisa tú también. Con los
 **alimentadores espontáneos**, lo mismo: retira la comida inadecuada, explícales con tacto las normas, invítales a
 acreditarse y, si no funciona, comunícalo.
 
@@ -51,7 +52,7 @@ otra comida), pero lo valora y coloca el ayuntamiento. No pongas carteles por tu
   suciedad, un gato herido) y deben respetar los elementos autorizados. Si retiran algo, no discutas con los
   operarios: avisa a quien coordina el programa.
 - **Tu seguridad.** Ve a horas con algo de gente o acompañada, con la acreditación; no entres en solares o edificios
-  abandonados y cuidado con el tráfico. Ante una persona agresiva, apártate y llama a la policía local.
+  abandonados y cuidado con el tráfico. Ante una persona agresiva, apártate y llama al 112 o a la policía.
 
 
 ## Mitos frecuentes y malas prácticas
@@ -76,7 +77,8 @@ colonias hay menos lagartos y más pequeños. En la península, el impacto depen
 sin esterilizar pueden cruzarse con el **gato montés**, especie silvestre protegida; en la ciudad, parques y riberas
 son refugio de aves.
 
-Las **entidades conservacionistas** critican el CER porque las colonias rara vez desaparecen solo con esterilizar;
+Las **entidades conservacionistas** critican el CER porque las colonias rara vez desaparecen solo con esterilizar,
+y piden que los gatos con dueño no salgan de casa y que no haya colonias en islas ni junto a especies amenazadas;
 buena parte de la veterinaria responde que el impacto debe medirse caso a caso y que los métodos letales están
 prohibidos y no funcionan. Coinciden en lo esencial: **esterilizar e identificar a los gatos con dueño, acabar con el
 abandono, no crear colonias nuevas y reducir de verdad las que existen**.
@@ -86,7 +88,7 @@ abandono, no crear colonias nuevas y reducir de verdad las que existen**.
 Lo que puedes hacer:
 
 - No alimentar ni instalar puntos de comida en el monte, riberas, charcas o espacios protegidos.
-- Poner la comida donde no llegue otra fauna y sin sobras (en zona rural atraen incluso jabalíes).
+- Poner la comida donde no llegue otra fauna y sin sobras (atraen incluso jabalíes, en el campo y en barrios junto al monte).
 - Proteger árboles con nidos con un faldón en el tronco que impida trepar, de acuerdo con el ayuntamiento.
 - Reducir la colonia con CER intenso y adopción, y avisar de gatos de fincas o casas sin esterilizar.
 
@@ -96,7 +98,7 @@ Lo que puedes hacer:
 >
 > - No intentes cogerlo con las manos: un gato asustado y dolorido muerde y araña.
 > - Fíjate en qué le pasa y dónde está; haz una foto si puedes.
-> - Avisa al ayuntamiento; si es urgente o está en la calzada, a la policía local.
+> - Llama al ayuntamiento en horario de oficina; fuera de horario, si es urgente o está en la calzada, al 112.
 > - La captura la organiza el ayuntamiento con la clínica; el veterinario decide el tratamiento y si puede volver a la colonia.
 
 > **Qué hacer si encuentras un gato muerto**
@@ -130,7 +132,7 @@ Lo que puedes hacer:
 ## Obras, derribos, desalojos y reubicación
 
 En la ciudad las obras son frecuentes: rehabilitaciones, zanjas, reforma de un parque, vallado o limpieza de un
-solar. La Directriz del Ministerio pide al ayuntamiento comprobar en cada licencia de obra si hay colonias cerca.
+solar. La Directriz del Ministerio recomienda que el ayuntamiento compruebe en cada licencia de obra si hay colonias cerca.
 
 > **Qué hacer si van a hacer obras donde vive la colonia**
 >
@@ -139,7 +141,9 @@ solar. La Directriz del Ministerio pide al ayuntamiento comprobar en cada licenc
 > - Los comederos se sacan fuera del perímetro y dentro no se alimenta, tampoco los trabajadores.
 
 Si una obra, un derribo o el desalojo de un solar impiden seguir, se busca un sitio cercano dentro del territorio y
-se mueve el comedero poco a poco, con **al menos dos semanas entre cada paso**, esperando a que acudan todos.
+se mueve el comedero poco a poco, con **al menos dos semanas entre cada paso**, esperando a que acudan todos. Lo
+decide el ayuntamiento: mover el comedero unos metros no es trasladar la colonia, pero llevarla a otra zona
+(**desplazamiento**) exige los mismos requisitos legales que la reubicación.
 
 La **reubicación** (capturar la colonia y llevarla a otro lugar) es excepcional: solo por impacto en la fauna, riesgo
 para las personas o peligro para los gatos, con estudio previo, informe de la comunidad autónoma y supervisión

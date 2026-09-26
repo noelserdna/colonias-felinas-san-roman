@@ -1,31 +1,39 @@
-# Revisión · Unidad 2 «Qué dice la ley»
+# Validación · Tema 2 «Qué dice la ley»
 
-**A** = ayuntamiento / secretaría municipal (o quien valide el temario universal); **V** = veterinario del programa.
-Artículos comprobados sobre los PDF de `investigacion-curso/referencias/` (Ley 7/2023 consolidada, LO 3/2023, protocolos
-marco de Andalucía y la Comunitat Valenciana). Versión universal del 26/09/2026: lo propio de San Román y de
-Castilla-La Mancha está en `local/fragmentos/marco-legal.md` y se marca «(local)».
+Fecha: 26/09/2026
 
-| # | Dónde | Afirmación | Quién | Motivo |
-|---|---|---|---|---|
-| 1 | «Qué norma manda» | «Si una norma anterior dice algo menos protector (por ejemplo, una ordenanza que presenta el microchip como opcional), manda la ley» | A | Interpretación de jerarquía normativa (carácter básico, disp. final 6.ª). El caso concreto de la ordenanza de colonias de San Román (7.2.2) pasa al suplemento **(local)** |
-| 2 | Idem, tabla | Reglamento (UE) 2026/1818: «se aplicará en general desde 2028» | A | Dato acordado; los plazos de identificación para particulares llegan a 2041. Se ha evitado dar esas fechas para no confundir |
-| 3 | Idem | «Las leyes autonómicas y las ordenanzas solo pueden completarla o ser más exigentes» | A | Formulación simplificada del carácter básico; hay materias no básicas en la Ley 7/2023 |
-| 4 | «Qué deben hacer las administraciones» | Informe anual de resultados a la comunidad autónoma | A | Art. 39.1.g Ley 7/2023 («informe estadístico anual»). La obligación añadida de la Ley 7/2020 (art. 28) es **(local)** |
-| 5 | «Lo que añade tu comunidad autónoma» | Cada comunidad tiene ley de protección animal y registro de identificación conectado a REIAC; plazo de identificación de gatos con dueño fijado por la ley autonómica; antirrábica obligatoria en algunas comunidades; multas propias | A, V | Generalización según la sección 9 de la guía. Comprobar que ningún registro autonómico quede fuera de REIAC y la lista actual de comunidades con rabia obligatoria en gatos |
-| 6 | Idem | Protocolo marco (art. 40): lo tienen Andalucía (2023) y la Comunitat Valenciana (2025); Castilla-La Mancha aún no | A | Situación a 25/09/2026 en las notas. Castilla y León publicó en 2025 un protocolo marco (fuente E8, fecha interna 24/07/2025) que no se cita por no haber confirmado su aprobación formal; revisar antes de cada edición |
-| 7 | «Qué está prohibido», sacrificio | «Salvo por problemas graves de salud del gato o en los casos excepcionales que prevé la ley, y siempre por un veterinario» | V | Paráfrasis del art. 42.1 |
-| 8 | Idem, retirada | Excepciones: enfermo que no puede valerse (valora el veterinario), sociable o gatito en edad de socialización para adopción | V | Art. 42.6; coherencia con las unidades 5 y 11 |
-| 9 | Idem, ordenanzas | «Muchas ordenanzas» prohíben dañar o mover comederos, meter perros, añadir gatos y alimentar sin autorización (leve, con excepción de cuidadores acreditados) | A | Generalización a partir de varias ordenanzas y de la sección 9 de la guía; los artículos concretos de San Román (tenencia, arts. 18.3, 18.5, 21.2.b) son **(local)** |
-| 10 | «Cuidar no es ser dueño» | «Muchas ordenanzas dirigen al ayuntamiento las reclamaciones por daños» | A | Generalización; el caso de San Román (tenencia, art. 18.4) es **(local)**. Comprobar que es lo habitual |
-| 11 | «Sanciones», tabla | Ejemplo de leve genérico («incumplimientos menores de la ley»); «las leyes autonómicas tienen su propio cuadro de multas, normalmente más bajas» | A | Se retira el ejemplo local de alimentar sin autorización **(local)**. Comprobar la afirmación «normalmente más bajas» (cierto en CLM: 300-60.000 €) |
-| 12 | «Qué hacer si sospechas de maltrato» | Avisar a policía local, Guardia Civil (Seprona) o 112; después al ayuntamiento; no tocar cebos | A | En ciudades con policía autonómica o nacional el circuito puede variar; cada suplemento local debe dar sus teléfonos **(local)** |
-| 13 | «Importante» | Abandonar un gato en una colonia es infracción grave; avisar al ayuntamiento o a la policía local | A | Art. 74.k y 42.3 Ley 7/2023 |
-| 14 | «Normas aún en desarrollo» | Sin reglamento estatal a septiembre de 2026; varias comunidades sin protocolo marco | A | Situación a 25/09/2026; revisar antes de cada edición del curso |
+## Resueltos con fuente
 
-## Pasado al suplemento local
+| N.º | Qué se comprobó | Conclusión | Fuente |
+|---|---|---|---|
+| 1 | Jerarquía: una norma menos protectora (ordenanza con microchip «opcional») frente a la Ley 7/2023 | Manda la ley: es básica (disp. final 6.ª) y el art. 38.2 obliga al microchip; un reglamento no puede vulnerar la ley. Sobraba «anterior»: **texto corregido** («una norma autonómica o municipal») | [Ley 7/2023, disp. final 6.ª y art. 38.2](https://www.boe.es/buscar/act.php?id=BOE-A-2023-7936); [Ley 39/2015, art. 128.2](https://www.boe.es/buscar/act.php?id=BOE-A-2015-10565) |
+| 2 | Reglamento (UE) 2026/1818 «se aplicará en general desde 2028» | Correcto: aplicable desde el 31/08/2028 (art. 33), con excepciones posteriores; la identificación de gatos de particulares llega en 2041, fecha que no conviene dar | [Reglamento (UE) 2026/1818, arts. 20.7 y 33](http://data.europa.eu/eli/reg/2026/1818/oj) |
+| 3 | «Las leyes autonómicas y las ordenanzas solo pueden completarla o ser más exigentes» | Simplificación aceptable: la ley fija un «mínimo común»; los pocos preceptos no básicos (arts. 55, 57, 58, 61) son competencia exclusiva del Estado y rigen igual en toda España | [Ley 7/2023, preámbulo y disp. final 6.ª](https://www.boe.es/buscar/act.php?id=BOE-A-2023-7936) |
+| 4 | Informe anual de resultados a la comunidad autónoma | Paráfrasis fiel del art. 39.1.g («elevar anualmente… un informe estadístico») | [Ley 7/2023, art. 39.1.g](https://www.boe.es/buscar/act.php?id=BOE-A-2023-7936) |
+| 5 | Registro autonómico conectado a REIAC; antirrábica obligatoria en algunas comunidades; multas propias | REIAC agrupa las 17 comunidades y Ceuta y Melilla; «algunas comunidades» sin lista es prudente; las multas autonómicas conviven con las estatales | [REIAC](https://www.reiac.es/); [Ley 7/2020 CLM, art. 44](https://www.boe.es/buscar/act.php?id=BOE-A-2020-13916) |
+| 6 | Protocolo marco: Andalucía (2023) y Comunitat Valenciana (2025); Castilla-La Mancha aún no | Correcto como ejemplos. Hay más: Castilla y León lo publica en su web (2025) e Illes Balears lo envió a los ayuntamientos el 11/12/2025. Revisar antes de cada edición | [JCyL · Colonias felinas](https://agriculturaganaderia.jcyl.es/web/es/ganaderia/colonias-felinas.html); [CAIB, 11/12/2025](https://www.caib.es/pidip2front/ficha_convocatoria.xhtml?lang=es&urlSemantica=el-govern-envia-a-los-ayuntamientos-a-los-consells-insulares-y-a-la-felib-el-protocolo-marco-para-la-gestion-de-colonias-felinas-de-las-illes-balears) |
+| 7 | Sacrificio: solo por problemas graves de salud o casos excepcionales, siempre por veterinario | Paráfrasis fiel del art. 42.1 | [Ley 7/2023, art. 42.1](https://www.boe.es/buscar/act.php?id=BOE-A-2023-7936) |
+| 8 | Excepciones a la retirada | Coincide con el art. 42.6 a), b) y c); «sociable» resume «totalmente socializados» | [Ley 7/2023, art. 42.6](https://www.boe.es/buscar/act.php?id=BOE-A-2023-7936) |
+| 9 | «Muchas ordenanzas» prohíben tocar comederos, meter perros, añadir gatos y alimentar sin autorización (leve) | Las prohibiciones aparecen en varios programas (Sevilla, Talavera); la calificación «leve» solo se comprobó en San Román y la cuantía depende de si la conducta la tipifica una ley o solo la ordenanza. **Texto corregido** («suele estar sancionado») | [Sevilla (2024)](https://www.sevilla.org/transparencia/informacion-sobre-la-corporacion-municipal/planes-y-programas/3-programa-de-gestion-colonias-felinas-report-1.pdf); [Talavera (2025)](https://sanidad.talavera.es/download/44/gestion-de-colonias-felinas/6474/programa-de-gestion-de-poblaciones-felinas-talavera-de-la-reina.pdf); [LBRL, art. 141](https://www.boe.es/buscar/act.php?id=BOE-A-1985-5392) |
+| 10 | «Muchas ordenanzas dirigen al ayuntamiento las reclamaciones por daños» | Sin base para «muchas» (la cláusula solo se ha visto en San Román; Montón, en cambio, hace que quien cuida exonere al ayuntamiento). Lo seguro: quien cuida no es titular y el chip va a nombre del ayuntamiento. **Texto corregido** (remitir al ayuntamiento) | [Directriz DGDA (2024), definiciones](https://www.dsca.gob.es/sites/default/files/publicaciones/directriz-tecnica-colonias-felinas.pdf); [Ley 7/2023, art. 38.2](https://www.boe.es/buscar/act.php?id=BOE-A-2023-7936) |
+| 11 | Leve genérico; multas autonómicas «normalmente más bajas» | Correcto: art. 73 y 76.1.a; en CLM las leves van de 300 a 3.000 € y el máximo es 60.000 € | [Ley 7/2023, arts. 73 y 76](https://www.boe.es/buscar/act.php?id=BOE-A-2023-7936); [Ley 7/2020 CLM, art. 44](https://www.boe.es/buscar/act.php?id=BOE-A-2020-13916) |
+| 12 | Ante maltrato: policía local, Guardia Civil (Seprona) o 112 | Válido como regla general; el Seprona atiende en el 062 y en algunas zonas actúa otra policía. **Texto corregido** («Seprona, 062) u otra policía de tu zona») | [Guardia Civil · 062 / Seprona](https://x.com/guardiacivil/status/606052144509272064?lang=es) |
+| 13 | Abandonar un gato en una colonia es infracción grave | Correcto: art. 42.3 (prohibición) y 74.k (grave) | [Ley 7/2023, arts. 42.3 y 74.k](https://www.boe.es/buscar/act.php?id=BOE-A-2023-7936) |
+| 14 | Sin reglamento estatal a septiembre de 2026 | El BOE consolidado no registra modificaciones; el reglamento sigue en proyecto (consulta pública de junio-julio de 2025). Revisar antes de cada edición | [DSCA · Proyecto de RD del reglamento de la Ley 7/2023](https://www.dsca.gob.es/es/consulta-publica/proyecto-real-decreto-se-aprueba-reglamento-ley-72023-28-marzo-proteccion-0); [Ley 7/2023, texto consolidado](https://www.boe.es/buscar/act.php?id=BOE-A-2023-7936) |
+| 9 (consulta) | Multa de la infracción leve del art. 21.2.b de la ordenanza de tenencia | Las infracciones que crea una ordenanza están limitadas por la LBRL: leves hasta 750 €, graves hasta 1.500 €, muy graves hasta 3.000 € (comprobado en el BOE). Alimentar sin autorización: hasta 750 €. **Texto corregido** en el tema 2 y en el suplemento (respuesta del responsable del proyecto, 26/09/2026) | Respuesta del responsable del proyecto, 26/09/2026; [Ley 7/1985, art. 141](https://www.boe.es/buscar/act.php?id=BOE-A-1985-5392#a141) |
+| 12 (consulta) | Teléfonos y horario para avisar de abandono, maltrato o envenenamiento | Teléfono del Ayuntamiento en horario de oficina; fuera de horario, si es urgente, 112; Guardia Civil (Seprona, 062). Se retira la mención a la Policía Local. Recogido en el suplemento (respuesta del responsable del proyecto, 26/09/2026) | Respuesta del responsable del proyecto, 26/09/2026; [Web del Ayuntamiento](https://www.sanromandelosmontes.es) (teléfonos 925 887002 y 925 887115; atención de 9 a 14 h de lunes a viernes) |
 
-- Ley 7/2020 de Castilla-La Mancha: art. 28 (comunicación anual a la Junta), identificación antes de 3 meses y
-  SIIA-CLM, multas propias (art. 44), falta de reglamento y de protocolo marco **(local)**.
-- Orden de 02/06/2014 (antirrábica obligatoria en CLM) **(local)**.
-- Ordenanzas de San Román (BOP 61 y 122/2024): microchip «recomendable» (7.2.2), arts. 18.3, 18.4, 18.5, 21.2.b y 24
-  de la ordenanza de tenencia, con sus dudas de numeración y cuantía **(local)**.
+## Pendiente de consulta
+
+- **5** · Veterinario del programa · ¿La clínica que esteriliza para el Ayuntamiento pone la vacuna antirrábica a todos los gatos de colonia de más de 3 meses durante el CER, como exige la Orden de 02/06/2014? (sí/no)
+
+## Local (suplemento de San Román)
+
+- **1** · Ordenanza de colonias (BOP 122/2024), apdo. 7.2.2 · Confirmado: solo «se recomienda» el microchip y permite aplazarlo «una vez está controlada la población». La ordenanza de tenencia (art. 20.1) cita la «Ley 7/2023, de 28 de mayo»: la fecha correcta es 28 de marzo.
+- **4** · Ley 7/2020 CLM, art. 28.1 · Confirmado: comunicación anual a la Consejería de programas, ubicación de colonias y resultados.
+- **5** · Antirrábica en CLM · Citar la Orden de 02/06/2014 (Programa zoosanitario básico de cánidos, félidos y hurones, DOCM n.º 110, 10/06/2014). La página del trámite JCCM 1002897 cita la Orden pero no dice por sí misma que sea obligatoria: comprobar en el DOCM. Que se ponga «en la clínica durante el CER» queda pendiente de la consulta 5.
+- **6 y 14** · Castilla-La Mancha · Mantener que no tiene protocolo marco ni reglamento de la Ley 7/2020; revisar el DOCM antes de cada edición.
+- **9** · Ordenanza de tenencia (BOP 61/2024) · Confirmados los arts. 18.3, 18.5 y 21.2.b; el art. 18 salta del apartado 1 al 3. Infracción leve con multa de hasta 750 € (LBRL, art. 141): consulta 9 resuelta (respuesta del responsable del proyecto, 26/09/2026).
+- **10** · Ordenanza de tenencia, art. 18.4 · Confirmado: las reclamaciones por daños se dirigen al Ayuntamiento.
+- **11** · Ley 7/2020 CLM, art. 44 · Confirmadas las multas (300-3.000 / 3.001-9.000 / 9.001-60.000 €).
+- **12** · Avisos · **Resuelto** (respuesta del responsable del proyecto, 26/09/2026): Ayuntamiento (925 88 70 02 · 925 88 71 15, de lunes a viernes de 9 a 14 h), Guardia Civil (Seprona, 062) y 112.

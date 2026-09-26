@@ -42,7 +42,7 @@ Hay gatos que parecen mansos y en realidad están paralizados por el miedo. Por 
 
 Cuando la comida lo permite, los gatos forman grupos estables:
 
-- El **núcleo** son hembras emparentadas que se ayudan con las crías, incluso amamantando las ajenas.
+- El **núcleo** suelen ser hembras, a menudo emparentadas, que se ayudan con las crías, incluso amamantando las ajenas.
 - Los **machos sin esterilizar** recorren territorios amplios y se mueven entre grupos.
 - Cada gato tiene **compañeros preferidos**, con los que se lame y descansa.
 - El grupo **rechaza a los extraños**: un gato nuevo tarda mucho en ser aceptado.
@@ -68,7 +68,7 @@ El objetivo no es mantener la colonia para siempre, sino **reducirla poco a poco
 - evitar nuevas entradas y vigilar la llegada de gatos nuevos;
 - alimentar con orden y mantener limpio el entorno.
 
-Hace falta esterilizar al menos el **70-75 %** de una colonia para que deje de crecer, y muchos programas municipales se marcan el **90 %**. Los resultados piden constancia: en un campus de Florida la población bajó un 85 % en 28 años de CER con adopción.
+Hace falta esterilizar al menos el **70-75 %** de una colonia para que deje de crecer; la Directriz estatal pide llegar al **80 %** antes de pasar a otra colonia, y muchos programas municipales se marcan el **90 %**. Los resultados piden constancia: en un campus de Florida, tras 28 años de CER con adopción, la población había bajado un 85 %.
 
 ## Dónde viven: ciudad, periferia y pueblo
 
@@ -82,8 +82,8 @@ Hay colonias en **solares**, **parques y jardines** (su lugar preferido), **pati
 
 Lo que cambia en la ciudad:
 
-- **Densidad**: hay colonias a pocas calles y los gatos pasan de una a otra. Esterilizar una y no la de al lado apenas sirve: hay que actuar **por zonas**.
-- **Más abandonos**: aparecen gatos sociables que no deberían estar en la calle y pueden ir a adopción.
+- **Densidad**: hay colonias a pocas calles y los gatos pasan de una a otra. Si se esteriliza una y no la de al lado, siguen llegando gatos sin esterilizar: hay que actuar **por zonas**.
+- **Abandonos**: aparecen a menudo gatos sociables que no deberían estar en la calle y pueden ir a adopción.
 - **Más gente implicada**: varios cuidadores por colonia, vecinos que echan comida por su cuenta y más quejas. Coordinarse es clave (tema 3).
 - **Espacios con dueño**: comunidades de propietarios, empresas u organismos. Sin su permiso no se gestiona una colonia en su recinto.
 - **Zonas sensibles**: junto a colegios, areneros, hospitales o zonas de perros no se ponen comederos, y tampoco junto al tráfico.
@@ -101,11 +101,12 @@ Urbanizaciones, extrarradios y polígonos son las zonas con **más densidad de g
 
 - Muchos gatos viven en **semipropiedad**: rondan casas y corrales, alguien les echa de comer, pero nadie se considera su dueño ni los esteriliza.
 - Hay pocas personas cuidadoras para mucho territorio: la Directriz recomienda **priorizar el CER**.
-- En verano y fines de semana llegan residentes temporales que pueden dar de comer sin control o abandonar gatos al irse.
+- Donde hay segundas residencias, en verano y fines de semana llegan residentes temporales que pueden dar de comer sin control o abandonar gatos al irse.
+- En las ciudades suele haber protectoras y casas de acogida; en los pueblos pequeños es raro, y la adopción la coordinan el ayuntamiento y el veterinario, a veces con entidades de la comarca o la provincia.
 
 <figure><img src="/img/curso/gatos-comunitarios/gato-calle-pueblo.jpg" alt="Gato blanco con manchas negras y pardas rascándose la oreja con una pata trasera en una calle de pueblo, junto a una pared encalada" loading="lazy" width="1200" height="900"><figcaption>En el medio rural muchos gatos viven entre la calle y las casas, sin dueño claro. <small>Foto: emp&amp;isd · CC0 · Wikimedia Commons</small></figcaption></figure>
 
-Cerca del monte vive el **gato montés** (*Felis silvestris*), un felino silvestre protegido: más corpulento, con la cola gruesa, anillada y de punta negra y roma. Los gatos domésticos sin esterilizar pueden cruzarse con él y cazan fauna silvestre: otra razón para esterilizar y no poner comida junto al monte.
+En algunas zonas de monte vive el **gato montés** (*Felis silvestris*), un felino silvestre protegido que se confunde fácilmente con un gato atigrado: es algo más robusto y tiene la cola gruesa, con dos o tres anillos oscuros y la punta negra y roma. Los gatos domésticos sin esterilizar pueden cruzarse con él y cazan fauna silvestre: otra razón para esterilizar y no poner comida junto al monte.
 
 ## Para saber más
 

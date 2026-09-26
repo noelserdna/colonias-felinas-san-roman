@@ -1,70 +1,48 @@
-# Revisión · Unidad 9 · El método CER paso a paso
+# Validación · Tema 9 «El método CER paso a paso»
 
-Afirmaciones que conviene validar antes de publicar. (V) = veterinario de la clínica colaboradora; (A) = ayuntamiento
-que adopte el temario. «(local)» = el punto pasa al suplemento local de San Román (`local/fragmentos/metodo-cer.md`).
+Fecha: 26/09/2026
 
-Versión universal (26/09/2026): el texto ya no cita la ordenanza de San Román; remite al programa de cada municipio.
+## Resueltos con fuente
 
-## Para el veterinario
+| N.º | Qué se comprobó | Conclusión | Fuente |
+|---|---|---|---|
+| 1 | Ayuno: retirar la comida la víspera (~24 h), nunca el agua; ajuste con calor | Correcto (DGDA 24-36 h; ACA 24 h con agua siempre; ASV admite excepciones en gatos en jaula). Ninguna fuente ajusta el ayuno al calor; el agua nunca se retira. Sin cambios | [Directriz DGDA 2024, Anexo VI](https://www.dsca.gob.es/sites/default/files/publicaciones/directriz-tecnica-colonias-felinas.pdf); [Alley Cat Allies, 2025](https://www.alleycat.org/wp-content/uploads/2025/03/tnr_field_guide_english_web.pdf); [ASV, JAVMA 2016](https://avmajournals.avma.org/view/journals/javma/249/2/javma.249.2.165.xml) |
+| 2 | Retorno habitual 24-48 h; máximo de ejemplo 72 h | Correcto: lo decide el veterinario (DGDA: idealmente ≤ 24 h; ASV: al día siguiente en la mayoría). Sin cambios | [Directriz DGDA 2024, Anexo VI](https://www.dsca.gob.es/sites/default/files/publicaciones/directriz-tecnica-colonias-felinas.pdf); [ASV, JAVMA 2016](https://avmajournals.avma.org/view/journals/javma/249/2/javma.249.2.165.xml) |
+| 3 | Vacunas en el CER (formulación universal) | Correcta: trivalente básica en todo el mundo; antirrábica donde la enfermedad o la ley lo exigen; vacunar al esterilizar es práctica aceptada. Sin cambios (la parte de CLM, abajo) | [WSAVA 2024, JSAP](https://doi.org/10.1111/jsap.13718) |
+| 4 | Técnica quirúrgica y corte recto de ~1 cm, sin muesca | Correcto. Sin cambios | [Directriz DGDA 2024, Anexo VI](https://www.dsca.gob.es/sites/default/files/publicaciones/directriz-tecnica-colonias-felinas.pdf); [ICAM, 2011](https://www.icam-coalition.org/download/humane-cat-population-management-guidance/); [ASV, JAVMA 2016](https://avmajournals.avma.org/view/journals/javma/249/2/javma.249.2.165.xml) |
+| 5 | Gata gestante: normalmente se esteriliza igual | Correcto; cada clínica tiene su política. Sin cambios | [ASV, JAVMA 2016](https://avmajournals.avma.org/view/journals/javma/249/2/javma.249.2.165.xml); [Neighborhood Cats TNR Handbook, 2013](https://catsinaction.org/wp-content/uploads/2021/04/Neighborhood-Cats-TNR-Handbook.pdf) |
+| 6 | Gata lactante: mejor no capturarla; si cae, prioridad y retorno rápido | Casi literal de la DGDA. Sin cambios | [Directriz DGDA 2024, Anexo VI.4.b](https://www.dsca.gob.es/sites/default/files/publicaciones/directriz-tecnica-colonias-felinas.pdf) |
+| 7 | Edad y peso mínimos: 8 semanas y ~1 kg | Correcto. Sin cambios | [Alley Cat Allies, 2025](https://www.alleycat.org/wp-content/uploads/2025/03/tnr_field_guide_english_web.pdf); [Halls *et al.* (iCatCare) 2023](https://doi.org/10.56771/jsmcah.v2.57) |
+| 8 | Gatitos a adopción hacia las 6-8 semanas | Retirada ideal a las 6-7 semanas (DGDA), pero la entrega no puede ser antes de las 8 (Ley 7/2023, art. 58.3). **Texto corregido** | [Directriz DGDA 2024, V.7.2.b](https://www.dsca.gob.es/sites/default/files/publicaciones/directriz-tecnica-colonias-felinas.pdf); [Ley 7/2023, art. 58.3](https://www.boe.es/buscar/act.php?id=BOE-A-2023-7936) |
+| 9 | Mortalidad «del orden de 1 por 1.000 o menos» | Correcto: 0,05 % en gatos (0,04 % en comunitarios) en clínica de alto volumen. Sin cambios | [Levy *et al.*, Vet J 2017](https://doi.org/10.1016/j.tvjl.2017.05.013); [ASV, JAVMA 2016](https://avmajournals.avma.org/view/journals/javma/249/2/javma.249.2.165.xml) |
+| 10 | Lado de la oreja según el programa | Correcto: izquierda machos en muchos municipios; al revés en la C. Valenciana; izquierda para todos en EE. UU. Sin cambios | [Protocolo marco C. Valenciana (DOGV 10/10/2025)](https://dogv.gva.es/datos/2025/10/10/pdf/2025_42068_es.pdf); [HSUS, Managing Community Cats](https://humanepro.org/sites/default/files/documents/humaneworld-guide-managing-community-cats-final-singlepgs_3-14-2025.pdf) |
+| 11 | Objetivo «muchos programas se marcan el 90 %» | Correcto (Sevilla 80-90 %; DGDA ≥ 80 % antes de pasar a otra colonia; efectivo desde el 75 %). Sin cambios | [Directriz DGDA 2024](https://www.dsca.gob.es/sites/default/files/publicaciones/directriz-tecnica-colonias-felinas.pdf); [Programa de Sevilla, 2024](https://www.sevilla.org/transparencia/informacion-sobre-la-corporacion-municipal/planes-y-programas/3-programa-de-gestion-colonias-felinas-report-1.pdf) |
+| 12 | Transportín si el gato se deja manejar | Correcto; no pasar gatos de la jaula trampa al transportín sobre el terreno. Sin cambios | [Directriz DGDA 2024, Anexo VI.1.1](https://www.dsca.gob.es/sites/default/files/publicaciones/directriz-tecnica-colonias-felinas.pdf) |
+| 13 | Préstamo de jaulas y transporte (formulación universal) | Correcta: depende de cada programa. Sin cambios | Ordenanza de San Román, 7.4.1 (ejemplo) |
+| 15 | Trabajar por zonas o barrios | Respaldado por la DGDA (colonias adyacentes, ≥ 80 % antes de pasar a la siguiente). Sin cambios | [Directriz DGDA 2024](https://www.dsca.gob.es/sites/default/files/publicaciones/directriz-tecnica-colonias-felinas.pdf) |
+| 16 | Permiso del propietario o comunidad, tramitado por el ayuntamiento | Respaldado por el protocolo de ubicaciones privadas. Sin cambios | [Directriz DGDA 2024, 6.10.9](https://www.dsca.gob.es/sites/default/files/publicaciones/directriz-tecnica-colonias-felinas.pdf) |
+| 17 | Una jaula con un gato no se lleva a pie ni en transporte público | No hay norma expresa, pero las guías exigen vehículo acondicionado. Criterio prudente. Sin cambios | [Directriz DGDA 2024, Anexo VI.1.3](https://www.dsca.gob.es/sites/default/files/publicaciones/directriz-tecnica-colonias-felinas.pdf); [Alley Cat Allies, 2025](https://www.alleycat.org/wp-content/uploads/2025/03/tnr_field_guide_english_web.pdf) |
+| 18 | Dejar gatos en una colonia es abandono; policía local ante amenazas | Correcto (la Ley 7/2023 lo prohíbe; la DGDA pide avisar a la policía local ante violencia). Sin cambios | [Directriz DGDA 2024, 6.9.3](https://www.dsca.gob.es/sites/default/files/publicaciones/directriz-tecnica-colonias-felinas.pdf) |
+| 19 | Avisar a vecinos y policía local en capturas grandes | Sin norma, pero coherente con el papel que la DGDA da a la policía local. Criterio práctico. Sin cambios | [Directriz DGDA 2024](https://www.dsca.gob.es/sites/default/files/publicaciones/directriz-tecnica-colonias-felinas.pdf) |
+| 20 | Gato con microchip de un particular: adónde va | Al centro de protección animal hasta que lo recoja su dueño. **Texto corregido** | [Directriz DGDA 2024](https://www.dsca.gob.es/sites/default/files/publicaciones/directriz-tecnica-colonias-felinas.pdf) |
+| 21 | «Capturar gatos de otra colonia sin que el ayuntamiento lo sepa» como práctica a evitar | Coherente con la DGDA (captura planificada; devolución siempre a la colonia de origen). Sin cambios | [Directriz DGDA 2024, Anexo VI.3](https://www.dsca.gob.es/sites/default/files/publicaciones/directriz-tecnica-colonias-felinas.pdf) |
+| 22 | Aplazar capturas por calor o frío extremos | Respaldado (DGDA: especial precaución con la temperatura; ACA: lugar climatizado). Sin umbral municipal. Sin cambios | [Directriz DGDA 2024, Anexo VI.1.2](https://www.dsca.gob.es/sites/default/files/publicaciones/directriz-tecnica-colonias-felinas.pdf); [Alley Cat Allies, 2025](https://www.alleycat.org/wp-content/uploads/2025/03/tnr_field_guide_english_web.pdf) |
+| 23 | Enlace a la guía en español de Alley Cat Allies | Activo el 26/09/2026 (HTTP 200, PDF de 5,3 MB). Sin cambios | [Alley Cat Allies, guía en español](https://www.alleycat.org/wp-content/uploads/2025/03/tnr_field_guide_spanish_web-1.pdf) |
+| Imágenes | `marcaje-oreja.svg` y `pasos-cer.svg` no nombran a San Román | Correcto; el SVG de la oreja ya dice que el lado lo fija cada programa. Sin cambios | Revisión del texto interno de los SVG |
+| 20 (local) | Gato con chip de un particular: centro de protección animal y quién avisa al titular | No se afirma que haya centro propio. Consejo neutro: avisar al Ayuntamiento; la clínica lee el chip y se localiza al titular. El tema 9 ya no da por hecho un centro de protección animal («donde indique el ayuntamiento»). (respuesta del responsable del proyecto, 26/09/2026) | Respuesta del responsable del proyecto, 26/09/2026 |
+| 14 (consulta) | Microchip en cada esterilización | Obligatorio en **cada** esterilización, a nombre del ayuntamiento; manda la ley aunque la ordenanza (7.2.2) solo lo «recomiende». **Texto corregido** en los temas 9 y 10 y en el suplemento (en San Román, con alta en SIIA-CLM) (respuesta del responsable del proyecto, 26/09/2026) | Respuesta del responsable del proyecto, 26/09/2026; [Ley 7/2023, art. 38.2](https://www.boe.es/buscar/act.php?id=BOE-A-2023-7936) |
 
-1. **Ayuno** (V): se dice «retirar la comida la víspera, unas 24 horas antes, según indique la organización; el agua
-   nunca». La DGDA habla de 24-36 h y la ASV de ≥4 h en la clínica. ¿Algún ajuste en olas de calor (ninguna fuente
-   española lo trata)?
-2. **Momento del retorno** (V): «lo habitual, 24-48 h (machos antes, hembras después)» y «muchos programas fijan un
-   máximo (por ejemplo, 72 horas)». El máximo de 24-72 h de San Román pasa al suplemento (local).
-3. **Vacunas en el CER** (V/A): «trivalente y, en las comunidades autónomas donde es obligatoria, la antirrábica; otras,
-   según criterio veterinario». Comprobar la formulación general. Confirmar que en San Román la antirrábica se aplica a
-   todos los comunitarios en el CER (local).
-4. **Técnica y marcaje** (V): «ovarios, o ovarios y útero, en hembras»; corte recto de «alrededor de un centímetro en un
-   adulto» (Alley Cat Allies). Confirmar tamaño y que no se hace muesca.
-5. **Gata gestante** (V/A): «normalmente se esteriliza igual; lo decide el veterinario» (ASV, Neighborhood Cats). Punto
-   sensible: cada programa puede tener su política.
-6. **Gata lactante** (V): «mejor no capturarla; si cae, se opera con prioridad y vuelve cuanto antes» (DGDA).
-7. **Edad y peso mínimos**: «desde las 8 semanas y alrededor de 1 kg» (dato acordado).
-8. **Gatitos a adopción «hacia las 6-8 semanas»** (dato acordado; la DGDA dice 6-7).
-9. **Mortalidad** «del orden de 1 por cada 1.000 o menos» (dato acordado; los estudios de alto volumen dan ≈0,05 %).
+## Pendiente de consulta
 
-## Formulaciones generales nuevas (versión universal)
+- **3** · Veterinario del programa · ¿En el CER de San Román se pone la antirrábica a todos los gatos mayores de 3 meses, sí o no? ¿Y se prevé revacunarlos cuando se vuelven a capturar?
 
-10. **Lado de la oreja** (A/V): «en muchos municipios españoles, izquierda machos y derecha hembras; en otros, al revés
-    (la Comunitat Valenciana, por ejemplo) o la misma para todos (EE. UU.)». Dato de la tabla universal y del protocolo
-    marco valenciano (DOGV 10/10/2025). El lado de San Román pasa al suplemento (local).
-11. **Objetivo**: «muchos programas se marcan el 90 %» (tabla universal). El ≥90 % y la escala de estados de San Román
-    pasan al suplemento (local).
-12. **Transportín**: «muchos programas permiten usarlo» si el gato se deja manejar. En San Román lo recoge la ordenanza
-    (7.4.1) (local).
-13. **Préstamo de jaulas y transporte**: se remite a preguntar al ayuntamiento o a una entidad. En San Román, el
-    Ayuntamiento suministra el material (9.2) (local).
-14. **Microchip a nombre del ayuntamiento** en cada CER: la Ley 7/2023 (art. 38.2) lo exige; la ordenanza de San Román
-    (7.2.2) solo lo «recomienda» (local). ¿Se implanta siempre en San Román?
+## Local (suplemento de San Román)
 
-## Apartado nuevo «El CER en la ciudad»
-
-15. **Trabajo por zonas o barrios** para evitar la recolonización (A): basado en la DGDA (zona urbana: gran número de
-    colonias, ≥80 % antes de pasar a la siguiente, prioridad a los nuevos) y en los estudios de Israel y Gainesville
-    (tema 05 de la investigación). Comprobar la redacción.
-16. **Permisos en patios, aparcamientos, solares y recintos** (A): «hace falta permiso del propietario, la comunidad o
-    quien gestione el recinto, que suele tramitar el ayuntamiento» (DGDA, protocolo de ubicaciones privadas). ¿Es así
-    en la práctica de los municipios usuarios?
-17. **Transporte** (A): «una jaula con un gato no se lleva a pie ni en transporte público»; furgoneta municipal o de
-    una entidad. Es criterio prudente (no hay norma específica): validar.
-18. **Personas que interfieren** (A): «quien deja gatos en una colonia los está abandonando» (Ley 7/2023 prohíbe el
-    abandono); avisar a la policía local ante amenazas o daños. Validar el tono.
-19. **Avisar a vecinos y a la policía local** en capturas grandes o en sitios concurridos (A): criterio práctico, sin
-    fuente normativa.
-
-## Otros
-
-20. **Gato con microchip de un particular** (A): ¿quién localiza al titular (ayuntamiento, clínica, policía local) y
-    adónde va el gato mientras tanto? Depende de cada municipio.
-21. «**Capturar gatos de otra colonia sin que el ayuntamiento lo sepa**» figura como práctica a evitar (inspirado en
-    prácticas prohibidas de programas municipales).
-22. **Aplazar capturas por calor o frío** (A): ¿hay criterio municipal?
-23. Enlace de Alley Cat Allies en español: comprobar que sigue activo.
-
-## Imágenes
-
-- Los esquemas `pasos-cer.svg` (800 × 1014) y `marcaje-oreja.svg` (800 × 834) existen; tamaños ajustados al viewBox.
-- Pie de `marcaje-oreja.svg` cambiado a «Ejemplo: izquierda machos, derecha hembras, regla habitual en muchos municipios
-  españoles». El SVG no se ha tocado; comprobar que su texto interno tampoco nombra a San Román.
-- La foto `gato-oreja-marcada.jpg` muestra la oreja **izquierda** cortada; el pie no atribuye sexo.
+- **2** · Retorno (7.4.3) · Sin cambios: el fragmento local reproduce bien el máximo de 24-72 h de la ordenanza.
+- **3** · Rabia en CLM (Normativa y «En la clínica») · Quitar «pendiente de verificar en el DOCM» y citar la Orden de 02/06/2014 de la Consejería de Agricultura (Programa zoosanitario básico de cánidos, félidos y hurones): vacunación antirrábica anual obligatoria de los félidos mayores de 3 meses. Matizar que un gatito operado antes de los 3 meses aún no la recibe. Cómo se aplica a los comunitarios, pendiente del veterinario (ver consulta).
+- **10** · Marca de oreja (7.4.2) · Sin cambios: izquierda machos, derecha hembras.
+- **11** · Objetivo y estado de la colonia · Sin cambios.
+- **12** · Transportín (7.4.1) · Sin cambios.
+- **13** · Jaulas trampa (7.4.1 y 9.2) · Sin cambios: las facilita el Ayuntamiento si hace falta.
+- **14** · Microchip · **Resuelto** (respuesta del responsable del proyecto, 26/09/2026): «en San Román se implanta en cada esterilización, a nombre del Ayuntamiento y con alta en SIIA-CLM»; manda la ley aunque la ordenanza (7.2.2) solo lo recomiende.
+- **20** · Gato con chip de un particular · **Resuelto** con un consejo neutro (respuesta del responsable del proyecto, 26/09/2026).

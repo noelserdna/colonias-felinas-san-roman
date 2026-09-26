@@ -7,13 +7,13 @@ El programa municipal es el marco en el que vas a trabajar: quién registra las 
 > - Llevas el censo con la periodicidad que fije tu programa y avisas enseguida si aparecen gatitos o varios gatos nuevos.
 > - Si dejas la colonia o te vas a ausentar mucho tiempo, avisa con la antelación que pida tu programa.
 > - En la ciudad, coordinarte con los demás cuidadores de la colonia y de la zona es tan importante como dar de comer.
-> - Las quejas de vecinos van al ayuntamiento, que hace de mediador.
+> - Las quejas van por escrito al ayuntamiento (instancia general), que hace de mediador.
 
 ## Qué es el programa municipal
 
 La Ley 7/2023 obliga a cada ayuntamiento a tener un **programa de gestión de colonias felinas** (art. 39): registro de colonias, formación y acreditación de cuidadores, esterilizaciones con el método CER, programa sanitario, censo, mediación con vecinos y campañas informativas.
 
-Lo habitual es que una **ordenanza** recoja la acreditación, las obligaciones de quien cuida y las sanciones. Lo coordina un servicio municipal concreto; en las ciudades grandes suele ser un departamento de protección animal o de salud pública.
+Muchos ayuntamientos llevan a una **ordenanza** la acreditación, los derechos y obligaciones de quien cuida y las sanciones; otros aprueban el programa sin ordenanza. Lo coordina un servicio municipal concreto; en las ciudades grandes suele ser un departamento de protección animal o de salud pública.
 
 | Quién | Qué hace |
 |---|---|
@@ -32,29 +32,29 @@ Una colonia entra en el programa cuando el ayuntamiento la **registra**, normalm
 > **Paso a paso: pedir el registro de una colonia**
 >
 > 1. Cuenta los gatos varios días y a distintas horas: hembras y machos, esterilizados o no, adoptables y enfermos.
-> 2. Rellena la solicitud de tu ayuntamiento con tus datos, los de quienes van a cuidarla y la ubicación del punto de comida.
-> 3. Si el terreno es privado, consigue la **autorización expresa** de quien lo gestiona: propietario, comunidad de propietarios (por medio de su presidencia o del administrador de fincas), empresa u organismo.
-> 4. Preséntala por el registro municipal o la sede electrónica.
+> 2. Rellena la solicitud de tu ayuntamiento con tus datos, los de quienes van a cuidarla y la ubicación: dirección y coordenadas (no hace falta croquis).
+> 3. Si el terreno es privado, consigue la **autorización expresa** de quien lo gestiona: propietario, comunidad de propietarios (normalmente por acuerdo de la junta, que te comunica la presidencia o el administrador de fincas), empresa u organismo.
+> 4. Preséntala con una instancia general en el registro municipal o en la sede electrónica.
 > 5. El ayuntamiento revisa el lugar y, si todo está en orden, la colonia recibe un **número** de registro.
 
-El registro anota la ubicación, los riesgos del sitio (zona sensible, obras, tráfico, perros sueltos), quién cuida, el censo y el porcentaje esterilizado. Muchos programas excluyen las viviendas particulares. Si el propietario de un terreno se niega, no actúes por tu cuenta: decide el ayuntamiento.
+El registro anota la ubicación, los riesgos del sitio (zona sensible, obras, tráfico, perros sueltos), quién cuida, el censo y el porcentaje esterilizado. Muchos programas excluyen las viviendas particulares. Si el propietario de un terreno se niega, no actúes por tu cuenta: avisa al ayuntamiento. Según la Directriz estatal, quien impide la gestión pasa a responder de esos gatos como su titular.
 
 ## Acreditación y carné
 
-Los requisitos habituales son ser **mayor de edad**, pedir el alta, **superar la formación** (a menudo con un examen final) y **firmar un compromiso** con tus derechos y obligaciones. Recibirás un **carné** personal que debes llevar siempre que atiendas la colonia; su vigencia depende del programa y puedes perderlo si incumples las pautas. Es una actividad **voluntaria**, sin relación laboral.
+Los requisitos habituales son ser **mayor de edad**, pedir el alta, **superar la formación** (a menudo con un examen final) y **firmar un compromiso** con tus obligaciones. Recibirás un **carné** personal que debes llevar siempre que atiendas la colonia. Su vigencia la fija cada ayuntamiento; si no fija ninguna, vale mientras colabores y se retira al causar baja. Puedes perderlo si incumples las pautas. Es una actividad **voluntaria**, sin relación laboral.
 
-## Derechos y obligaciones habituales
+## Obligaciones y apoyo del programa
 
 Lo que suele tocarte:
 
 - Colaborar en la esterilización: captura, traslado, recogida y retorno.
 - Alimentar con **pienso seco**, **agua limpia** y **horario fijo**, sin dejar comida en el suelo (tema 6).
 - Mantener limpio el punto de comida y no mover ni añadir comederos o refugios sin permiso.
-- Llevar las **fichas de los gatos** y el **censo** al día, y avisar de gatitos, gatos nuevos, heridos o enfermos.
+- Llevar las **fichas de los gatos** y el **censo** al día, y avisar de gatitos, gatos nuevos, heridos o enfermos. Para avisar, lo normal es llamar al **ayuntamiento en horario de oficina**; fuera de horario, si es urgente, al **112**.
 - Tratar con respeto a vecinos, otros cuidadores y personal municipal.
 - Avisar con antelación si dejas la colonia o te ausentas mucho tiempo.
 
-Lo que puedes esperar: formación y carné, **esterilizaciones** a cargo del programa, préstamo de **jaulas trampa**, aviso previo de obras o capturas en tu colonia, **apoyo ante conflictos** y, según el presupuesto, comida, tratamientos, refugios y carteles.
+Lo que puedes esperar: en muchos ayuntamientos, pequeños y grandes, no hay derechos específicos para quien cuida, más allá de la formación, el carné y el acceso a los fondos o servicios del programa para el CER (las **esterilizaciones** y, a veces, el préstamo de **jaulas trampa**). Cada ayuntamiento puede añadir otros, como comida, tratamientos, refugios, carteles o apoyo ante conflictos. Normalmente **no hay seguro** para las personas cuidadoras.
 
 ## Coordinarse con otros cuidadores
 
@@ -66,13 +66,13 @@ En la ciudad es normal que varias personas cuiden la misma colonia y que haya ot
 
 > **Qué hacer si no tienes coche o la zona es conflictiva**
 >
-> Muchos programas organizan el traslado de las jaulas a la clínica: pregunta. Ve con luz de día o con compañía, lleva el carné visible y no discutas; si alguien te amenaza, apártate y llama a la policía local.
+> Algunos programas se encargan de la captura o del traslado a la clínica con personal propio o contratado: pregunta. Ve con luz de día o con compañía, lleva el carné visible y no discutas; si alguien te amenaza, apártate y llama al 112.
 
 ## Esterilizaciones
 
 El ayuntamiento contrata las esterilizaciones y las reparte según prioridades: conflictos, zonas sensibles, camadas. La Directriz técnica estatal pide llegar a **más del 80 %** de una colonia antes de pasar a otra (tema 9). Con el **70-75 %** la colonia deja de crecer, y muchos programas se marcan el **90 %**.
 
-Puedes pedir que se esterilicen gatos de tu colonia. Las capturas siguen el calendario municipal y el gato va a la clínica que indique el programa; si eliges otra, lo normal es que pagues tú. Vuelve **al mismo lugar** cuando lo decida el veterinario: lo habitual son 24-48 horas y muchos programas fijan un máximo (por ejemplo, 72 horas).
+Puedes pedir que se esterilicen gatos de tu colonia. Las capturas siguen el calendario municipal y el gato va a la clínica que indique el programa; si eliges otra, lo normal es que pagues tú. Vuelve **al mismo lugar** cuando lo decida el veterinario, lo antes posible: lo ideal es en unas 24 horas, algo más si tarda en recuperarse o hace mucho frío, y muchos programas fijan un máximo (por ejemplo, 72 horas).
 
 Algunos programas clasifican las colonias por su porcentaje de gatos esterilizados. Por ejemplo:
 
@@ -88,7 +88,7 @@ Por ejemplo, 15 esterilizados de 20 gatos son el 75 %: colonia estable, pero aú
 
 ## Quejas y mediación
 
-Las quejas sobre una colonia se presentan por el **cauce que fije el ayuntamiento**, normalmente por escrito. El ayuntamiento media con vecinos, alimentadores espontáneos y propietarios, actúa si hay malas prácticas y deja constancia de quejas e inspecciones. Si un vecino se queja, escúchalo, no discutas y explícale cómo presentar su queja (tema 11).
+Las quejas sobre una colonia se presentan **por escrito**, con una **instancia general** en el registro municipal o en la sede electrónica del ayuntamiento. El ayuntamiento media con vecinos, alimentadores espontáneos y propietarios, actúa si hay malas prácticas y deja constancia de quejas e inspecciones. Si un vecino se queja, escúchalo, no discutas y explícale cómo presentar su queja (tema 11).
 
 > **Pregunta en tu ayuntamiento**
 >
@@ -99,9 +99,8 @@ Las quejas sobre una colonia se presentan por el **cauce que fije el ayuntamient
 > - Qué plazo máximo hay para devolver al gato a la colonia.
 > - Quién presta las jaulas trampa y quién hace el traslado.
 > - Qué clínica o veterinario opera a los gatos.
-> - Dónde y cómo se presentan las quejas.
-> - Cuánto dura el carné y si hay seguro para cuidadores.
-> - Teléfonos: servicio del programa, policía local, urgencias veterinarias y recogida de animales heridos o muertos.
+> - Cuánto dura el carné (si no se fija, mientras colabores) y si el programa ofrece algo más que las esterilizaciones (comida, tratamientos, refugios).
+> - El teléfono y el horario del ayuntamiento, y qué clínica atiende las urgencias.
 
 ## Cómo se hace en la aplicación
 
@@ -114,7 +113,7 @@ Las quejas sobre una colonia se presentan por el **cauce que fije el ayuntamient
 | Recibir avisos | En la aplicación y por correo; en el móvil, si activas los avisos en tu perfil. |
 | Dejar de colaborar | **Dejar de colaborar en esta colonia**, con una breve explicación. |
 
-Cuando el ayuntamiento registra la colonia en la aplicación, te asigna como persona responsable o colaboradora, recibes un aviso y la colonia aparece en tu carnet. Todas las personas de la colonia ven el mismo censo y las mismas fichas. La aplicación te recuerda cuándo toca el censo y, un mes antes, cuándo caduca tu carnet digital; para renovarlo, repites el examen final.
+Cuando el ayuntamiento registra la colonia en la aplicación, te asigna como persona responsable o colaboradora, recibes un aviso y la colonia aparece en tu carnet. Todas las personas de la colonia ven el mismo censo y las mismas fichas. La aplicación te recuerda cuándo toca el censo. El censo de la aplicación es el registro oficial de la colonia y, si el ayuntamiento lo pide, la aplicación genera con esos datos un **PDF del censo**. Si tu ayuntamiento fija una vigencia al carnet digital, la aplicación te avisa antes de que caduque y lo renuevas repitiendo el examen final o lo renueva el ayuntamiento; si no la fija, vale mientras colabores.
 
 > **Importante:** si eres la única persona que cuida la colonia y quieres dejarla, la aplicación te pedirá que indiques quién se hará cargo. Avisa igualmente con la antelación que fije tu programa.
 
