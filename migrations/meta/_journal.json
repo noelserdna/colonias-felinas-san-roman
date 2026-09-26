@@ -85,6 +85,13 @@
       "when": 1790341182683,
       "tag": "0011_push",
       "breakpoints": true
+    },
+    {
+      "idx": 12,
+      "version": "6",
+      "when": 1790420215147,
+      "tag": "0012_censo_movimientos",
+      "breakpoints": true
     }
   ]
 }

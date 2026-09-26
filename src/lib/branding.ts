@@ -1,25 +1,10 @@
 import { eq } from "drizzle-orm";
 import { z } from "zod";
+import { brandingSchema, DEFAULT_BRANDING } from "./branding-schema";
 import type { DB } from "./db";
 import { schema } from "./db";
 import { sha256, sniffImageType, toBase64 } from "./util";
-export { sniffImageType };
-
-const optionalText = (max: number) =>
-  z.preprocess((v) => (typeof v === "string" && v.trim() === "" ? undefined : v), z.string().trim().max(max).optional());
-
-export const brandingSchema = z.object({
-  municipio: z.string().trim().min(2).max(80),
-  provincia: z.string().trim().min(2).max(60),
-  // Contacto de la unidad responsable de accesibilidad (declaración de accesibilidad).
-  accesibilidad_email: z.preprocess(
-    (v) => (typeof v === "string" ? v.trim() || undefined : v),
-    z.email("El correo de accesibilidad no es válido").max(254).optional(),
-  ),
-  accesibilidad_telefono: optionalText(40),
-  // Autoría del temario, que se cita en el pie de todas las páginas (p. ej. el colegio de veterinarios).
-  credito_formativo: optionalText(160),
-});
+export { sniffImageType, brandingSchema, DEFAULT_BRANDING };
 
 export type Branding = z.infer<typeof brandingSchema> & {
   /** "Ayuntamiento de …" */
@@ -27,23 +12,27 @@ export type Branding = z.infer<typeof brandingSchema> & {
   escudo: { src: string; srcset?: string; custom: boolean };
 };
 
-export const DEFAULT_BRANDING: z.infer<typeof brandingSchema> = { municipio: "San Román de los Montes", provincia: "Toledo" };
 const DEFAULT_ESCUDO = { src: "/img/escudo.png", srcset: "/img/escudo.png 1x, /img/escudo@2x.png 2x", custom: false };
-const ESCUDO_KEY = "escudo";
+export const ESCUDO_KEY = "escudo";
 export const ESCUDO_MAX_BYTES = 1_000_000;
+
+/** Branding a partir del valor guardado y de la versión del escudo propio (null = escudo por defecto). */
+export function brandingFrom(value: unknown, escudoVersion: string | null): Branding {
+  const parsed = brandingSchema.safeParse(value);
+  const b = parsed.success ? parsed.data : DEFAULT_BRANDING;
+  return {
+    ...b,
+    ayuntamiento: `Ayuntamiento de ${b.municipio}`,
+    escudo: escudoVersion ? { src: `/branding/escudo?v=${escudoVersion}`, custom: true } : DEFAULT_ESCUDO,
+  };
+}
 
 export async function getBranding(db: DB): Promise<Branding> {
   const [row, escudo] = await Promise.all([
     db.query.settings.findFirst({ where: eq(schema.settings.key, "branding") }),
     db.select({ version: schema.assets.version }).from(schema.assets).where(eq(schema.assets.key, ESCUDO_KEY)).limit(1),
   ]);
-  const parsed = brandingSchema.safeParse(row?.value);
-  const b = parsed.success ? parsed.data : DEFAULT_BRANDING;
-  return {
-    ...b,
-    ayuntamiento: `Ayuntamiento de ${b.municipio}`,
-    escudo: escudo[0] ? { src: `/branding/escudo?v=${escudo[0].version}`, custom: true } : DEFAULT_ESCUDO,
-  };
+  return brandingFrom(row?.value, escudo[0]?.version ?? null);
 }
 
 export async function saveBranding(db: DB, input: unknown) {
@@ -74,4 +63,15 @@ export async function deleteEscudo(db: DB) {
 
 export async function getEscudo(db: DB) {
   return db.query.assets.findFirst({ where: eq(schema.assets.key, ESCUDO_KEY) });
+}
+
+/**
+ * Escudo para incrustar en los PDF generados en el servidor: el propio si es PNG o JPG; `fallback` (el
+ * escudo por defecto) si no hay uno propio. Un escudo WebP no se puede incrustar: los PDF salen sin escudo.
+ */
+export async function loadEscudoBytes(db: DB, fallback?: Uint8Array): Promise<{ bytes?: Uint8Array; version: string; webp: boolean }> {
+  const e = await getEscudo(db);
+  if (!e) return { bytes: fallback, version: "defecto", webp: false };
+  if (e.contentType === "image/webp") return { bytes: undefined, version: e.version, webp: true };
+  return { bytes: Uint8Array.from(atob(e.dataB64), (c) => c.charCodeAt(0)), version: e.version, webp: false };
 }

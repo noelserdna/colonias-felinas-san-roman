@@ -14,7 +14,7 @@ instrucciones para asistentes de IA en [AGENTS.md](../AGENTS.md).
 | Corrección con IA | **JEV** de TypeSafe (`jev-latest`): respuestas escritas y explicación de las bajas | `src/lib/jev.ts`, `grading.ts`, `baja.ts` |
 | Correo | **Cloudflare Email Service** (o Resend) | `src/lib/email.ts` |
 | Avisos | En la app + correo + **Web Push** (WebCrypto, sin dependencias) | `src/lib/notices.ts`, `push.ts`, `webpush.ts` |
-| PDF | **pdf-lib** en el navegador (anexos de la ordenanza) | `src/lib/anexos-pdf.ts` |
+| PDF | **pdf-lib**: rellenos en el navegador, en blanco en el servidor (`/docs/*.pdf`) | `src/lib/anexos-pdf.ts`, `src/pages/docs/[archivo].ts` |
 | PWA | Manifest dinámico y service worker propio | `src/pages/manifest.webmanifest.ts`, `public/sw.js` |
 | Acceso | Enlace mágico por correo (sin contraseñas), sesiones en D1, límite de peticiones | `src/lib/auth.ts`, `src/middleware.ts` |
 
@@ -22,17 +22,41 @@ Variables (`wrangler.jsonc` → `vars`): `APP_NAME`, `MAIL_FROM`, `APP_ORIGIN`, 
 (y `DEMO` en la instancia de demostración). Secretos (`wrangler secret put`): `ADMIN_EMAILS`, `APP_SECRET`,
 `VAPID_PRIVATE_KEY` y, opcionales, `TYPESAFE_API_KEY` y `RESEND_API_KEY`.
 
-## Piezas ligadas a la ordenanza de San Román
+## Programa local (lo que depende de la ordenanza de cada municipio)
 
-Estas partes siguen la *Ordenanza municipal reguladora del plan de control y gestión ética de las colonias felinas
-urbanas* de San Román de los Montes (BOP de Toledo n.º 122, de 28/06/2024). Otro municipio debe revisarlas:
+El código no lleva ninguna ordenanza fijada: los valores por defecto son neutros y cada municipio los configura en el
+panel. San Román (ordenanza del BOP de Toledo n.º 122, de 28/06/2024) es una **precarga** más.
 
-- **Guía «Mi colonia»**: texto por defecto en `src/lib/colonia.ts`; se edita en *Administración → Guía «Mi colonia»*.
-- **Documentos**: `seed/documents.json` (ordenanzas, formularios, sede electrónica); se editan en *Administración → Documentos*.
-- **Anexos I y II y autorización de la persona propietaria**: `src/lib/anexos-pdf.ts` (campos y pie con la referencia
-  al BOP), `public/docs/*.pdf` (se regeneran con `node scripts/build-anexos.ts`) y el enlace al BOP en
-  `src/pages/colonia/solicitud.astro`.
-- **Declaración de accesibilidad**: `src/pages/accesibilidad.astro` menciona las imágenes del manual del Colegio de Toledo.
+- **`programa`** (clave de `settings`; *Administración → Programa local*): `src/lib/programa-config.ts` (puro: esquema
+  zod, `DEFAULT_PROGRAMA`, etiquetas y grupos del formulario, `renderTemplate`, `programaVars`, `textosAnexos`,
+  `docsPdf`, `periodoTexto`) y `src/lib/programa.ts` (lectura y guardado; `getIdentidad` lee branding y programa en un
+  solo viaje y el middleware los deja en `Astro.locals.branding` / `Astro.locals.programa`). Lectura tolerante campo
+  a campo (un campo inválido toma su valor por defecto); validación estricta al guardar, con los textos de los PDF
+  limitados a WinAnsi (`src/lib/winansi.ts`). Incluye: plan, órgano, normativa (nombre, forma breve, cita, enlace),
+  sede electrónica, nombres oficiales de los formularios (`etiqueta_*`: «Anexo I»…; vacíos = nombre genérico), norma
+  que exige la autorización en terreno privado, textos de los PDF, máximo de personas cuidadoras (1–6), censo
+  (`censo_meses`, `censo_alineado` a periodos naturales, `censo_movimientos` `no|opcional|obligatorio`) y título del
+  suplemento local.
+- **Páginas Markdown** (`page:<slug>` en `settings`; *Administración → Textos*): `src/lib/pages-config.ts` (textos por
+  defecto neutros con marcadores `{{var}}`, `{{#var}}…{{/var}}`, `{{^var}}…{{/var}}`; `splitSteps`) y `src/lib/pages.ts`.
+  `mi-colonia` (guía de alta en `/colonia`), `pautas-colonia` (en cada colonia) y `programa-local` (suplemento en
+  `/temario/local`, enlazado desde el inicio, la consulta, «Mi colonia» y los temas con «Pregunta en tu ayuntamiento»;
+  vacío = no existe). `/admin/colonia` redirige a `/admin/textos/mi-colonia`.
+- **PDF de las solicitudes** (`src/lib/anexos-pdf.ts`, puro): reciben `textos: AnexoTextos` (ver `textosAnexos`). Los
+  rellenos se generan en el navegador (`SolicitudForm.tsx` recibe los textos ya resueltos); los en blanco, en el
+  servidor con `src/pages/docs/[archivo].ts` (escudo propio PNG/JPG o el por defecto; un escudo WebP no se incrusta),
+  con ETag. Admite `*solicitud-registro-colonia.pdf`, `*solicitud-alta-colaborador.pdf` (con o sin prefijo del
+  nombre oficial, p. ej. `anexo-i-…`) y `autorizacion-propietario-terreno.pdf`. Sube `VERSION_PDF` si cambia el diseño.
+- **Censo** (`src/lib/colonies.ts`): `censusDue(last, now, {meses, alineado})`, movimientos por sexo (12 columnas
+  *nullable* en `colony_censuses`), `validateCensus` (un descuadre es un aviso con «Guardar igualmente», no un error),
+  `censusMovementsFromCats` (propuesta a partir de las fichas, con `colony_cats.estado_desde`) y el estado de gato
+  `devuelto` (a su responsable legal).
+- **Ajustes**: `carnet_prefix` (por defecto `CF`) y `carnet_aviso_dias` (aviso de caducidad; se repite 15 días después).
+- **Precargas** `seed/local/<slug>/` + `node scripts/build-local.mjs <slug> [--sobrescribir]` → `seed/local/<slug>.sql`
+  (ignorado por git), idempotente (`ON CONFLICT DO NOTHING`). La de San Román: `npm run db:local:sanroman:local`
+  (`:remote` / `:demo` para producción y demo; orden de despliegue: migraciones → precarga → deploy). El suplemento
+  local se toma de `programa-local.md` o, si no existe, de `seed/temario-propio/local/<slug>.md`.
+- **Declaración de accesibilidad**: cita `branding.credito_formativo` como origen de las imágenes del temario.
 
 ## Desarrollo local
 
@@ -145,7 +169,8 @@ Si se cambia `APP_SECRET`, la clave guardada deja de poder descifrarse y hay que
 - `seed/units/NN-<slug>.md`: el texto de cada tema. **No está en el repositorio** (ver «Contenido formativo»); si falta,
   el tema se crea con un texto de ejemplo y nunca se sobrescribe lo escrito después en el panel.
 - `seed/questions/*.json`: banco de preguntas (no incluido). Formato de ejemplo en `docs/preguntas-ejemplo.json`.
-- `seed/documents.json`: documentos de la sección «Documentos» (solo se añaden si no existe ya uno con la misma URL).
+- `seed/documents.json`: documentos neutros de la sección «Documentos» (solo se añaden si no existe ya uno con la misma
+  URL o con una que encaje con `si_no_existe`). Los de cada municipio van en su precarga (`seed/local/<slug>/`).
 - Es idempotente: se puede ejecutar varias veces.
 
 ## Correo (enlace de acceso y avisos)

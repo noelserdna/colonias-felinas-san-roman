@@ -16,6 +16,9 @@
     "deploy": "astro build && wrangler deploy",
     "db:migrate:demo": "wrangler d1 migrations apply colonias-demo --remote --env demo",
     "db:seed:demo": "node scripts/build-seed.mjs && wrangler d1 execute colonias-demo --remote --env demo --file=seed/seed.sql",
+    "db:local:sanroman:local": "node scripts/build-local.mjs san-roman-de-los-montes && wrangler d1 execute colonias --local --file=seed/local/san-roman-de-los-montes.sql",
+    "db:local:sanroman:remote": "node scripts/build-local.mjs san-roman-de-los-montes && wrangler d1 execute colonias --remote --file=seed/local/san-roman-de-los-montes.sql",
+    "db:local:sanroman:demo": "node scripts/build-local.mjs san-roman-de-los-montes && wrangler d1 execute colonias-demo --remote --env demo --file=seed/local/san-roman-de-los-montes.sql",
     "deploy:demo": "CLOUDFLARE_ENV=demo astro build && wrangler deploy",
     "demo:gatos": "node scripts/build-demo-gatos.mjs && node scripts/upload-demo-gatos.mjs"
   },

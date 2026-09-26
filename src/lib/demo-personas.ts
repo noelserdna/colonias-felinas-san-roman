@@ -66,10 +66,10 @@ export const PERSONAS: Record<
     recorrido: [
       { texto: "El carnet digital (anverso, reverso y hora en directo)", href: "/" },
       { texto: "Guía para solicitar el alta de una colonia", href: "/colonia" },
-      { texto: "Rellenar el Anexo I y descargar el PDF", href: "/colonia/solicitud" },
+      { texto: "Rellenar la solicitud de registro y descargar el PDF", href: "/colonia/solicitud" },
       { texto: "Autorización de la persona propietaria", href: "/colonia/solicitud?anexo=aut" },
       { texto: "Temario en modo consulta", href: "/temario" },
-      { texto: "Ordenanzas y formularios", href: "/documentos" },
+      { texto: "Normativa y formularios", href: "/documentos" },
     ],
   },
   responsable: {

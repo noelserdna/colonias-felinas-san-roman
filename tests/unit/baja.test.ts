@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { decideBaja, mockBajaScores, MIN_BAJA_CHARS } from "../../src/lib/baja";
+import { buildBajaRequest, decideBaja, mockBajaScores, MIN_BAJA_CHARS } from "../../src/lib/baja";
 import { censusDue, censusFromCats, censusTotal } from "../../src/lib/colonies";
 
 const long = "Me mudo a Madrid el mes que viene por un cambio de trabajo y no podré venir a la colonia.";
@@ -60,10 +60,20 @@ describe("censo", () => {
       ]),
     ).toEqual({ hembrasEsterilizadas: 1, hembrasSinEsterilizar: 0, machosCastrados: 0, machosSinCastrar: 1 });
   });
-  it("aviso semestral", () => {
+  it("aviso del censo (por defecto, cada seis meses desde el último)", () => {
     const d = new Date("2026-01-10");
     expect(censusDue(null)).toBe(true);
     expect(censusDue(d, new Date("2026-05-01"))).toBe(false);
     expect(censusDue(d, new Date("2026-07-11"))).toBe(true);
+  });
+  it("las fichas devueltas a su responsable legal no cuentan en el censo", () => {
+    expect(censusFromCats([{ sexo: "macho", esterilizado: true, estado: "devuelto" }])).toEqual({ hembrasEsterilizadas: 0, hembrasSinEsterilizar: 0, machosCastrados: 0, machosSinCastrar: 0 });
+  });
+});
+
+describe("pregunta a JEV sobre la colonia sin gatos", () => {
+  it("incluye los gatos devueltos a su responsable legal", () => {
+    const req = buildBajaRequest({ colonia: "X", gatos: 0, rol: "responsable", otras_personas_cuidadoras: 0, requiere_relevo: true, explicacion: "…" });
+    expect(req.questions.sin_gatos.instructions).toContain("devuelto a su responsable legal");
   });
 });

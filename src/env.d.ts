@@ -37,6 +37,8 @@ declare namespace App {
   interface Locals {
     user: import("./lib/auth").SessionUser | null;
     branding: import("./lib/branding").Branding;
+    /** Programa municipal: normativa, nombres de los anexos, censo… (Administración → Programa local). */
+    programa: import("./lib/programa-config").Programa;
     /** El usuario tiene un carnet vigente: modo «consulta» (sin tests ni examen). */
     hasCarnet: boolean;
     /** En la demo: si el visitante ha entrado con el enlace con código. */

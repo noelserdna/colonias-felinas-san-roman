@@ -9,14 +9,23 @@ import { getDb } from "../lib/db";
 import { getProgress } from "../lib/exam";
 import { getActiveCarnet } from "../lib/carnet";
 import { profileComplete } from "../lib/auth";
+import { count, eq } from "drizzle-orm";
+import { schema } from "../lib/db";
+import { getPage } from "../lib/pages";
 
 const user = Astro.locals.user;
+const db = getDb();
 let data: Awaited<ReturnType<typeof getProgress>> | null = null;
 let carnet = null;
+let suplemento = false;
+let temas = 0;
 if (user) {
-  const db = getDb();
   data = await getProgress(db, user.id);
   carnet = await getActiveCarnet(db, user.id);
+  suplemento = Boolean((await getPage(db, "programa-local")).markdown.trim());
+  temas = data.units.length;
+} else {
+  temas = (await db.select({ n: count() }).from(schema.units).where(eq(schema.units.activo, true)))[0]?.n ?? 0;
 }
 const passedCount = data?.units.filter((u) => u.passed).length ?? 0;
 const total = data?.units.length ?? 0;
@@ -28,7 +37,7 @@ const hero = hasHero
   ? { src: "/img/hero.jpg", srcset: "/img/hero-640.jpg 640w, /img/hero.jpg 1010w", alt: "Gato atigrado y blanco mirando con atención" }
   : { src: "/img/portada.jpg", srcset: "/img/portada-640.jpg 640w, /img/portada.jpg 1010w", alt: "Ilustración de tres gatos: uno negro, uno atigrado naranja y uno blanco" };
 const steps = [
-  { icon: "book", title: "Estudia el temario", text: "8 temas, a tu ritmo y desde el móvil." },
+  { icon: "book", title: "Estudia el temario", text: temas ? `${temas} ${temas === 1 ? "tema" : "temas"}, a tu ritmo y desde el móvil.` : "A tu ritmo y desde el móvil." },
   { icon: "check", title: "Aprueba cada tema", text: "Un test corto desbloquea el siguiente." },
   { icon: "exam", title: "Haz el examen final", text: "Preguntas tipo test y de respuesta breve." },
   { icon: "card", title: "Recibe tu carnet", text: "Tu acreditación digital, siempre contigo." },
@@ -46,7 +55,7 @@ const steps = [
         <span class="step-icon"><Icon name="book" size={26} /></span>
         <span style="flex:1">
           <strong>Consulta el temario</strong>
-          <span class="muted text-sm" style="display:block">Los {data?.units.length ?? 8} temas del curso, siempre disponibles para repasar.</span>
+          <span class="muted text-sm" style="display:block">Los {temas} temas del curso, siempre disponibles para repasar.</span>
         </span>
         <Icon name="arrow" />
       </a>
@@ -140,6 +149,17 @@ const steps = [
             </li>
           );
         })}
+        {suplemento && (
+          <li class="extra">
+            <a href="/temario/local">
+              <span class="node"><Icon name="book" size={18} /></span>
+              <span class="step-body">
+                <span class="step-title">{Astro.locals.programa.suplemento_titulo}</span>
+                <span class="step-sub">Suplemento de lectura (sin test)</span>
+              </span>
+            </a>
+          </li>
+        )}
         <li class:list={["final", carnet ? "done" : data!.allPassed ? "current" : "locked"]}>
           {(() => {
             const inner = (

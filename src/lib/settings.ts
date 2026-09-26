@@ -15,6 +15,8 @@ export const settingsSchema = z
     jev_flag_threshold: z.number().min(0).max(1),
     carnet_validity_months: z.number().int().min(1).max(240),
     carnet_prefix: z.string().trim().min(1).max(20),
+    // Días de antelación del aviso de caducidad del carnet (se repite 15 días después si sigue sin renovar).
+    carnet_aviso_dias: z.number().int().min(1).max(180),
     magic_link_ttl_min: z.number().int().min(5).max(1440),
     final_min_per_unit: z.number().int().min(0).max(10),
     // Reparto de dificultad en cada test/examen (porcentajes que suman 100).
@@ -41,7 +43,8 @@ export const DEFAULT_SETTINGS: Settings = {
   jev_pass_score: 2,
   jev_flag_threshold: 0.7,
   carnet_validity_months: 24,
-  carnet_prefix: "SRM-CF",
+  carnet_prefix: "CF",
+  carnet_aviso_dias: 30,
   magic_link_ttl_min: 15,
   final_min_per_unit: 1,
   mix_baja: 50,
@@ -59,6 +62,7 @@ export const SETTINGS_LABELS: Record<keyof Settings, string> = {
   jev_flag_threshold: "Umbral JEV de respuesta no válida / manipulación (0–1)",
   carnet_validity_months: "Validez del carnet (meses)",
   carnet_prefix: "Prefijo del número de carnet",
+  carnet_aviso_dias: "Aviso de caducidad del carnet (días antes)",
   magic_link_ttl_min: "Caducidad del enlace de acceso (minutos)",
   final_min_per_unit: "Mínimo de preguntas por tema en el examen final",
   mix_baja: "Preguntas de dificultad baja (%)",

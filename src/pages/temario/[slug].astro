@@ -6,6 +6,7 @@ import { eq } from "drizzle-orm";
 import { getDb, schema } from "../../lib/db";
 import { getProgress } from "../../lib/exam";
 import { renderMarkdown } from "../../lib/markdown";
+import { getPage } from "../../lib/pages";
 
 const db = getDb();
 const unit = await db.query.units.findFirst({ where: eq(schema.units.slug, Astro.params.slug!) });
@@ -19,6 +20,8 @@ const idx = units.findIndex((u) => u.id === unit.id);
 const prev = units[idx - 1];
 const next = units[idx + 1];
 const html = renderMarkdown(unit.contenido);
+// Los temas que remiten al ayuntamiento («Pregunta en tu ayuntamiento») enlazan al suplemento local, si lo hay.
+const suplemento = unit.contenido.includes("Pregunta en tu ayuntamiento") && Boolean((await getPage(db, "programa-local")).markdown.trim());
 ---
 <Layout title={unit.titulo} readingProgress>
   <a class="btn ghost small" href={consulta ? "/temario" : "/"} style="margin-left:-.6rem"><Icon name="back" size={18} /> {consulta ? "Consulta" : "Temario"}</a>
@@ -32,6 +35,16 @@ const html = renderMarkdown(unit.contenido);
     {consulta ? null : p.passed ? <span class="badge ok"><Icon name="check" size={14} /> Aprobado{p.bestPct != null ? ` · ${p.bestPct}%` : ""}</span> : <a class="btn small ghost" href={`/temario/${unit.slug}/test`}>Ir directamente al test</a>}
   </div>
   <article class="card prose" set:html={html} />
+  {suplemento && (
+    <a class="card end-cta" href="/temario/local">
+      <span class="step-icon"><Icon name="book" size={26} /></span>
+      <span class="grow">
+        <strong>{Astro.locals.programa.suplemento_titulo}</strong>
+        <span class="muted text-sm" style="display:block">Las respuestas a «Pregunta en tu ayuntamiento» para {Astro.locals.branding.municipio}.</span>
+      </span>
+      <Icon name="arrow" />
+    </a>
+  )}
   {consulta ? (
     <div class="row" style="justify-content:space-between">
       {prev ? <a class="btn ghost" href={`/temario/${prev.slug}`}><Icon name="back" size={18} /> {prev.titulo}</a> : <span></span>}

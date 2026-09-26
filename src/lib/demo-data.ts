@@ -4,7 +4,9 @@ import { and, asc, eq, sql } from "drizzle-orm";
 import { env } from "cloudflare:workers";
 import type { DB } from "./db";
 import * as schema from "./db/schema";
-import { createColony } from "./colonies";
+import { censusPeriodStart, createColony } from "./colonies";
+import { getPrograma } from "./programa";
+import type { Programa } from "./programa-config";
 import { issueCarnet, addMonths } from "./carnet";
 import { getSettings } from "./settings";
 import { getAttemptForUser, startFinalExam, submitAttempt } from "./exam";
@@ -15,6 +17,15 @@ const uuid = () => crypto.randomUUID();
 const DAY = 86_400_000;
 const ago = (days: number) => new Date(Date.now() - days * DAY);
 const isoDay = (d: Date) => d.toISOString().slice(0, 10);
+
+/** Días desde el censo de una colonia con el censo pendiente, según la periodicidad del programa local. */
+const censoPendiente = (p: Programa) => p.censo_meses * 31 + 10;
+/** Días desde el censo de una colonia al día (dentro del periodo en curso si el censo va por periodos naturales). */
+function censoAlDia(p: Programa) {
+  const max = Math.max(0, Math.floor((p.censo_meses * 30) / 2));
+  if (!p.censo_alineado) return Math.min(35, max);
+  return Math.min(35, max, Math.floor((Date.now() - censusPeriodStart(new Date(), p.censo_meses).getTime()) / DAY));
+}
 
 /** Ilustraciones de gatos subidas a R2 con `scripts/upload-demo-gatos.mjs`. */
 export const GATOS_BASE = ["misi", "tizon", "nube", "tigre", "canela", "sombra"] as const;
@@ -108,7 +119,7 @@ type GatoDemo = {
   edad: string;
   descripcion: string;
   esterilizado: boolean;
-  estado?: "en_colonia" | "adoptado";
+  estado?: "en_colonia" | "adoptado" | "devuelto";
   foto?: (typeof GATOS_BASE)[number];
   intervenciones?: { dias: number; motivo: "esterilizacion" | "vacunacion" | "desparasitacion" | "revision" | "enfermedad"; notas?: string }[];
   nota?: { dias: number; texto: string; foto?: (typeof GATOS_BASE)[number] };
@@ -167,6 +178,15 @@ const GATOS_POLIDEPORTIVO: GatoDemo[] = [
     estado: "adoptado",
     foto: "canela",
   },
+  {
+    nombre: "Sombra",
+    sexo: "macho",
+    edad: "Unos 2 años",
+    descripcion: "Gris, muy tranquilo. Tenía microchip: se devolvió a la familia que lo había perdido.",
+    esterilizado: true,
+    estado: "devuelto",
+    foto: "sombra",
+  },
 ];
 
 async function addCats(db: DB, colonyId: string, userId: string, gatos: GatoDemo[]) {
@@ -183,6 +203,8 @@ async function addCats(db: DB, colonyId: string, userId: string, gatos: GatoDemo
       esterilizado: g.esterilizado,
       marcaOreja: g.esterilizado,
       estado: g.estado ?? "en_colonia",
+      // Los que ya no están en la colonia salieron hace un mes.
+      estadoDesde: g.estado && g.estado !== "en_colonia" ? ago(30) : created,
       createdAt: created,
       updatedAt: created,
     });
@@ -243,6 +265,7 @@ export async function createPersona(db: DB, key: PersonaKey, ctx: Ctx): Promise<
   await passUnits(db, userId, p.aprobados);
   if (p.carnet) await carnetFor(db, userId, ago(20));
   if (p.colonia) {
+    const programa = await getPrograma(db);
     // Una compañera colaboradora, también acreditada, para que la colonia tenga equipo.
     const comp = randomName(parseInt(rand, 36) + 3);
     const compId = await createUser(db, { email: personaEmail("carnet", `${rand}c`), ...comp, createdAt: ago(60) });
@@ -254,7 +277,7 @@ export async function createPersona(db: DB, key: PersonaKey, ctx: Ctx): Promise<
       coordenadas: "40.0723, -4.4051",
       responsableId: userId,
       colaboradores: [compId],
-      censoDias: 190, // hace más de seis meses: «toca actualizarlo»
+      censoDias: censoPendiente(programa), // «toca actualizarlo»
       censo: [4, 1, 2, 1],
       gatos: GATOS_POLIDEPORTIVO,
     });
@@ -362,13 +385,14 @@ async function seedBase(db: DB, ctx: Ctx) {
   await db.update(schema.carnets).set({ revokedAt: ago(15) }).where(eq(schema.carnets.userId, elena));
 
   // Colonias: una al día, otra con el censo pendiente y otra que se ha quedado sin cuidadores.
+  const programa = await getPrograma(db);
   await colonyWith(db, {
     nombre: "Polideportivo municipal",
     direccion: "Calle del Deporte, s/n (trasera del polideportivo)",
     coordenadas: "40.0741, -4.4032",
     responsableId: carmen,
     colaboradores: [javier],
-    censoDias: 35,
+    censoDias: censoAlDia(programa),
     censo: [5, 1, 3, 1],
     gatos: GATOS_POLIDEPORTIVO,
   });
@@ -377,7 +401,7 @@ async function seedBase(db: DB, ctx: Ctx) {
     direccion: "Plaza de la Iglesia, 2 (patio trasero)",
     coordenadas: "40.0718, -4.4066",
     responsableId: lucia,
-    censoDias: 210,
+    censoDias: censoPendiente(programa) + 20,
     censo: [2, 2, 1, 2],
     gatos: GATOS_POLIDEPORTIVO.slice(1, 3).map((g) => ({ ...g, nota: undefined, intervenciones: [] })),
   });
@@ -387,7 +411,7 @@ async function seedBase(db: DB, ctx: Ctx) {
     direccion: "Camino del Molino, km 1 (solar privado)",
     titularidad: "privado",
     responsableId: lucia,
-    censoDias: 400,
+    censoDias: Math.max(400, censoPendiente(programa) + 60),
     censo: [1, 0, 1, 0],
   });
   await db.insert(schema.colonyMembers).values({

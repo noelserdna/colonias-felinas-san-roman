@@ -17,7 +17,7 @@ const sucesor = await sucesorSiSeVa(db, colony!.id, Astro.locals.user!.id);
   <ColonyHeader colony={colony!} />
   <h1>Dejar de colaborar</h1>
   <p>
-    Según la ordenanza, si dejas de colaborar tienes que comunicarlo al Ayuntamiento para darte de baja. Tu explicación se valora
+    Según {Astro.locals.programa.normativa_corta}, si dejas de colaborar tienes que comunicarlo al Ayuntamiento para darte de baja. Tu explicación se valora
     automáticamente y el botón se habilita cuando cumple los requisitos.
   </p>
   <section class="card">

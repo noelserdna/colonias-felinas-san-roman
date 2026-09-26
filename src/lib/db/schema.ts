@@ -188,7 +188,7 @@ export const documents = sqliteTable("documents", {
   updatedAt: integer("updated_at", { mode: "timestamp_ms" }).notNull(),
 });
 
-// ---------- Colonias felinas (Ordenanza municipal: Anexos I–IV) ----------
+// ---------- Colonias felinas (registro, cuidadores, censo y fichas de los gatos) ----------
 
 export const colonies = sqliteTable("colonies", {
   id: text("id").primaryKey(),
@@ -220,7 +220,10 @@ export const colonyMembers = sqliteTable(
   (t) => [index("colony_members_user").on(t.userId), index("colony_members_colony").on(t.colonyId)],
 );
 
-/** Censo de la colonia (se actualiza cada seis meses a través de las personas cuidadoras). */
+/**
+ * Censo de la colonia (se actualiza cada `censo_meses` a través de las personas cuidadoras). Los movimientos
+ * desde el censo anterior, por sexo, son opcionales (null = no declarados); ver `censo_movimientos`.
+ */
 export const colonyCensuses = sqliteTable(
   "colony_censuses",
   {
@@ -235,11 +238,23 @@ export const colonyCensuses = sqliteTable(
     adoptables: integer("adoptables").notNull().default(0),
     enfermos: integer("enfermos").notNull().default(0),
     observaciones: text("observaciones"),
+    nacidosHembras: integer("nacidos_hembras"),
+    nacidosMachos: integer("nacidos_machos"),
+    nuevosHembras: integer("nuevos_hembras"),
+    nuevosMachos: integer("nuevos_machos"),
+    fallecidosHembras: integer("fallecidos_hembras"),
+    fallecidosMachos: integer("fallecidos_machos"),
+    adoptadosHembras: integer("adoptados_hembras"),
+    adoptadosMachos: integer("adoptados_machos"),
+    devueltosHembras: integer("devueltos_hembras"),
+    devueltosMachos: integer("devueltos_machos"),
+    otrasSalidasHembras: integer("otras_salidas_hembras"),
+    otrasSalidasMachos: integer("otras_salidas_machos"),
   },
   (t) => [index("colony_censuses_colony").on(t.colonyId, t.fecha)],
 );
 
-/** Ficha identificativa de cada gato (Anexo IV). */
+/** Ficha identificativa de cada gato (en San Román, el Anexo IV de la ordenanza). */
 export const colonyCats = sqliteTable(
   "colony_cats",
   {
@@ -252,7 +267,9 @@ export const colonyCats = sqliteTable(
     esterilizado: integer("esterilizado", { mode: "boolean" }).notNull().default(false),
     marcaOreja: integer("marca_oreja", { mode: "boolean" }).notNull().default(false),
     microchip: text("microchip"),
-    estado: text("estado", { enum: ["en_colonia", "adoptado", "fallecido", "desaparecido", "trasladado"] }).notNull().default("en_colonia"),
+    estado: text("estado", { enum: ["en_colonia", "adoptado", "fallecido", "desaparecido", "trasladado", "devuelto"] }).notNull().default("en_colonia"),
+    // Desde cuándo está en su situación actual (para rellenar los movimientos del censo desde las fichas).
+    estadoDesde: integer("estado_desde", { mode: "timestamp_ms" }),
     observaciones: text("observaciones"),
     // Foto principal de la ficha (tabla photos).
     photoId: text("photo_id"),
@@ -262,7 +279,7 @@ export const colonyCats = sqliteTable(
   (t) => [index("colony_cats_colony").on(t.colonyId)],
 );
 
-/** Intervenciones de cada gato (Anexo IV: captura, motivo, clínica, vacunas…). */
+/** Intervenciones de cada gato (captura, motivo, clínica, vacunas…). */
 export const catInterventions = sqliteTable(
   "cat_interventions",
   {

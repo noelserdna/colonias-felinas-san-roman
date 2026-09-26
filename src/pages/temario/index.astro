@@ -6,12 +6,14 @@ import { getDb, schema } from "../../lib/db";
 import { readingMinutes } from "../../lib/exam";
 import { listDocuments } from "../../lib/documents";
 import DocumentList from "../../components/DocumentList.astro";
+import { getPage } from "../../lib/pages";
 
 // Sin carnet, el temario (con progreso y tests) está en la pantalla principal.
 if (!Astro.locals.hasCarnet) return Astro.redirect("/");
 const db = getDb();
 const docs = await listDocuments(db);
 const units = await db.query.units.findMany({ where: eq(schema.units.activo, true), orderBy: asc(schema.units.orden) });
+const suplemento = (await getPage(db, "programa-local")).markdown;
 ---
 <Layout title="Consulta">
   <p class="eyebrow">Consulta</p>
@@ -32,6 +34,16 @@ const units = await db.query.units.findMany({ where: eq(schema.units.activo, tru
       </li>
     ))}
   </ol>
+  {suplemento.trim() && (
+    <a class="card end-cta" href="/temario/local">
+      <span class="step-icon"><Icon name="book" size={26} /></span>
+      <span class="grow">
+        <strong>{Astro.locals.programa.suplemento_titulo}</strong>
+        <span class="muted text-sm" style="display:block">Suplemento local · {readingMinutes(suplemento)} min de lectura</span>
+      </span>
+      <Icon name="arrow" />
+    </a>
+  )}
   <h2 id="documentos">Documentos del Ayuntamiento</h2>
   <DocumentList docs={docs} level={3} />
 </Layout>

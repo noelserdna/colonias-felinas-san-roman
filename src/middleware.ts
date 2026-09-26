@@ -2,17 +2,17 @@ import { demoGate, isDemo } from "./lib/demo";
 import { defineMiddleware } from "astro:middleware";
 import { getDb } from "./lib/db";
 import { getSessionUser, SESSION_COOKIE } from "./lib/auth";
-import { getBranding } from "./lib/branding";
+import { getIdentidad } from "./lib/programa";
 import { getActiveCarnet } from "./lib/carnet";
 
-const PUBLIC = [/^\/$/, /^\/login/, /^\/auth\//, /^\/api\/auth\//, /^\/privacidad/, /^\/accesibilidad/, /^\/documentos/, /^\/offline/, /^\/branding\//, /^\/manifest\.webmanifest$/, /^\/demo$/, /^\/api\/demo\/(entrar|reset)$/];
+const PUBLIC = [/^\/$/, /^\/login/, /^\/auth\//, /^\/api\/auth\//, /^\/privacidad/, /^\/accesibilidad/, /^\/documentos/, /^\/docs\//, /^\/offline/, /^\/branding\//, /^\/manifest\.webmanifest$/, /^\/demo$/, /^\/api\/demo\/(entrar|reset)$/];
 
 export const onRequest = defineMiddleware(async (ctx, next) => {
   const db = getDb();
-  [ctx.locals.user, ctx.locals.branding] = await Promise.all([
-    getSessionUser(db, ctx.cookies.get(SESSION_COOKIE)?.value),
-    getBranding(db),
-  ]);
+  const [user, identidad] = await Promise.all([getSessionUser(db, ctx.cookies.get(SESSION_COOKIE)?.value), getIdentidad(db)]);
+  ctx.locals.user = user;
+  ctx.locals.branding = identidad.branding;
+  ctx.locals.programa = identidad.programa;
   ctx.locals.hasCarnet = ctx.locals.user ? Boolean(await getActiveCarnet(db, ctx.locals.user.id)) : false;
   const path = ctx.url.pathname;
   const isApi = path.startsWith("/api/");

@@ -12,6 +12,23 @@ export class ColonyError extends Error {
 
 const blank = (v: unknown) => (typeof v === "string" ? v.trim() || undefined : v);
 const count = z.coerce.number().int().min(0, "Los recuentos no pueden ser negativos").max(999);
+// Movimiento del censo: vacío = no declarado (null).
+const movimiento = z.preprocess((v) => (v == null || (typeof v === "string" && v.trim() === "") ? null : v), count.nullable());
+
+/** Movimientos desde el censo anterior, por sexo (como el censo en papel de algunas ordenanzas). */
+export const MOVIMIENTOS = {
+  nacidos: { label: "Nacidos en la colonia", entrada: true },
+  nuevos: { label: "Llegados de fuera", entrada: true },
+  fallecidos: { label: "Fallecidos", entrada: false },
+  adoptados: { label: "Dados en adopción", entrada: false },
+  devueltos: { label: "Devueltos a su responsable legal", entrada: false },
+  otrasSalidas: { label: "Otras salidas (desaparecidos, trasladados)", entrada: false },
+} as const;
+export type Movimiento = keyof typeof MOVIMIENTOS;
+export const MOVIMIENTO_KEYS = Object.keys(MOVIMIENTOS) as Movimiento[];
+/** Campos del censo: nacidosHembras, nacidosMachos… */
+export const MOVIMIENTO_CAMPOS = MOVIMIENTO_KEYS.flatMap((m) => [`${m}Hembras`, `${m}Machos`] as const);
+export type MovimientoCampo = `${Movimiento}Hembras` | `${Movimiento}Machos`;
 
 export const censusInput = z.object({
   hembrasEsterilizadas: count,
@@ -21,8 +38,10 @@ export const censusInput = z.object({
   adoptables: count,
   enfermos: count,
   observaciones: z.preprocess(blank, z.string().max(2000).optional()),
+  ...(Object.fromEntries(MOVIMIENTO_CAMPOS.map((k) => [k, movimiento])) as Record<MovimientoCampo, typeof movimiento>),
 });
 export type CensusInput = z.infer<typeof censusInput>;
+export type CensoMovimientos = "no" | "opcional" | "obligatorio";
 
 export const colonyInput = z.object({
   nombre: z.string().trim().min(2, "El nombre de la colonia es obligatorio").max(120),
@@ -40,7 +59,7 @@ export const catInput = z.object({
   esterilizado: z.boolean(),
   marcaOreja: z.boolean(),
   microchip: z.preprocess(blank, z.string().max(40).optional()),
-  estado: z.enum(["en_colonia", "adoptado", "fallecido", "desaparecido", "trasladado"]),
+  estado: z.enum(["en_colonia", "adoptado", "fallecido", "desaparecido", "trasladado", "devuelto"]),
   observaciones: z.preprocess(blank, z.string().max(2000).optional()),
 });
 
@@ -57,6 +76,7 @@ export const CAT_ESTADOS = {
   fallecido: "Fallecido",
   desaparecido: "Desaparecido",
   trasladado: "Trasladado",
+  devuelto: "Devuelto a su responsable legal",
 } as const;
 export const MOTIVOS = {
   esterilizacion: "Esterilización (CER)",
@@ -73,13 +93,107 @@ export function censusTotal(c: Pick<CensusInput, "hembrasEsterilizadas" | "hembr
   return c.hembrasEsterilizadas + c.hembrasSinEsterilizar + c.machosCastrados + c.machosSinCastrar;
 }
 
-/** El censo se actualiza cada seis meses (apartado 11 de la ordenanza). */
-export const CENSUS_MONTHS = 6;
-export function censusDue(last: Date | null, now = new Date()): boolean {
+export type CensoPeriodo = { meses: number; alineado: boolean };
+
+/** Número del periodo natural al que pertenece la fecha (con 6 meses: enero–junio, julio–diciembre…). */
+const periodo = (d: Date, meses: number) => Math.floor((d.getFullYear() * 12 + d.getMonth()) / meses);
+
+/** Primer día del periodo natural en curso. */
+export function censusPeriodStart(now: Date, meses: number): Date {
+  const m = periodo(now, meses) * meses;
+  return new Date(Math.floor(m / 12), m % 12, 1);
+}
+
+/**
+ * ¿Toca actualizar el censo? Cada `meses` desde el último censo o, si `alineado`, en cuanto empieza un
+ * periodo natural nuevo (con 6 meses, un censo por semestre). Ver `censo_meses` en el programa local.
+ */
+export function censusDue(last: Date | null, now = new Date(), p: CensoPeriodo = { meses: 6, alineado: false }): boolean {
   if (!last) return true;
+  if (p.alineado) return periodo(now, p.meses) > periodo(last, p.meses);
   const due = new Date(last);
-  due.setMonth(due.getMonth() + CENSUS_MONTHS);
+  due.setMonth(due.getMonth() + p.meses);
   return now >= due;
+}
+
+type Recuento = Pick<CensusInput, "hembrasEsterilizadas" | "hembrasSinEsterilizar" | "machosCastrados" | "machosSinCastrar">;
+type ConMovimientos = Partial<Record<MovimientoCampo, number | null>>;
+
+/** ¿Declara algún movimiento? */
+export function hasMovements(c: ConMovimientos): boolean {
+  return MOVIMIENTO_CAMPOS.some((k) => c[k] != null);
+}
+
+/**
+ * Cuadre por sexo: censo anterior + entradas − salidas, frente a lo contado ahora.
+ * Los movimientos no declarados cuentan como 0.
+ */
+export function censusBalance(prev: Recuento, c: Recuento & ConMovimientos) {
+  const sexo = (s: "Hembras" | "Machos") => {
+    const antes = s === "Hembras" ? prev.hembrasEsterilizadas + prev.hembrasSinEsterilizar : prev.machosCastrados + prev.machosSinCastrar;
+    const ahora = s === "Hembras" ? c.hembrasEsterilizadas + c.hembrasSinEsterilizar : c.machosCastrados + c.machosSinCastrar;
+    let entradas = 0;
+    let salidas = 0;
+    for (const m of MOVIMIENTO_KEYS) {
+      const v = c[`${m}${s}`] ?? 0;
+      if (MOVIMIENTOS[m].entrada) entradas += v;
+      else salidas += v;
+    }
+    const esperado = antes + entradas - salidas;
+    return { antes, entradas, salidas, esperado, ahora, cuadra: esperado === ahora };
+  };
+  return { hembras: sexo("Hembras"), machos: sexo("Machos") };
+}
+
+/**
+ * Comprueba un censo nuevo. `errores` impiden guardarlo; `avisos` (el censo no cuadra con el anterior y
+ * los movimientos) se muestran para revisarlo, pero se puede guardar igualmente.
+ */
+export function validateCensus(c: CensusInput, prev: Recuento | null, modo: CensoMovimientos): { errores: string[]; avisos: string[] } {
+  const errores: string[] = [];
+  const avisos: string[] = [];
+  if (c.adoptables > censusTotal(c) || c.enfermos > censusTotal(c)) {
+    errores.push("Los gatos adoptables y enfermos se cuentan dentro del total: no pueden ser más que el total de gatos.");
+  }
+  if (!prev || modo === "no") return { errores, avisos };
+  if (modo === "obligatorio" && MOVIMIENTO_CAMPOS.some((k) => c[k] == null)) {
+    errores.push("Indica los movimientos desde el censo anterior (pon 0 donde no haya habido ninguno).");
+  }
+  if (!hasMovements(c)) return { errores, avisos };
+  const b = censusBalance(prev, c);
+  for (const [nombre, x] of [["hembras", b.hembras], ["machos", b.machos]] as const) {
+    if (x.cuadra) continue;
+    avisos.push(
+      `Las ${nombre} no cuadran: el censo anterior tenía ${x.antes}, con ${x.entradas} ${x.entradas === 1 ? "entrada" : "entradas"} y ${x.salidas} ${x.salidas === 1 ? "salida" : "salidas"} deberían ser ${x.esperado}, pero has contado ${x.ahora}.`,
+    );
+  }
+  return { errores, avisos };
+}
+
+/**
+ * Movimientos desde `desde` (fecha del censo anterior) según las fichas: fichas nuevas como entradas y
+ * cambios de situación posteriores como salidas. Solo gatos con sexo conocido. Es una propuesta: la persona
+ * cuidadora la revisa antes de guardar.
+ */
+export function censusMovementsFromCats(
+  cats: { sexo: string; estado: string; edad?: string | null; createdAt: Date; estadoDesde: Date | null }[],
+  desde: Date,
+): Record<MovimientoCampo, number> {
+  const out = Object.fromEntries(MOVIMIENTO_CAMPOS.map((k) => [k, 0])) as Record<MovimientoCampo, number>;
+  const SALIDA: Record<string, Movimiento> = { fallecido: "fallecidos", adoptado: "adoptados", devuelto: "devueltos", desaparecido: "otrasSalidas", trasladado: "otrasSalidas" };
+  for (const cat of cats) {
+    const s = cat.sexo === "hembra" ? "Hembras" : cat.sexo === "macho" ? "Machos" : null;
+    if (!s) continue;
+    const nuevo = cat.createdAt > desde;
+    const cambio = cat.estadoDesde ?? cat.createdAt;
+    const salida = SALIDA[cat.estado];
+    // Un gato que llegó y se fue en el mismo periodo no aparece en ninguno de los dos recuentos.
+    if (nuevo && salida && cambio > desde) continue;
+    // Las fichas nuevas de cachorros cuentan como nacidos en la colonia; el resto, como llegados de fuera.
+    if (nuevo && cat.estado === "en_colonia") out[`${/cachorr|gatit|reci[eé]n nacid/i.test(cat.edad ?? "") ? "nacidos" : "nuevos"}${s}`]++;
+    else if (!nuevo && salida && cambio > desde) out[`${salida}${s}`]++;
+  }
+  return out;
 }
 
 /** Recuento automático a partir de las fichas de los gatos que siguen en la colonia. */
@@ -125,10 +239,11 @@ async function nextNumero(db: DB): Promise<number> {
 
 export async function createColony(
   db: DB,
-  input: { colony: unknown; responsableId: string; colaboradores: string[]; census: unknown },
+  input: { colony: unknown; responsableId: string; colaboradores: string[]; census: unknown; etiquetaRegistro?: string },
 ) {
   const c = colonyInput.parse(input.colony);
-  const census = censusInput.parse(input.census);
+  // El primer censo (el de la solicitud) no tiene movimientos: no hay censo anterior.
+  const census = censusInput.parse({ ...(input.census as object), ...Object.fromEntries(MOVIMIENTO_CAMPOS.map((k) => [k, null])) });
   if (!input.responsableId) throw new ColonyError("Elige la persona cuidadora responsable.");
   const colaboradores = [...new Set(input.colaboradores.filter((u) => u && u !== input.responsableId))];
   await assertCaretakers(db, [input.responsableId, ...colaboradores]);
@@ -139,7 +254,7 @@ export async function createColony(
     db.insert(schema.colonies).values({ id, numero, ...c, coordenadas: c.coordenadas ?? null, notas: c.notas ?? null, estado: "activa", createdAt: now, updatedAt: now }),
     db.insert(schema.colonyMembers).values({ id: uuid(), colonyId: id, userId: input.responsableId, rol: "responsable", since: now }),
     ...colaboradores.map((u) => db.insert(schema.colonyMembers).values({ id: uuid(), colonyId: id, userId: u, rol: "colaborador", since: now })),
-    db.insert(schema.colonyCensuses).values({ id: uuid(), colonyId: id, userId: null, fecha: now, ...census, observaciones: census.observaciones ?? "Datos de la solicitud de registro (Anexo I)." }),
+    db.insert(schema.colonyCensuses).values({ id: uuid(), colonyId: id, userId: null, fecha: now, ...census, observaciones: census.observaciones ?? `Datos de la solicitud de registro${input.etiquetaRegistro ? ` (${input.etiquetaRegistro})` : ""}.` }),
   ]);
   return { id, numero };
 }
@@ -277,12 +392,26 @@ export async function assertCanManage(db: DB, colonyId: string, user: { id: stri
   if (!m) throw new ColonyError("No colaboras en esta colonia.", 403);
 }
 
-export async function addCensus(db: DB, colonyId: string, userId: string, input: unknown) {
-  const c = censusInput.parse(input);
-  if (c.adoptables > censusTotal(c) || c.enfermos > censusTotal(c)) {
-    throw new ColonyError("Los gatos adoptables y enfermos se cuentan dentro del total: no pueden ser más que el total de gatos.");
-  }
+/**
+ * Guarda un censo. Si no cuadra con el anterior y los movimientos, no se guarda y devuelve los avisos,
+ * salvo que se confirme («Guardar igualmente»).
+ */
+export async function addCensus(
+  db: DB,
+  colonyId: string,
+  userId: string,
+  input: unknown,
+  opts: { modo: CensoMovimientos; confirmar?: boolean } = { modo: "opcional" },
+): Promise<{ guardado: boolean; avisos: string[] }> {
+  const parsed = censusInput.parse(input);
+  const prev = await db.query.colonyCensuses.findFirst({ where: eq(schema.colonyCensuses.colonyId, colonyId), orderBy: desc(schema.colonyCensuses.fecha) });
+  // Sin censo anterior o sin movimientos en este municipio, no se guardan.
+  const c = !prev || opts.modo === "no" ? { ...parsed, ...Object.fromEntries(MOVIMIENTO_CAMPOS.map((k) => [k, null])) } : parsed;
+  const { errores, avisos } = validateCensus(c, prev ?? null, opts.modo);
+  if (errores.length) throw new ColonyError(errores.join(" "));
+  if (avisos.length && !opts.confirmar) return { guardado: false, avisos };
   await db.insert(schema.colonyCensuses).values({ id: uuid(), colonyId, userId, fecha: new Date(), ...c, observaciones: c.observaciones ?? null });
+  return { guardado: true, avisos };
 }
 
 export async function listCensuses(db: DB, colonyId: string) {
@@ -301,12 +430,16 @@ export async function listCats(db: DB, colonyId: string) {
 
 export async function saveCat(db: DB, colonyId: string, catId: string | null, input: unknown) {
   const c = catInput.parse(input);
-  const row = { ...c, edad: c.edad ?? null, descripcion: c.descripcion ?? null, microchip: c.microchip ?? null, observaciones: c.observaciones ?? null, updatedAt: new Date() };
+  const now = new Date();
+  const row = { ...c, edad: c.edad ?? null, descripcion: c.descripcion ?? null, microchip: c.microchip ?? null, observaciones: c.observaciones ?? null, updatedAt: now };
   if (!catId) {
-    await db.insert(schema.colonyCats).values({ id: uuid(), colonyId, ...row, createdAt: new Date() });
+    await db.insert(schema.colonyCats).values({ id: uuid(), colonyId, ...row, estadoDesde: now, createdAt: now });
     return;
   }
-  await db.update(schema.colonyCats).set(row).where(and(eq(schema.colonyCats.id, catId), eq(schema.colonyCats.colonyId, colonyId)));
+  const where = and(eq(schema.colonyCats.id, catId), eq(schema.colonyCats.colonyId, colonyId));
+  const before = await db.query.colonyCats.findFirst({ where });
+  // La fecha de la situación solo cambia cuando cambia la situación.
+  await db.update(schema.colonyCats).set({ ...row, ...(before && before.estado !== c.estado ? { estadoDesde: now } : {}) }).where(where);
 }
 
 export async function addIntervention(db: DB, colonyId: string, catId: string, userId: string, input: unknown) {

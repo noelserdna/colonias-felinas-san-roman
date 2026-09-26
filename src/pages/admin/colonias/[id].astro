@@ -1,10 +1,11 @@
 ---
 import Layout from "../../../layouts/Layout.astro";
 import AdminNav from "../../../components/AdminNav.astro";
+import CensusHistory from "../../../components/CensusHistory.astro";
 import { eq } from "drizzle-orm";
 import { ZodError } from "zod";
 import { getDb, schema } from "../../../lib/db";
-import { activeMembers, addMember, ColonyError, listCaretakers, listCats, listCensuses, removeMemberByAdmin, setResponsable, updateColony, censusTotal } from "../../../lib/colonies";
+import { activeMembers, addMember, ColonyError, listCaretakers, listCats, listCensuses, removeMemberByAdmin, setResponsable, updateColony, CAT_ESTADOS, SEXOS } from "../../../lib/colonies";
 import { formatDate } from "../../../lib/util";
 import { notifyColony } from "../../../lib/notices";
 
@@ -109,20 +110,13 @@ const nombre = (u: { nombre: string | null; apellidos: string | null; email: str
 
   <section class="card">
     <h2 class="mt-0">Censos</h2>
-    {censuses.length === 0 ? <p class="muted">Sin censos.</p> : (
-      <div class="table-scroll"><table class="data responsive">
-        <thead><tr><th>Fecha</th><th>Total</th><th>Hembras (est./sin)</th><th>Machos (cast./sin)</th><th>Adoptables</th><th>Enfermos</th></tr></thead>
-        <tbody>{censuses.map((c) => (
-          <tr><td class="primary-cell">{formatDate(c.fecha)}</td><td data-label="Total">{censusTotal(c)}</td><td data-label="Hembras">{c.hembrasEsterilizadas} / {c.hembrasSinEsterilizar}</td><td data-label="Machos">{c.machosCastrados} / {c.machosSinCastrar}</td><td data-label="Adoptables">{c.adoptables}</td><td data-label="Enfermos">{c.enfermos}</td></tr>
-        ))}</tbody>
-      </table></div>
-    )}
+    {censuses.length === 0 ? <p class="muted">Sin censos.</p> : <CensusHistory censuses={censuses} detalle />}
   </section>
 
   <section class="card">
     <h2 class="mt-0">Fichas de gatos ({cats.length})</h2>
     {cats.length === 0 ? <p class="muted">Las personas cuidadoras todavía no han registrado fichas.</p> : (
-      <ul class="stack" style="padding-left:1.1rem">{cats.map((c) => <li><a href={`/colonia/${id}/gatos/${c.id}`}>{c.nombre}</a> · {c.sexo} · {c.esterilizado ? "esterilizado" : "sin esterilizar"} · {c.interventions.length} intervenciones</li>)}</ul>
+      <ul class="stack" style="padding-left:1.1rem">{cats.map((c) => <li><a href={`/colonia/${id}/gatos/${c.id}`}>{c.nombre}</a> · {SEXOS[c.sexo]} · {c.esterilizado ? "esterilizado" : "sin esterilizar"}{c.estado !== "en_colonia" ? ` · ${CAT_ESTADOS[c.estado]}` : ""} · {c.interventions.length} intervenciones</li>)}</ul>
     )}
   </section>
 </Layout>

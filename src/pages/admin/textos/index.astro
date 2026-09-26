@@ -1,0 +1,36 @@
+---
+import Layout from "../../../layouts/Layout.astro";
+import AdminNav from "../../../components/AdminNav.astro";
+import Icon from "../../../components/Icon.astro";
+import { getDb } from "../../../lib/db";
+import { getPage } from "../../../lib/pages";
+import { PAGE_DEFS, PAGE_SLUGS } from "../../../lib/pages-config";
+
+const db = getDb();
+const pages = await Promise.all(PAGE_SLUGS.map(async (slug) => ({ slug, def: PAGE_DEFS[slug], page: await getPage(db, slug) })));
+---
+<Layout title="Textos · Administración" wide>
+  <p class="eyebrow">Administración</p>
+  <h1>Textos</h1>
+  <AdminNav />
+  <p class="muted">
+    Páginas que el Ayuntamiento adapta a su normativa. Se escriben en Markdown y admiten marcadores como
+    <code>{"{{municipio}}"}</code> o <code>{"{{censo_periodo}}"}</code>, que se sustituyen por los datos del
+    <a href="/admin/programa">programa local</a>.
+  </p>
+  <ul class="consult-list">
+    {pages.map(({ slug, def, page }) => (
+      <li>
+        <a href={`/admin/textos/${slug}`}>
+          <span class="step-body">
+            <span class="step-title">{def.titulo}</span>
+            <span class="step-sub">
+              {page.custom ? "Texto propio" : def.opcional ? "Vacío: no se muestra" : "Texto por defecto"} · {def.descripcion}
+            </span>
+          </span>
+          <Icon name="arrow" size={18} />
+        </a>
+      </li>
+    ))}
+  </ul>
+</Layout>

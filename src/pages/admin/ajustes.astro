@@ -117,7 +117,7 @@ const groups: [string, (keyof Settings)[]][] = [
   ["Examen final", ["final_mc_count", "final_written_count", "final_pass_pct", "final_min_per_unit"]],
   ["Dificultad de las preguntas", ["mix_baja", "mix_media", "mix_alta"]],
   ["Corrección con JEV", ["jev_pass_score", "jev_flag_threshold"]],
-  ["Carnet y acceso", ["carnet_validity_months", "carnet_prefix", "magic_link_ttl_min"]],
+  ["Carnet y acceso", ["carnet_validity_months", "carnet_prefix", "carnet_aviso_dias", "magic_link_ttl_min"]],
 ];
 const step: Partial<Record<keyof Settings, string>> = { unit_pass_pct: "0.5", final_pass_pct: "0.5", jev_pass_score: "0.05", jev_flag_threshold: "0.05" };
 const note = (section: string) => (msg && msg.section === section ? msg : null);

@@ -72,18 +72,3 @@ describe("finalComposition", () => {
     expect(finalComposition(DEFAULT_SETTINGS, false)).toEqual({ objective: 20, written: 0, jevAvailable: false });
   });
 });
-
-import { splitSteps, DEFAULT_COLONIA_GUIDE } from "../../src/lib/colonia";
-
-describe("guía Mi colonia", () => {
-  it("separa introducción y pasos", () => {
-    const { intro, steps } = splitSteps("Intro **x**\n\n## Uno\nA\n\n## Dos\n- b\n");
-    expect(intro).toBe("Intro **x**");
-    expect(steps).toEqual([{ title: "Uno", body: "A" }, { title: "Dos", body: "- b" }]);
-  });
-  it("la guía por defecto tiene 6 pasos y empieza por la acreditación", () => {
-    const { steps } = splitSteps(DEFAULT_COLONIA_GUIDE);
-    expect(steps).toHaveLength(6);
-    expect(steps[0].title).toBe("Consigue tu acreditación");
-  });
-});

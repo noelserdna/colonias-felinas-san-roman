@@ -1,0 +1,24 @@
+---
+// Suplemento local del temario: lo propio del municipio (normativa, ordenanzas, procedimientos).
+// Se escribe en Administración → Textos → Suplemento local; si está vacío, la página no existe.
+import Layout from "../../layouts/Layout.astro";
+import Icon from "../../components/Icon.astro";
+import { getDb } from "../../lib/db";
+import { getRenderedPage } from "../../lib/pages";
+import { renderMarkdown } from "../../lib/markdown";
+import { readingMinutes } from "../../lib/exam";
+
+const { programa, branding } = Astro.locals;
+const page = await getRenderedPage(getDb(), "programa-local", programa, branding);
+if (!page.markdown.trim()) return new Response("No encontrado", { status: 404 });
+const consulta = Astro.locals.hasCarnet;
+---
+<Layout title={programa.suplemento_titulo} readingProgress>
+  <a class="btn ghost small" href={consulta ? "/temario" : "/"} style="margin-left:-.6rem"><Icon name="back" size={18} /> {consulta ? "Consulta" : "Temario"}</a>
+  <p class="eyebrow" style="margin-top:.6rem">Suplemento local · {branding.municipio}</p>
+  <h1>{programa.suplemento_titulo}</h1>
+  <div class="meta">
+    <span><Icon name="clock" size={16} /> {readingMinutes(page.markdown)} min de lectura</span>
+  </div>
+  <article class="card prose" set:html={renderMarkdown(page.markdown)} />
+</Layout>

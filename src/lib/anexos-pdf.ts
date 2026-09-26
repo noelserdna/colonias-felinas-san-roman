@@ -1,14 +1,16 @@
-// Genera los Anexos I y II de la Ordenanza municipal reguladora del plan de control y gestión ética
-// de las colonias felinas urbanas (BOP de Toledo n.º 122, de 28/06/2024), en blanco o rellenos.
-// Módulo puro (sin dependencias de Cloudflare): se usa en el navegador y en scripts de Node.
+// Genera las solicitudes de registro de colonia y de alta como colaborador/a, y la autorización de la
+// persona propietaria del terreno, en blanco o rellenas. Los textos que dependen de la normativa de cada
+// municipio (nombres de los anexos, órgano, pie…) llegan en `textos` (Administración → Programa local).
+// Módulo puro (sin dependencias de Cloudflare): se usa en el navegador, en el servidor y en scripts de Node.
 import { PDFDocument, rgb, StandardFonts, type PDFFont, type PDFPage, type PDFImage } from "pdf-lib";
+import { toWinAnsi } from "./winansi.ts";
 
 export type Persona = { nombre?: string; nif?: string; telefono?: string; email?: string };
 export type Solicitante = Persona & { direccion?: string };
 
 export type AnexoIData = {
   solicitante: Solicitante;
-  cuidadores: Persona[]; // hasta 4
+  cuidadores: Persona[]; // hasta textos.maxCuidadores
   colonia: {
     direccion?: string;
     coordenadas?: string;
@@ -34,7 +36,59 @@ export type AutorizacionData = {
   fecha?: Date | null;
 };
 
-const PIE_ANEXO = "Anexo de la Ordenanza municipal publicada en el BOP de Toledo n.º 122, de 28 de junio de 2024.";
+/** Textos de los formularios que cambian de un municipio a otro. Se resuelven en `textosAnexos` (programa-config). */
+export type AnexoTextos = {
+  /** Segunda línea de la cabecera (p. ej. «Concejalía con competencias en Bienestar Animal»). */
+  organo: string;
+  /** Tercera línea de la cabecera: nombre del plan o programa municipal. */
+  plan: string;
+  /** Pie de las solicitudes (p. ej. la publicación oficial de la ordenanza). Vacío = sin pie. */
+  pie: string;
+  /** Base legal en el aviso de protección de datos (p. ej. «Ley 7/2023 y ordenanza municipal»). */
+  rgpdBase: string;
+  /** Nombre oficial de cada formulario (p. ej. «Anexo I»). Vacío = sin nombre oficial. */
+  etiquetaRegistro: string;
+  etiquetaColaborador: string;
+  tituloRegistro: string;
+  tituloColaborador: string;
+  /** Párrafo final del registro (qué hará el Ayuntamiento con la solicitud). */
+  registroResolucion: string;
+  colaboradorManifiesta: string[];
+  colaboradorSolicita: string;
+  /** Referencia de la norma que exige la autorización en terreno privado (p. ej. «apartado 7.1.4 de la Ordenanza…»). */
+  refAutorizacion: string;
+  /** Cita de la publicación oficial de la norma (p. ej. «BOP de … n.º …»), para el pie de la autorización. */
+  normativaCita: string;
+  /** Filas de personas cuidadoras en la solicitud de registro. */
+  maxCuidadores: number;
+};
+
+/** Textos genéricos, sin referencias a la normativa de ningún municipio. */
+export const DEFAULT_TEXTOS: AnexoTextos = {
+  organo: "Área municipal con competencias en bienestar animal",
+  plan: "Programa municipal de gestión de colonias felinas",
+  pie: "",
+  rgpdBase: "Ley 7/2023 y normativa municipal",
+  etiquetaRegistro: "",
+  etiquetaColaborador: "",
+  tituloRegistro: "Solicitud para registrar una nueva colonia de gatos urbanos",
+  tituloColaborador: "Solicitud de alta como persona colaboradora del programa de colonias felinas",
+  registroResolucion:
+    "El Ayuntamiento, conocida la solicitud, la analizará, visitará la ubicación y consultará lo que considere conveniente. Se emitirá un informe justificando la autorización o no de la colonia.",
+  colaboradorManifiesta: [
+    "Se ofrece voluntario o voluntaria para atender las colonias felinas urbanas que le sean asignadas, como persona colaboradora autorizada.",
+    "Se compromete a cumplir el programa municipal de gestión de colonias felinas y a seguir las instrucciones del Ayuntamiento en todo momento.",
+    "Se compromete a completar la formación para personas cuidadoras que indique el Ayuntamiento.",
+    "Que acompaña la siguiente documentación: fotocopia de DNI.",
+  ],
+  colaboradorSolicita: "Por todo ello, SOLICITA su alta como persona colaboradora autorizada para la gestión y control de las colonias felinas.",
+  refAutorizacion: "",
+  normativaCita: "",
+  maxCuidadores: 4,
+};
+
+/** «Anexo I: Título» o solo «Título», según haya nombre oficial. */
+const conEtiqueta = (etiqueta: string, titulo: string, sep = ": ") => (etiqueta.trim() ? `${etiqueta.trim()}${sep}${titulo}` : titulo);
 
 type Ctx = {
   doc: PDFDocument;
@@ -44,6 +98,7 @@ type Ctx = {
   y: number;
   municipio: string;
   escudo?: PDFImage;
+  t: AnexoTextos;
 };
 
 const A4: [number, number] = [595.28, 841.89];
@@ -57,7 +112,8 @@ const FILL = rgb(0.05, 0.25, 0.45); // texto rellenado, en azul oscuro como si f
 const MESES = ["enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"];
 
 /** Recorta el texto para que quepa en el ancho indicado. */
-function fit(text: string, font: PDFFont, size: number, width: number): string {
+function fit(raw: string, font: PDFFont, size: number, width: number): string {
+  const text = toWinAnsi(raw);
   if (font.widthOfTextAtSize(text, size) <= width) return text;
   let t = text;
   while (t.length > 1 && font.widthOfTextAtSize(t + "…", size) > width) t = t.slice(0, -1);
@@ -66,7 +122,7 @@ function fit(text: string, font: PDFFont, size: number, width: number): string {
 
 /** Parte un texto en líneas que caben en el ancho. */
 function wrap(text: string, font: PDFFont, size: number, width: number): string[] {
-  const words = text.split(/\s+/);
+  const words = toWinAnsi(text).split(/\s+/).filter(Boolean);
   const lines: string[] = [];
   let cur = "";
   for (const w of words) {
@@ -81,7 +137,8 @@ function wrap(text: string, font: PDFFont, size: number, width: number): string[
 }
 
 function text(c: Ctx, s: string, x: number, y: number, size = 10, font = c.font, color = INK) {
-  c.page.drawText(s, { x, y, size, font, color });
+  // Las fuentes estándar solo admiten WinAnsi: un emoji o un «≥» no deben romper el PDF.
+  c.page.drawText(toWinAnsi(s), { x, y, size, font, color });
 }
 
 function paragraph(c: Ctx, s: string, size = 10, font = c.font, gap = 4) {
@@ -115,8 +172,8 @@ function header(c: Ctx, titulo: string) {
   }
   const tx = M + 60;
   text(c, `AYUNTAMIENTO DE ${c.municipio.toUpperCase()}`, tx, top - 8, 11, c.bold);
-  text(c, "Concejalía con competencias en Bienestar Animal", tx, top - 23, 9.5, c.font, MUTED);
-  text(c, "Plan de Control y Gestión Ética de Colonias Felinas Urbanas", tx, top - 36, 9.5, c.font, MUTED);
+  text(c, fit(c.t.organo, c.font, 9.5, A4[0] - M - tx), tx, top - 23, 9.5, c.font, MUTED);
+  text(c, fit(c.t.plan, c.font, 9.5, A4[0] - M - tx), tx, top - 36, 9.5, c.font, MUTED);
   c.page.drawLine({ start: { x: M, y: top - 60 }, end: { x: A4[0] - M, y: top - 60 }, thickness: 1, color: rgb(0.18, 0.42, 0.31) });
   c.y = top - 84;
   for (const line of wrap(titulo, c.bold, 12.5, W)) {
@@ -140,11 +197,11 @@ function firma(c: Ctx, lugar?: string, fecha?: Date | null, quien = "El/La solic
   c.y -= 30;
 }
 
-function proteccionDatos(c: Ctx, pie = PIE_ANEXO) {
+function proteccionDatos(c: Ctx, pie = c.t.pie) {
   const size = 7.5;
   const t =
     `Protección de datos: el responsable del tratamiento es el Ayuntamiento de ${c.municipio}. Los datos se tratan para tramitar esta solicitud y ` +
-    "gestionar el registro de colonias felinas y de personas cuidadoras, en ejercicio de las competencias municipales (Ley 7/2023 y ordenanza municipal). " +
+    `gestionar el registro de colonias felinas y de personas cuidadoras, en ejercicio de las competencias municipales (${c.t.rgpdBase}). ` +
     "Puede ejercer sus derechos de acceso, rectificación, supresión, oposición, limitación y portabilidad ante el Ayuntamiento.";
   const lines = wrap(t, c.font, size, W);
   let y = M + lines.length * (size + 2);
@@ -159,7 +216,7 @@ function proteccionDatos(c: Ctx, pie = PIE_ANEXO) {
   }
 }
 
-async function newDoc(municipio: string, escudoPng?: Uint8Array, title = "Solicitud") {
+async function newDoc(municipio: string, escudoPng: Uint8Array | undefined, title: string, textos?: Partial<AnexoTextos>) {
   const doc = await PDFDocument.create();
   doc.setTitle(title);
   doc.setLanguage("es-ES");
@@ -179,15 +236,18 @@ async function newDoc(municipio: string, escudoPng?: Uint8Array, title = "Solici
       }
     }
   }
-  const c: Ctx = { doc, page, font, bold, y: 0, municipio, escudo };
+  const c: Ctx = { doc, page, font, bold, y: 0, municipio, escudo, t: { ...DEFAULT_TEXTOS, ...textos } };
   return c;
 }
 
-/** Anexo I: Solicitud para registrar una nueva colonia de gatos urbanos. */
-export async function anexoI(opts: { municipio: string; escudoPng?: Uint8Array; data?: AnexoIData }): Promise<Uint8Array> {
+type Opts<D> = { municipio: string; escudoPng?: Uint8Array; data?: D; textos?: Partial<AnexoTextos> };
+
+/** Solicitud para registrar una nueva colonia de gatos urbanos (en San Román, el Anexo I de la ordenanza). */
+export async function anexoI(opts: Opts<AnexoIData>): Promise<Uint8Array> {
   const d = opts.data;
-  const c = await newDoc(opts.municipio, opts.escudoPng, "Anexo I · Solicitud para registrar una nueva colonia de gatos urbanos");
-  header(c, "ANEXO I: SOLICITUD PARA REGISTRAR UNA NUEVA COLONIA DE GATOS URBANOS");
+  const t = { ...DEFAULT_TEXTOS, ...opts.textos };
+  const c = await newDoc(opts.municipio, opts.escudoPng, conEtiqueta(t.etiquetaRegistro, t.tituloRegistro, " · "), t);
+  header(c, conEtiqueta(t.etiquetaRegistro, t.tituloRegistro).toUpperCase());
 
   heading(c, "DATOS DE LA PERSONA SOLICITANTE");
   const s = d?.solicitante ?? {};
@@ -210,7 +270,10 @@ export async function anexoI(opts: { municipio: string; escudoPng?: Uint8Array; 
   ];
   for (const col of cols) text(c, col.t, col.x, c.y, 8, c.bold, MUTED);
   c.y -= 16;
-  for (let i = 0; i < 4; i++) {
+  // Hasta 4 filas con el espaciado normal; con más, se apretan para que todo quepa en una página.
+  const filas = Math.min(6, Math.max(1, Math.round(t.maxCuidadores)));
+  const alto = filas <= 4 ? 20 : Math.max(14, Math.floor(88 / filas));
+  for (let i = 0; i < filas; i++) {
     const p = d?.cuidadores?.[i] ?? {};
     text(c, String(i + 1), M + 2, c.y, 9.5, c.bold);
     const vals = [p.nombre, p.nif, p.telefono, p.email];
@@ -219,7 +282,7 @@ export async function anexoI(opts: { municipio: string; escudoPng?: Uint8Array; 
       const v = vals[j];
       if (v) text(c, fit(v, c.font, 9.5, col.w - 8), col.x + 1, c.y + 0.5, 9.5, c.font, FILL);
     });
-    c.y -= 20;
+    c.y -= alto;
   }
   c.y -= 2;
 
@@ -250,21 +313,18 @@ export async function anexoI(opts: { municipio: string; escudoPng?: Uint8Array; 
     c.y -= 18;
   }
   c.y -= 6;
-  paragraph(
-    c,
-    `El Ayuntamiento de ${opts.municipio.toUpperCase()}, conocida la solicitud, analizará la misma, visitará la ubicación y consultará lo que considere conveniente para decidir autorizarla. Se emitirá un informe justificando la autorización o no de dicha colonia.`,
-    9.5,
-  );
+  if (t.registroResolucion.trim()) paragraph(c, t.registroResolucion, 9.5);
   firma(c, d?.lugar, d?.fecha ?? null);
   proteccionDatos(c);
   return c.doc.save();
 }
 
-/** Anexo II: Solicitud de alta como colaborador o colaboradora del proyecto CER. */
-export async function anexoII(opts: { municipio: string; escudoPng?: Uint8Array; data?: AnexoIIData }): Promise<Uint8Array> {
+/** Solicitud de alta como persona colaboradora (en San Román, el Anexo II de la ordenanza). */
+export async function anexoII(opts: Opts<AnexoIIData>): Promise<Uint8Array> {
   const d = opts.data;
-  const c = await newDoc(opts.municipio, opts.escudoPng, "Anexo II · Solicitud de alta como colaborador o colaboradora del proyecto CER");
-  header(c, "ANEXO II: SOLICITUD DE ALTA COMO COLABORADOR O COLABORADORA DEL PROYECTO CER");
+  const t = { ...DEFAULT_TEXTOS, ...opts.textos };
+  const c = await newDoc(opts.municipio, opts.escudoPng, conEtiqueta(t.etiquetaColaborador, t.tituloColaborador, " · "), t);
+  header(c, conEtiqueta(t.etiquetaColaborador, t.tituloColaborador).toUpperCase());
   heading(c, "DATOS DE LA PERSONA SOLICITANTE");
   const s = d?.solicitante ?? {};
   field(c, "NIF:", s.nif, M, 180);
@@ -278,12 +338,7 @@ export async function anexoII(opts: { municipio: string; escudoPng?: Uint8Array;
   c.y -= 30;
   text(c, "Manifiesta que:", M, c.y, 10.5, c.bold);
   c.y -= 18;
-  const puntos = [
-    "Se ofrece voluntario o voluntaria para gestionar las colonias felinas urbanas que le sean asignadas, siendo colaborador o colaboradora autorizada.",
-    "Se compromete a cumplir con el PCFE y a seguir las instrucciones del Ayuntamiento en todo momento.",
-    "Se compromete a asistir al curso formativo impartido por el Ayuntamiento.",
-    "Que acompaña la siguiente documentación: fotocopia de DNI.",
-  ];
+  const puntos = t.colaboradorManifiesta.filter((p) => p.trim());
   puntos.forEach((p, i) => {
     const lines = wrap(p, c.font, 10, W - 18);
     text(c, `${i + 1}.`, M, c.y, 10, c.bold);
@@ -294,7 +349,7 @@ export async function anexoII(opts: { municipio: string; escudoPng?: Uint8Array;
     c.y -= 4;
   });
   c.y -= 6;
-  paragraph(c, "Por todo ello, SOLICITA su nombramiento como colaborador o colaboradora autorizada para la gestión y control de las colonias felinas.", 10, c.bold);
+  if (t.colaboradorSolicita.trim()) paragraph(c, t.colaboradorSolicita, 10, c.bold);
   c.y -= 6;
   firma(c, d?.lugar, d?.fecha ?? null, "La persona solicitante");
   proteccionDatos(c);
@@ -302,12 +357,13 @@ export async function anexoII(opts: { municipio: string; escudoPng?: Uint8Array;
 }
 
 /**
- * Modelo de autorización expresa de la persona propietaria de un terreno privado, que exige el
- * apartado 7.1.4 de la ordenanza para ubicar en él una colonia. No es un anexo oficial: es un modelo orientativo.
+ * Modelo de autorización expresa de la persona propietaria de un terreno privado para ubicar en él una
+ * colonia (en San Román la exige el apartado 7.1.4 de la ordenanza). No es un anexo oficial: es un modelo orientativo.
  */
-export async function autorizacionPropietario(opts: { municipio: string; escudoPng?: Uint8Array; data?: AutorizacionData }): Promise<Uint8Array> {
+export async function autorizacionPropietario(opts: Opts<AutorizacionData>): Promise<Uint8Array> {
   const d = opts.data;
-  const c = await newDoc(opts.municipio, opts.escudoPng, "Autorización de la persona propietaria del terreno para ubicar una colonia felina");
+  const t = { ...DEFAULT_TEXTOS, ...opts.textos };
+  const c = await newDoc(opts.municipio, opts.escudoPng, "Autorización de la persona propietaria del terreno para ubicar una colonia felina", t);
   header(c, "AUTORIZACIÓN DE LA PERSONA PROPIETARIA DEL TERRENO PARA UBICAR UNA COLONIA FELINA");
 
   heading(c, "DATOS DE LA PERSONA PROPIETARIA");
@@ -325,11 +381,11 @@ export async function autorizacionPropietario(opts: { municipio: string; escudoP
   c.y -= 14;
 
   heading(c, "DATOS DEL TERRENO");
-  const t = d?.terreno ?? {};
-  field(c, "Dirección o ubicación:", t.direccion);
+  const terreno = d?.terreno ?? {};
+  field(c, "Dirección o ubicación:", terreno.direccion);
   c.y -= 22;
-  field(c, "Referencia catastral:", t.referenciaCatastral, M, 240);
-  field(c, "Coordenadas:", t.coordenadas, M + 255, W - 255);
+  field(c, "Referencia catastral:", terreno.referenciaCatastral, M, 240);
+  field(c, "Coordenadas:", terreno.coordenadas, M + 255, W - 255);
   c.y -= 14;
 
   heading(c, "PERSONA CUIDADORA RESPONSABLE DE LA COLONIA");
@@ -338,9 +394,10 @@ export async function autorizacionPropietario(opts: { municipio: string; escudoP
   field(c, "NIF:", r.nif, M + 315, W - 315);
   c.y -= 26;
 
+  const ref = t.refAutorizacion.trim();
   paragraph(
     c,
-    "AUTORIZA expresamente, conforme al apartado 7.1.4 de la Ordenanza municipal reguladora del plan de control y gestión ética de las colonias felinas urbanas, la ubicación en este terreno de una colonia felina incluida en dicho plan y, en consecuencia:",
+    `AUTORIZA expresamente${ref ? `, conforme al ${ref},` : ""} la ubicación en este terreno de una colonia felina incluida en el ${t.plan} y, en consecuencia:`,
     9.5,
     c.bold,
   );
@@ -362,9 +419,10 @@ export async function autorizacionPropietario(opts: { municipio: string; escudoP
   c.y -= 2;
   paragraph(c, "Esta autorización se mantiene mientras no se revoque por escrito ante el Ayuntamiento. Se acompaña fotocopia del DNI de la persona propietaria.", 9.5);
   firma(c, d?.lugar, d?.fecha ?? null, "La persona propietaria");
+  const cita = t.normativaCita.trim();
   proteccionDatos(
     c,
-    "Modelo orientativo de la autorización expresa que exige el apartado 7.1.4 de la Ordenanza municipal (BOP de Toledo n.º 122, de 28 de junio de 2024). No es un anexo de la ordenanza.",
+    `Modelo orientativo de la autorización expresa de la persona propietaria${ref ? ` que exige el ${ref}` : ""}${cita ? ` (${cita})` : ""}. No es un formulario oficial.`,
   );
   return c.doc.save();
 }

@@ -1,0 +1,128 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import AdminNav from "../../components/AdminNav.astro";
+import { ZodError } from "zod";
+import { getDb } from "../../lib/db";
+import { getEscudo } from "../../lib/branding";
+import { getPrograma, savePrograma } from "../../lib/programa";
+import { CENSO_MOVIMIENTOS, docsPdf, PROGRAMA_CAMPOS, PROGRAMA_GROUPS, PROGRAMA_LABELS, type Programa, type ProgramaKey } from "../../lib/programa-config";
+
+const db = getDb();
+let msg: { ok: boolean; text: string } | null = null;
+// Si no se puede guardar, el formulario conserva lo escrito.
+let form: Record<string, unknown> | null = null;
+let fieldErrors: Partial<Record<ProgramaKey, string>> = {};
+
+if (Astro.request.method === "POST") {
+  const f = await Astro.request.formData();
+  const input: Record<string, unknown> = {};
+  for (const [k, campo] of Object.entries(PROGRAMA_CAMPOS)) {
+    const v = f.get(k);
+    input[k] =
+      campo.tipo === "si_no"
+        ? v === "on"
+        : campo.tipo === "lista"
+          ? String(v ?? "")
+              .split(/\r?\n/)
+              .map((x) => x.trim())
+              .filter(Boolean)
+          : String(v ?? "");
+  }
+  try {
+    await savePrograma(db, input);
+    msg = { ok: true, text: "Programa local guardado. Los PDF en blanco y los textos ya usan los datos nuevos." };
+  } catch (e) {
+    form = input;
+    if (e instanceof ZodError) {
+      for (const i of e.issues) {
+        const k = i.path[0] as ProgramaKey;
+        fieldErrors[k] ??= i.message;
+      }
+      msg = { ok: false, text: `No se ha guardado. Revisa: ${Object.keys(fieldErrors).map((k) => PROGRAMA_LABELS[k as ProgramaKey]).join("; ")}.` };
+    } else msg = { ok: false, text: "No se ha podido guardar." };
+  }
+}
+
+const saved = await getPrograma(db);
+// Tras guardar, la cabecera y el resto de la página ya usan los valores nuevos.
+Astro.locals.programa = saved;
+const p = (form ?? saved) as Programa;
+const docs = docsPdf(saved);
+const escudoWebp = (await getEscudo(db))?.contentType === "image/webp";
+const value = (k: ProgramaKey) => {
+  const v = p[k];
+  return Array.isArray(v) ? v.join("\n") : String(v ?? "");
+};
+---
+<Layout title="Programa local · Administración" wide>
+  <p class="eyebrow">Administración</p>
+  <h1>Programa local</h1>
+  <AdminNav />
+  {msg && <div class:list={["alert", msg.ok ? "ok" : "bad"]} role={msg.ok ? "status" : "alert"} tabindex="-1" data-focus-on-load>{msg.text}</div>}
+  <p class="muted">
+    Lo que depende de la normativa de tu municipio: nombre del plan, ordenanza, sede electrónica, nombres oficiales de los formularios
+    (por ejemplo «Anexo I»), textos de los PDF de las solicitudes y periodicidad del censo. Los campos opcionales vacíos no se muestran.
+    Las páginas largas (guía «Mi colonia», pautas y suplemento local) se editan en <a href="/admin/textos">Textos</a>.
+  </p>
+  {escudoWebp && (
+    <div class="alert bad" role="status">
+      El escudo propio está en WebP y no se puede incluir en los PDF generados en el servidor: los formularios en blanco salen sin escudo.
+      Súbelo en PNG o JPG desde <a href="/admin/ajustes#ayuntamiento">Ajustes</a>.
+    </div>
+  )}
+  <section class="card">
+    <h2 class="mt-0">Vista previa de los PDF en blanco</h2>
+    <p class="muted text-sm mt-0">Se generan con los datos guardados.</p>
+    <ul class="stack" style="padding-left:1.1rem">
+      <li><a href={`/docs/${docs.registro}`} target="_blank">Solicitud de registro de colonia<span class="sr-only"> (PDF, se abre en una ventana nueva)</span></a></li>
+      <li><a href={`/docs/${docs.colaborador}`} target="_blank">Solicitud de alta como colaborador/a<span class="sr-only"> (PDF, se abre en una ventana nueva)</span></a></li>
+      <li><a href={`/docs/${docs.autorizacion}`} target="_blank">Autorización de la persona propietaria<span class="sr-only"> (PDF, se abre en una ventana nueva)</span></a></li>
+    </ul>
+  </section>
+  <form method="post">
+    {PROGRAMA_GROUPS.map(([title, keys]) => (
+      <fieldset class="card">
+        <legend><strong>{title}</strong></legend>
+        {keys.map((k) => {
+          const c = PROGRAMA_CAMPOS[k];
+          const help = c.help ? `${k}-help` : undefined;
+          const err = fieldErrors[k] ? `${k}-error` : undefined;
+          const describedby = [err, help].filter(Boolean).join(" ") || undefined;
+          const invalid = err ? "true" : undefined;
+          return (
+            <div class="programa-campo">
+              {c.tipo === "si_no" ? (
+                <label class="check"><input type="checkbox" id={k} name={k} checked={Boolean(p[k])} aria-describedby={describedby} /> {c.label}</label>
+              ) : (
+                <label for={k}>{c.label}</label>
+              )}
+              {err && <small class="field-error" id={err}>{fieldErrors[k]}</small>}
+              {c.tipo === "texto" && <input id={k} name={k} type="text" value={value(k)} aria-describedby={describedby} aria-invalid={invalid} />}
+              {c.tipo === "url" && <input id={k} name={k} type="url" inputmode="url" placeholder="https://…" value={value(k)} aria-describedby={describedby} aria-invalid={invalid} />}
+              {c.tipo === "numero" && <input id={k} name={k} type="number" inputmode="numeric" required value={value(k)} style="max-width:10rem" aria-describedby={describedby} aria-invalid={invalid} />}
+              {(c.tipo === "largo" || c.tipo === "lista") && (
+                <textarea id={k} name={k} rows={c.tipo === "lista" ? 6 : 3} aria-describedby={describedby} aria-invalid={invalid}>{value(k)}</textarea>
+              )}
+              {c.tipo === "opciones" && (
+                <select id={k} name={k} aria-describedby={describedby}>
+                  {Object.entries(CENSO_MOVIMIENTOS).map(([v, l]) => <option value={v} selected={p[k] === v}>{l}</option>)}
+                </select>
+              )}
+              {c.help && <small class="muted" id={help}>{c.help}</small>}
+            </div>
+          );
+        })}
+        {title === "Suplemento local del temario" && (
+          <p class="muted text-sm mb-0">Contenido: <a href="/admin/textos/programa-local">Textos → Suplemento local del temario</a>.</p>
+        )}
+      </fieldset>
+    ))}
+    <button class="btn primary" type="submit">Guardar programa local</button>
+  </form>
+</Layout>
+
+<style>
+  .programa-campo { margin-bottom: 0.9rem; }
+  .programa-campo small { display: block; }
+  .field-error { color: var(--bad); font-weight: 600; }
+</style>

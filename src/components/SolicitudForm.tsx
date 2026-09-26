@@ -1,8 +1,9 @@
 import { useId, useState } from "react";
-import type { AnexoIData, AutorizacionData, Persona, Solicitante } from "../lib/anexos-pdf";
+import type { AnexoIData, AnexoTextos, AutorizacionData, Persona, Solicitante } from "../lib/anexos-pdf";
 
-// Rellena el Anexo I o II de la ordenanza, o la autorización de la persona propietaria del terreno,
-// y descarga el PDF listo para firmar.
+// Rellena la solicitud de registro de una colonia, la de alta como colaborador/a o la autorización de la
+// persona propietaria del terreno, y descarga el PDF listo para firmar. Los textos que dependen de la
+// normativa del municipio llegan ya resueltos del servidor (programa local).
 // Todo ocurre en el navegador: los datos no se envían ni se guardan en el servidor.
 
 type Props = {
@@ -11,13 +12,13 @@ type Props = {
   escudoSrc: string;
   nombre?: string;
   email?: string;
-};
-
-const FILE = {
-  i: "anexo-i-solicitud-registro-colonia.pdf",
-  iAut: "anexo-i-y-autorizacion-propietario.pdf",
-  ii: "anexo-ii-solicitud-alta-colaborador.pdf",
-  aut: "autorizacion-propietario-terreno.pdf",
+  textos: AnexoTextos;
+  /** Nombres de los PDF descargados (con el prefijo del nombre oficial, si lo hay). */
+  ficheros: { i: string; iAut: string; ii: string; aut: string };
+  /** Dónde se presenta por internet, con artículo («la Instancia General de la sede electrónica»). */
+  sede: string;
+  /** Máximo de personas cuidadoras en letra («cuatro»). */
+  maxLetra: string;
 };
 const vacia = (): Persona => ({ nombre: "", nif: "", telefono: "", email: "" });
 const hoy = () => new Date().toISOString().slice(0, 10);
@@ -70,7 +71,7 @@ function Text({
   );
 }
 
-export default function SolicitudForm({ anexo, municipio, escudoSrc, nombre = "", email = "" }: Props) {
+export default function SolicitudForm({ anexo, municipio, escudoSrc, nombre = "", email = "", textos, ficheros: FILE, sede, maxLetra }: Props) {
   const [sol, setSol] = useState<Required<Solicitante>>({ nombre, nif: "", direccion: "", telefono: "", email });
   const [yoCuido, setYoCuido] = useState(true);
   const [otros, setOtros] = useState<Persona[]>([]);
@@ -101,7 +102,9 @@ export default function SolicitudForm({ anexo, municipio, escudoSrc, nombre = ""
   const setC = (k: keyof AnexoIData["colonia"]) => (v: string) => setCol((c) => ({ ...c, [k]: v }));
   const setP = (k: keyof AutorizacionData["propietario"]) => (v: string) => setProp((x) => ({ ...x, [k]: v }));
   const privado = anexo === "i" && col.titularidad === "privado";
-  const maxOtros = yoCuido ? 3 : 4;
+  const max = textos.maxCuidadores;
+  const maxOtros = yoCuido ? max - 1 : max;
+  const etReg = textos.etiquetaRegistro.trim();
 
   function ubicacion() {
     if (!("geolocation" in navigator)) {
@@ -132,6 +135,7 @@ export default function SolicitudForm({ anexo, municipio, escudoSrc, nombre = ""
         autorizacionPropietario({
           municipio,
           escudoPng: escudo,
+          textos,
           data: {
             propietario,
             terreno: { direccion: col.direccion, coordenadas: col.coordenadas, referenciaCatastral: catastral },
@@ -148,16 +152,17 @@ export default function SolicitudForm({ anexo, municipio, escudoSrc, nombre = ""
           ? await anexoI({
               municipio,
               escudoPng: escudo,
+              textos,
               data: {
                 solicitante: sol,
-                cuidadores: [...(yoCuido ? [{ nombre: sol.nombre, nif: sol.nif, telefono: sol.telefono, email: sol.email }] : []), ...otros].slice(0, 4),
+                cuidadores: [...(yoCuido ? [{ nombre: sol.nombre, nif: sol.nif, telefono: sol.telefono, email: sol.email }] : []), ...otros].slice(0, max),
                 colonia: col,
                 lugar,
                 fecha: f,
               },
             })
-          : await anexoII({ municipio, escudoPng: escudo, data: { solicitante: sol, lugar, fecha: f } });
-      if (incluirAut) bytes = await unirPdfs([bytes, await aut({})], "Anexo I y autorización de la persona propietaria del terreno");
+          : await anexoII({ municipio, escudoPng: escudo, textos, data: { solicitante: sol, lugar, fecha: f } });
+      if (incluirAut) bytes = await unirPdfs([bytes, await aut({})], `${etReg || "Solicitud de registro"} y autorización de la persona propietaria del terreno`);
       if (url) URL.revokeObjectURL(url);
       const u = URL.createObjectURL(new Blob([bytes as BlobPart], { type: "application/pdf" }));
       setUrl(u);
@@ -173,10 +178,10 @@ export default function SolicitudForm({ anexo, municipio, escudoSrc, nombre = ""
         ok: true,
         msg:
           anexo === "aut"
-            ? "PDF generado. La persona propietaria debe firmarlo; preséntalo con el Anexo I y una fotocopia de su DNI."
+            ? `PDF generado. La persona propietaria debe firmarlo; preséntalo con la solicitud de registro${etReg ? ` (${etReg})` : ""} y una fotocopia de su DNI.`
             : incluirAut
-            ? "PDF generado con dos páginas: el Anexo I, que firmas tú, y la autorización, que completa y firma la persona propietaria."
-            : "PDF generado. Preséntalo por la Instancia General de la sede electrónica, o impreso y firmado en el registro del Ayuntamiento.",
+            ? `PDF generado con dos páginas: la solicitud de registro${etReg ? ` (${etReg})` : ""}, que firmas tú, y la autorización, que completa y firma la persona propietaria.`
+            : `PDF generado. Preséntalo por ${sede}, o impreso y firmado en el registro del Ayuntamiento.`,
       });
     } catch {
       setStatus({ ok: false, msg: "No se ha podido generar el PDF. Inténtalo de nuevo o descarga el formulario en blanco." });
@@ -306,9 +311,11 @@ export default function SolicitudForm({ anexo, municipio, escudoSrc, nombre = ""
             <legend>
               <h2 className="mt-0">Personas cuidadoras de la colonia</h2>
             </legend>
-            <p className="muted text-sm mt-0">Hasta cuatro personas. Todas deben estar acreditadas.</p>
+            <p className="muted text-sm mt-0">
+              Hasta {maxLetra} {max === 1 ? "persona" : "personas"}. Todas deben estar acreditadas.
+            </p>
             <label className="check">
-              <input type="checkbox" checked={yoCuido} onChange={(e) => { setYoCuido(e.target.checked); if (e.target.checked) setOtros((o) => o.slice(0, 3)); }} />
+              <input type="checkbox" checked={yoCuido} onChange={(e) => { setYoCuido(e.target.checked); if (e.target.checked) setOtros((o) => o.slice(0, max - 1)); }} />
               Yo también seré cuidador/a de la colonia
             </label>
             {otros.map(persona)}
@@ -339,8 +346,8 @@ export default function SolicitudForm({ anexo, municipio, escudoSrc, nombre = ""
             {privado && (
               <div className="alert info solicitud-aut">
                 <p className="mt-0">
-                  En un terreno privado hace falta la <strong>autorización expresa de la persona propietaria</strong> (apartado 7.1.4 de la
-                  ordenanza).
+                  En un terreno privado hace falta la <strong>autorización expresa de la persona propietaria</strong>
+                  {textos.refAutorizacion.trim() ? ` (${textos.refAutorizacion.trim()})` : ""}.
                 </p>
                 <label className="check">
                   <input type="checkbox" checked={conAut} onChange={(e) => setConAut(e.target.checked)} />

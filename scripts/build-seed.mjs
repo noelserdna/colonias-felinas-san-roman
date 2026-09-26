@@ -60,7 +60,8 @@ for (const file of existsSync(qdir) ? readdirSync(qdir).filter((f) => f.endsWith
   }
 }
 
-// Documentos iniciales (solo se añaden si no existe ya uno con la misma URL).
+// Documentos iniciales (solo se añaden si no existe ya uno con la misma URL, o con una URL que encaje con
+// `si_no_existe`: así no se duplican los formularios que la precarga local da con su nombre oficial).
 const docsFile = join(root, "documents.json");
 let docs = 0;
 if (existsSync(docsFile)) {
@@ -68,7 +69,7 @@ if (existsSync(docsFile)) {
     out.push(
       `INSERT INTO documents (titulo, categoria, descripcion, url, fecha, orden, activo, updated_at) ` +
         `SELECT ${q(d.titulo)}, ${q(d.categoria)}, ${q(d.descripcion ?? null)}, ${q(d.url)}, ${q(d.fecha ?? null)}, ${d.orden ?? 0}, 1, ${Date.now()} ` +
-        `WHERE NOT EXISTS (SELECT 1 FROM documents WHERE url = ${q(d.url)});`,
+        `WHERE NOT EXISTS (SELECT 1 FROM documents WHERE url = ${q(d.url)}${d.si_no_existe ? ` OR url LIKE ${q(d.si_no_existe)}` : ""});`,
     );
     docs++;
   }

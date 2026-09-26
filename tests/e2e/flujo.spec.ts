@@ -104,15 +104,17 @@ test("flujo completo: temas, examen final, carnet y revocación", async ({ brows
   await expect(page.getByText("Aprueba todos los temas")).toBeVisible();
 
   await page.goto("/");
-  const unitItems = page.locator("ol.path > li:not(.final)");
+  const unitItems = page.locator("ol.path > li:not(.final):not(.extra)");
   const units = await unitItems.count();
   expect(units).toBe(8);
+  // El suplemento local (si hay) va aparte, sin test.
+  if (await page.locator("ol.path > li.extra").count()) await expect(page.locator("ol.path > li.extra a")).toHaveAttribute("href", "/temario/local");
   await expect(unitItems.nth(1)).toHaveClass(/locked/);
   await expect(unitItems.nth(1).locator("a")).toHaveCount(0);
 
   for (let u = 0; u < units; u++) {
     await page.goto("/");
-    await page.locator("ol.path > li:not(.final)").nth(u).locator("a").click();
+    await page.locator("ol.path > li:not(.final):not(.extra)").nth(u).locator("a").click();
     await page.getByRole("link", { name: "Hacer el test" }).click();
 
     if (u === 0) {
@@ -315,7 +317,7 @@ test("accesibilidad (axe-core WCAG 2.1 AA) en las pantallas principales, claro y
     await login(page, ADMIN);
     await check("/documentos");
     await check("/privacidad");
-    for (const url of ["/", "/carnet", "/colonia", "/colonia/solicitud", "/colonia/solicitud?anexo=ii", "/colonia/solicitud?anexo=aut", "/temario", "/temario/sanidad-y-salud", "/perfil", "/admin", "/admin/preguntas", "/admin/ajustes"]) await check(url);
+    for (const url of ["/", "/carnet", "/colonia", "/colonia/solicitud", "/colonia/solicitud?anexo=ii", "/colonia/solicitud?anexo=aut", "/temario", "/temario/sanidad-y-salud", "/perfil", "/admin", "/admin/preguntas", "/admin/ajustes", "/admin/programa", "/admin/textos", "/admin/textos/mi-colonia", "/temario/local"]) await check(url);
     await ctx.close();
   }
 });
@@ -429,16 +431,30 @@ test("Mi colonia y documentos del Ayuntamiento", async ({ browser }) => {
   await admin.getByRole("button", { name: `Eliminar ${titulo}` }).click();
   await expect(admin.getByText("Documento eliminado.")).toBeVisible();
 
+  // La antigua dirección del editor lleva a Textos. Se edita la guía y se vuelve a dejar la que había
+  // (la precargada del municipio, no la genérica por defecto).
   await admin.goto("/admin/colonia");
-  const guia = admin.getByLabel("Contenido de la guía");
-  await guia.fill("Introducción de prueba.\n\n## Primer paso de prueba\nTexto.\n\n## Segundo paso\nMás texto.");
-  await admin.getByRole("button", { name: "Guardar guía" }).click();
+  await expect(admin).toHaveURL(/\/admin\/textos\/mi-colonia$/);
+  const guia = admin.getByLabel("Contenido (Markdown)");
+  const original = await guia.inputValue();
+  await guia.fill("Introducción de prueba en {{municipio}}.\n\n## Primer paso de prueba\nTexto.\n\n## Segundo paso\nMás texto.");
+  await admin.getByRole("button", { name: "Guardar texto" }).click();
+  await expect(admin.getByText("Texto guardado.")).toBeVisible();
   await page.goto("/colonia");
   await expect(page.locator(".colonia-step")).toHaveCount(2);
-  await admin.goto("/admin/colonia");
-  await admin.getByRole("button", { name: "Restaurar la guía por defecto" }).click();
+  await expect(page.locator(".colonia-intro")).not.toContainText("{{");
+  await admin.getByLabel("Contenido (Markdown)").fill(original);
+  await admin.getByRole("button", { name: "Guardar texto" }).click();
+  await expect(admin.getByText("Texto guardado.")).toBeVisible();
   await page.goto("/colonia");
   await expect(page.locator(".colonia-step")).toHaveCount(6);
+
+  // Programa local: un valor no válido no se guarda y se señala en su campo.
+  await admin.goto("/admin/programa");
+  await admin.getByLabel("Enlace al trámite de la sede electrónica").fill("http://inseguro.example");
+  await admin.getByRole("button", { name: "Guardar programa local" }).click();
+  await expect(admin.locator(".alert.bad")).toContainText("No se ha guardado");
+  await expect(admin.getByLabel("Enlace al trámite de la sede electrónica")).toHaveAttribute("aria-invalid", "true");
 });
 
 /** Da a un usuario un carnet vigente directamente en la base local (para no repetir todo el curso). */
@@ -508,14 +524,40 @@ test("alta de colonia, censo, fichas, carnet y baja validada con JEV", async ({ 
   await page.getByRole("button", { name: "Añadir intervención" }).click();
   await expect(page.getByText("Intervención añadida.")).toBeVisible();
   await expect(page.getByLabel("Esterilizado")).toBeChecked();
+  // Un gato que tenía dueño y vuelve con él sale de la colonia como «devuelto».
+  await page.goto("/colonia");
+  await page.getByRole("link", { name: "Añadir ficha de un gato" }).click();
+  await page.getByLabel("Nombre o apodo").fill("Tom");
+  await page.getByLabel("Sexo").selectOption("macho");
+  await page.getByLabel("Situación").selectOption("devuelto");
+  await page.getByRole("button", { name: "Guardar ficha" }).click();
+  await expect(page.locator(".cat-item", { hasText: "Tom" })).toContainText("Devuelto a su responsable legal");
 
   // Nuevo censo: el carnet refleja el nuevo total.
   await page.goto("/colonia");
   await page.getByRole("link", { name: "Actualizar el censo" }).click();
   await axe();
   await page.getByLabel("Hembras esterilizadas").fill("5");
-  await page.getByRole("button", { name: "Guardar censo" }).click();
+  // Movimientos desde el censo anterior (obligatorios en la precarga de San Román): si no cuadran, aviso y
+  // «Guardar igualmente»; no se bloquea.
+  const movimientos = page.locator(".censo-movimientos input");
+  const conMovimientos = (await movimientos.count()) > 0;
+  if (conMovimientos) {
+    for (const inp of await movimientos.all()) await inp.fill("0");
+    await page.getByRole("button", { name: "Guardar censo" }).click();
+    await expect(page.locator("#censo-aviso")).toContainText("Las hembras no cuadran");
+    await axe();
+    await page.locator("#nacidosHembras").fill("1");
+    await page.getByRole("button", { name: "Guardar igualmente" }).click();
+  } else {
+    await page.getByRole("button", { name: "Guardar censo" }).click();
+  }
   await expect(page.getByText("Tu carnet ya muestra 9 gatos.")).toBeVisible();
+  if (conMovimientos) {
+    await page.getByRole("link", { name: "Actualizar el censo" }).click();
+    await page.locator("summary", { hasText: "Ver movimientos" }).first().click();
+    await expect(page.locator(".census-moves").first()).toContainText("Nacidos en la colonia");
+  }
   await page.goto("/carnet");
   await expect(page.locator(".carnet.front .carnet-colonias")).toContainText(`${nombreColonia} · 9 gatos`);
 

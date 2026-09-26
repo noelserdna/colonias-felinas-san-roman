@@ -94,9 +94,9 @@ sección de correo tiene un botón de correo de prueba. Con la clave de Resend e
 
 ## 6. Contenido inicial
 
-Antes de cargar la semilla, **revisa `seed/documents.json`**: contiene documentos de San Román (su ordenanza en el BOP
-de Toledo, su sede electrónica, su portal de transparencia). Sustitúyelos por los del municipio o deja solo los de
-ámbito estatal (Ley 7/2023). Después:
+`seed/documents.json` solo trae documentos neutros (Ley 7/2023 y los tres formularios en blanco, que genera la app).
+Los de San Román (ordenanzas, sede, portal de transparencia) están en su precarga, `seed/local/san-roman-de-los-montes/`:
+**no la apliques a otro municipio**. Después:
 
 ```bash
 npm run db:migrate:remote
@@ -125,10 +125,28 @@ npm run deploy             # compila y publica; muestra la dirección https://�
   preguntas a partir de su temario en el formato de `docs/preguntas-ejemplo.json`: tipo test (`mc`), varias correctas
   (`multi`) y escritas (`written`, con `respuesta_referencia` y `puntos_clave`). Recuérdale que **las revise una
   persona experta** antes de abrir la plataforma.
-- **Guía «Mi colonia»** y **Documentos**: ajustarlos a la ordenanza del municipio.
-- **Anexos en PDF**: siguen la ordenanza de San Román (ver «Piezas ligadas a la ordenanza» en `docs/TECNICO.md`). Si
-  la ordenanza del municipio tiene otros formularios, adapta `src/lib/anexos-pdf.ts` y regenera los PDF con
-  `node scripts/build-anexos.ts`.
+- **Programa local** (*Administración → Programa local*): todo lo que depende de la ordenanza del municipio. Pide a la
+  persona su ordenanza de colonias felinas (o confirma que no tiene) y rellena con ella:
+  1. *Programa y normativa*: nombre del plan, órgano al que se dirigen las solicitudes (p. ej. «Concejalía de…»),
+     título completo de la ordenanza, forma breve («la ordenanza municipal»), publicación oficial y enlace (BOP).
+  2. *Sede electrónica*: enlace al trámite (Instancia General o el específico) y su nombre, con artículo.
+  3. *Nombres oficiales de los formularios*: si la ordenanza tiene anexos («Anexo I», «Anexo II»…), sus nombres;
+     vacíos si no los tiene. Cambian los títulos y los nombres de los PDF (`/docs/anexo-i-…pdf`).
+  4. *Solicitudes en PDF*: máximo de personas cuidadoras, títulos, párrafos y puntos que marque la ordenanza. Solo
+     caracteres que admiten los PDF (el formulario avisa). Comprueba el resultado con la vista previa de la página.
+  5. *Censo*: cada cuántos meses, si va por periodos naturales (semestres…) y si pide movimientos (nacidos, llegados,
+     fallecidos, adopciones, devueltos a su responsable legal): «Obligatorios» si la ordenanza tiene un modelo de censo
+     con esos datos.
+- **Textos** (*Administración → Textos*): guía «Mi colonia» (los pasos del alta), pautas básicas de la colonia y
+  suplemento local del temario (normativa autonómica y municipal; vacío = no se muestra). Admiten marcadores
+  (`{{municipio}}`, `{{sede_tramite}}`, `{{censo_periodo}}`…; la lista está en el propio editor). Los textos por
+  defecto son genéricos y ya usan los datos del programa local.
+- **Documentos**: añadir la ordenanza, la sede electrónica y lo que el municipio quiera enlazar.
+- **Ajustes → Carnet y acceso**: prefijo del número de carnet (por defecto `CF`) y aviso de caducidad.
+- Opcional, para instalar varias veces el mismo municipio: crea `seed/local/<slug>/` como la de San Román
+  (`programa.json`, `branding.json`, `settings.json`, `*.md`, `documents.json`) y aplícala con
+  `node scripts/build-local.mjs <slug> && npx wrangler d1 execute <bd> --remote --file=seed/local/<slug>.sql`. Solo
+  añade lo que falte; no pisa lo editado en el panel (salvo con `--sobrescribir`).
 
 ## 9. Opcional
 

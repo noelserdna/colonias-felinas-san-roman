@@ -1,14 +1,4 @@
-import { eq } from "drizzle-orm";
-import type { DB } from "./db";
-import * as schema from "./db/schema";
-
-const KEY = "page:mi-colonia";
-
-/**
- * Guía por defecto para solicitar el alta de una colonia, basada en el apartado 7 del manual
- * (registro, autorización y acreditación). Cada «## » es un paso. El ayuntamiento puede editarla.
- */
-export const DEFAULT_COLONIA_GUIDE = `Para que una colonia felina entre en el Plan de Control y Gestión Ética de Colonias Felinas del municipio (y pueda beneficiarse, por ejemplo, del método CER), el Ayuntamiento tiene que **registrarla**. Estos pasos siguen la [Ordenanza municipal reguladora del plan de control y gestión ética de las colonias felinas urbanas](/documentos#ordenanza) (BOP de Toledo n.º 122, de 28 de junio de 2024).
+Para que una colonia felina entre en el Plan de Control y Gestión Ética de Colonias Felinas del municipio (y pueda beneficiarse, por ejemplo, del método CER), el Ayuntamiento tiene que **registrarla**. Estos pasos siguen la [Ordenanza municipal reguladora del plan de control y gestión ética de las colonias felinas urbanas](/documentos#ordenanza) (BOP de Toledo n.º 122, de 28 de junio de 2024).
 
 ## Consigue tu acreditación
 Cada colonia registrada tiene una **persona cuidadora responsable**, que es quien trata con el Ayuntamiento, y puede tener otras personas colaboradoras. Todas deben estar acreditadas: haber superado esta formación y tener el carné de cuidador o cuidadora.
@@ -71,30 +61,3 @@ La colonia recibe un **número** en el registro municipal y la persona cuidadora
 - avisa al Ayuntamiento cuanto antes si hay gatos enfermos;
 - colabora en el censo de la colonia, que se actualiza cada seis meses, y en las capturas para el método CER según el calendario municipal;
 - lleva siempre tu carné cuando atiendas la colonia y comunica al Ayuntamiento si dejas de colaborar, para darte de baja.
-`;
-
-export async function getColoniaGuide(db: DB): Promise<{ markdown: string; custom: boolean }> {
-  const row = await db.query.settings.findFirst({ where: eq(schema.settings.key, KEY) });
-  const md = typeof row?.value === "string" && row.value.trim() ? row.value : null;
-  return { markdown: md ?? DEFAULT_COLONIA_GUIDE, custom: Boolean(md) };
-}
-
-export async function saveColoniaGuide(db: DB, markdown: string | null) {
-  if (!markdown || !markdown.trim()) {
-    await db.delete(schema.settings).where(eq(schema.settings.key, KEY));
-    return;
-  }
-  const value = markdown.slice(0, 50_000);
-  await db.insert(schema.settings).values({ key: KEY, value }).onConflictDoUpdate({ target: schema.settings.key, set: { value } });
-}
-
-/** Separa la guía en introducción y pasos (cada encabezado «## » inicia un paso). */
-export function splitSteps(md: string): { intro: string; steps: { title: string; body: string }[] } {
-  const parts = md.split(/^## +/m);
-  const intro = parts.shift()?.trim() ?? "";
-  const steps = parts.map((p) => {
-    const nl = p.indexOf("\n");
-    return { title: (nl === -1 ? p : p.slice(0, nl)).trim(), body: nl === -1 ? "" : p.slice(nl + 1).trim() };
-  });
-  return { intro, steps };
-}

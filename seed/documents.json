@@ -1,21 +1,5 @@
 [
   {
-    "titulo": "Ordenanza municipal reguladora de plan de control y gestión ética de las colonias felinas urbanas",
-    "categoria": "ordenanza",
-    "descripcion": "Regula el registro de colonias, las personas cuidadoras, el método CER y los cuidados de las colonias. Incluye el Anexo I (solicitud para registrar una nueva colonia), el Anexo II (solicitud de alta como colaborador o colaboradora), el Anexo III (pautas básicas) y el Anexo IV (ficha de cada gato). Publicada en el BOP de Toledo n.º 122.",
-    "url": "https://bop.diputoledo.es/webEbop/DocGet?id=24065992%3B0&insert_number=3274&insert_year=2024",
-    "fecha": "2024-06-28",
-    "orden": 1
-  },
-  {
-    "titulo": "Ordenanza municipal reguladora de la tenencia responsable y del bienestar animal",
-    "categoria": "ordenanza",
-    "descripcion": "Ordenanza municipal adaptada a la Ley 7/2023. Publicada en el BOP de Toledo n.º 61.",
-    "url": "https://bop.diputoledo.es/webEbop/DocGet?id=24034171%3B0&insert_number=1450&insert_year=2024",
-    "fecha": "2024-03-27",
-    "orden": 2
-  },
-  {
     "titulo": "Ley 7/2023, de 28 de marzo, de protección de los derechos y el bienestar de los animales",
     "categoria": "normativa",
     "descripcion": "Ley estatal. Su capítulo VI (artículos 38 a 42) regula las colonias felinas y la gestión de los gatos comunitarios.",
@@ -24,55 +8,26 @@
     "orden": 1
   },
   {
-    "titulo": "Ley 7/2020, de 31 de agosto, de Bienestar, Protección y Defensa de los Animales de Castilla-La Mancha",
-    "categoria": "normativa",
-    "descripcion": "Ley autonómica de protección animal aplicable en Castilla-La Mancha.",
-    "url": "https://www.boe.es/buscar/act.php?id=BOE-A-2020-13916",
-    "fecha": "2020-08-31",
-    "orden": 2
-  },
-  {
-    "titulo": "Portal de transparencia del Ayuntamiento",
-    "categoria": "otro",
-    "descripcion": "Normativa, ordenanzas y resto de información pública del Ayuntamiento.",
-    "url": "https://sanromandelosmontes.sedelectronica.es/transparency",
-    "orden": 1
-  },
-  {
-    "titulo": "Sede electrónica del Ayuntamiento",
-    "categoria": "otro",
-    "descripcion": "Presentación de solicitudes y escritos por vía electrónica (registro electrónico y catálogo de trámites).",
-    "url": "https://sanromandelosmontes.sedelectronica.es/",
-    "orden": 2
-  },
-  {
-    "titulo": "Anexo I · Solicitud para registrar una nueva colonia de gatos urbanos",
+    "titulo": "Solicitud para registrar una nueva colonia de gatos urbanos",
     "categoria": "formulario",
     "descripcion": "Formulario en blanco para imprimir y rellenar a mano. También puedes rellenarlo en la aplicación, desde «Mi colonia», y descargarlo listo para firmar.",
-    "url": "/docs/anexo-i-solicitud-registro-colonia.pdf",
-    "fecha": "2024-06-28",
+    "url": "/docs/solicitud-registro-colonia.pdf",
+    "si_no_existe": "/docs/%solicitud-registro-colonia.pdf",
     "orden": 1
   },
   {
-    "titulo": "Anexo II · Solicitud de alta como colaborador o colaboradora del proyecto CER",
+    "titulo": "Solicitud de alta como persona colaboradora",
     "categoria": "formulario",
     "descripcion": "Formulario en blanco. Se presenta firmado en el Ayuntamiento junto con una fotocopia del DNI.",
-    "url": "/docs/anexo-ii-solicitud-alta-colaborador.pdf",
-    "fecha": "2024-06-28",
+    "url": "/docs/solicitud-alta-colaborador.pdf",
+    "si_no_existe": "/docs/%solicitud-alta-colaborador.pdf",
     "orden": 2
   },
   {
     "titulo": "Autorización de la persona propietaria del terreno para ubicar una colonia felina",
     "categoria": "formulario",
-    "descripcion": "Modelo orientativo de la autorización expresa que exige la ordenanza (apartado 7.1.4) cuando la colonia está en un terreno privado. Lo firma la persona propietaria y se presenta con el Anexo I.",
+    "descripcion": "Modelo orientativo de la autorización expresa de la persona propietaria cuando la colonia está en un terreno privado. Lo firma la persona propietaria y se presenta con la solicitud de registro.",
     "url": "/docs/autorizacion-propietario-terreno.pdf",
     "orden": 3
-  },
-  {
-    "titulo": "Instancia General (sede electrónica)",
-    "categoria": "formulario",
-    "descripcion": "Trámite de la sede electrónica del Ayuntamiento para presentar por internet la solicitud de registro de la colonia (Anexo I), el alta como colaborador/a (Anexo II) y la autorización de la persona propietaria. Necesitas Cl@ve, certificado digital o DNI electrónico.",
-    "url": "https://sanromandelosmontes.sedelectronica.es/catalog/t/5161fa8d-970e-4b48-a506-b2ac34ceafe5",
-    "orden": 4
   }
 ]

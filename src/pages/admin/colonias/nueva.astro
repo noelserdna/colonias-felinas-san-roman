@@ -5,6 +5,7 @@ import { ZodError } from "zod";
 import { getDb } from "../../../lib/db";
 import { ColonyError, createColony, listCaretakers } from "../../../lib/colonies";
 import { notifyColony } from "../../../lib/notices";
+import { entreParentesis, etiqueta } from "../../../lib/programa-config";
 
 const db = getDb();
 let error: string | null = null;
@@ -15,7 +16,7 @@ if (Astro.request.method === "POST") {
   form = Object.fromEntries([...f.entries()].filter(([k]) => k !== "colaboradores").map(([k, v]) => [k, String(v)]));
   colaboradores = f.getAll("colaboradores").map(String);
   try {
-    const { id, numero } = await createColony(db, { colony: form, responsableId: form.responsable ?? "", colaboradores, census: form });
+    const { id, numero } = await createColony(db, { colony: form, responsableId: form.responsable ?? "", colaboradores, census: form, etiquetaRegistro: etiqueta(Astro.locals.programa, "registro") });
     // Aviso en la aplicación y por correo a todas las personas cuidadoras de la nueva colonia.
     await notifyColony(db, { origin: Astro.url.origin, ayuntamiento: Astro.locals.branding.ayuntamiento }, id, [form.responsable ?? "", ...colaboradores], "colonia_alta");
     return Astro.redirect(`/admin/colonias?creada=${numero}`, 303);
@@ -37,7 +38,7 @@ const num = (k: string) => form[k] ?? "0";
   ) : (
     <form method="post" class="stack">
       <fieldset class="card">
-        <legend>Datos de la colonia (Anexo I)</legend>
+        <legend>Datos de la colonia{entreParentesis(Astro.locals.programa, "registro")}</legend>
         <label for="nombre">Nombre de la colonia</label>
         <input id="nombre" name="nombre" type="text" required maxlength="120" value={form.nombre ?? ""} />
         <label for="direccion">Dirección exacta</label>

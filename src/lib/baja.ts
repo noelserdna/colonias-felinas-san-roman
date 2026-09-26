@@ -56,7 +56,7 @@ export function buildBajaRequest(ctx: BajaContext) {
       sin_gatos: {
         type: "noul",
         instructions:
-          "¿Afirma `explicacion` que en la colonia ya no queda ningún gato que atender (porque han muerto, se han adoptado, se han trasladado o han desaparecido todos)?",
+          "¿Afirma `explicacion` que en la colonia ya no queda ningún gato que atender (porque han muerto, se han adoptado, se han devuelto a su responsable legal, se han trasladado o han desaparecido todos)?",
       },
       invalida: {
         type: "noul",

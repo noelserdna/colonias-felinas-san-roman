@@ -4,6 +4,7 @@ dist
 .wrangler
 .dev.vars*
 seed/seed.sql
+seed/local/*.sql
 test-results
 seed/.manual-extract.txt
 .sdd/

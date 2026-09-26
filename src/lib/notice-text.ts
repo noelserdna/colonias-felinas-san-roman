@@ -9,6 +9,8 @@ type Datos = {
   motivo?: string | null;
   /** Último censo (colonia_censo) o caducidad del carnet (carnet_caduca). */
   fecha?: Date | null;
+  /** Periodicidad del censo, detrás de «cada» (p. ej. «seis meses»); ver periodoTexto. */
+  periodo?: string | null;
 };
 
 const fmtFecha = (d: Date) => new Intl.DateTimeFormat("es-ES", { day: "numeric", month: "long", year: "numeric", timeZone: "Europe/Madrid" }).format(d);
@@ -82,7 +84,7 @@ export function noticeFor(kind: NoticeKind, d: Datos): NoticeText {
         titulo: "Toca actualizar el censo de tu colonia",
         saludo,
         parrafos: [
-          `El censo de la colonia ${col} se actualiza cada seis meses${d.fecha ? ` y el último es del ${fmtFecha(d.fecha)}` : ""}.`,
+          `El censo de la colonia ${col} se actualiza ${d.periodo ? `cada ${d.periodo}` : "periódicamente"}${d.fecha ? ` y el último es del ${fmtFecha(d.fecha)}` : ""}.`,
           "Cuenta los gatos y anótalo en la aplicación: así el Ayuntamiento puede planificar las esterilizaciones.",
         ],
         url: `${url}/censo`,

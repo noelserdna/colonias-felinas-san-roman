@@ -1,0 +1,8 @@
+- La colonia está identificada por el área de Bienestar Animal. Informa del número de gatos y, si es posible, de su estado.
+- Alimenta en los puntos de alimentación que conoce el Ayuntamiento, con un horario estable.
+- Usa solo pienso seco y agua limpia y fresca (salvo indicación veterinaria). Si pones comida húmeda, retira los recipientes.
+- Limpia a diario el punto de alimentación y retira platos vacíos y latas. No ensucies la vía pública.
+- Las capturas para el método CER se programan según el calendario municipal y el gato va al centro veterinario que indique el Ayuntamiento.
+- Rellena una ficha por gato con sus características y los resultados de las actuaciones veterinarias.
+- Colabora en la esterilización de los gatos de la colonia: captura, traslado, recogida y retorno al mismo lugar.
+- Avisa al Ayuntamiento cuanto antes si hay gatos enfermos.

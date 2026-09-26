@@ -1,40 +1,60 @@
 ---
 import Layout from "../../layouts/Layout.astro";
 import SolicitudForm from "../../components/SolicitudForm.tsx";
+import { docsPdf, enLetra, etiqueta, textosAnexos } from "../../lib/programa-config";
 
-const BOP_COLONIAS_URL = "https://bop.diputoledo.es/webEbop/DocGet?id=24065992%3B0&insert_number=3274&insert_year=2024";
 const b = Astro.locals.branding;
+const p = Astro.locals.programa;
 const user = Astro.locals.user!;
 const q = Astro.url.searchParams.get("anexo");
 const anexo = q === "ii" ? "ii" : q === "aut" ? "aut" : "i";
 const nombre = [user.nombre, user.apellidos].filter(Boolean).join(" ");
 // El PDF se genera en el navegador con el escudo en PNG; el escudo por defecto tiene una versión @2x más nítida.
 const escudoSrc = b.escudo.custom ? b.escudo.src : "/img/escudo@2x.png";
+const etReg = etiqueta(p, "registro");
+const etCol = etiqueta(p, "colaborador");
+const pre = (e: string) => (e ? `${e} · ` : "");
 const titulo = { i: "Solicitud de registro de una colonia", ii: "Solicitud de alta como colaborador/a", aut: "Autorización de la persona propietaria" }[anexo];
-const blanco = {
-  i: "/docs/anexo-i-solicitud-registro-colonia.pdf",
-  ii: "/docs/anexo-ii-solicitud-alta-colaborador.pdf",
-  aut: "/docs/autorizacion-propietario-terreno.pdf",
-}[anexo];
+const docs = docsPdf(p);
+const blanco = `/docs/${{ i: docs.registro, ii: docs.colaborador, aut: docs.autorizacion }[anexo]}`;
+const ref = p.ref_autorizacion_privado.trim();
+const sede = p.sede_tramite.trim() || "la sede electrónica del Ayuntamiento";
 ---
 <Layout title={titulo}>
   <p class="eyebrow"><a href="/colonia">Mi colonia</a></p>
   <h1>Rellenar la solicitud</h1>
   <nav class="segmented" aria-label="Formulario">
-    <a href="/colonia/solicitud" aria-current={anexo === "i" ? "page" : undefined}>Anexo I · Registro de colonia</a>
-    <a href="/colonia/solicitud?anexo=ii" aria-current={anexo === "ii" ? "page" : undefined}>Anexo II · Alta como colaborador/a</a>
+    <a href="/colonia/solicitud" aria-current={anexo === "i" ? "page" : undefined}>{pre(etReg)}Registro de colonia</a>
+    <a href="/colonia/solicitud?anexo=ii" aria-current={anexo === "ii" ? "page" : undefined}>{pre(etCol)}Alta como colaborador/a</a>
     <a href="/colonia/solicitud?anexo=aut" aria-current={anexo === "aut" ? "page" : undefined}>Autorización de la persona propietaria</a>
   </nav>
   <p>
     {{
-      i: "Rellena los datos, descarga el PDF y preséntalo firmado en el Ayuntamiento. Es el Anexo I de la ordenanza de colonias felinas.",
-      ii: "Con el Anexo II solicitas colaborar en el proyecto CER. Preséntalo firmado en el Ayuntamiento junto con una fotocopia de tu DNI.",
-      aut: "Si la colonia está en un terreno privado, la ordenanza exige la autorización expresa de la persona propietaria (apartado 7.1.4). Este es un modelo orientativo: la persona propietaria lo firma y se presenta junto con el Anexo I y una fotocopia de su DNI.",
+      i: `Rellena los datos, descarga el PDF y preséntalo firmado en el Ayuntamiento.${etReg ? ` Es el ${etReg} de ${p.normativa_corta}.` : ""}`,
+      ii: `Con esta solicitud${etCol ? ` (${etCol})` : ""} pides colaborar en el cuidado de las colonias. Preséntala firmada en el Ayuntamiento junto con una fotocopia de tu DNI.`,
+      aut: `Si la colonia está en un terreno privado, hace falta la autorización expresa de la persona propietaria${ref ? ` (${ref})` : ""}. Este es un modelo orientativo: la persona propietaria lo firma y se presenta junto con la solicitud de registro y una fotocopia de su DNI.`,
     }[anexo]}
     {" "}¿Prefieres hacerlo a mano?{" "}
     <a href={blanco} download>
       Descarga el formulario en blanco (PDF)
-    </a>. Texto oficial en el <a href={BOP_COLONIAS_URL} target="_blank" rel="noopener">BOP de Toledo<span class="sr-only"> (se abre en una ventana nueva)</span></a>.
+    </a>.
+    {p.normativa_url && (
+      <>
+        {" "}Texto oficial en el{" "}
+        <a href={p.normativa_url} target="_blank" rel="noopener">{p.normativa_url_texto || "texto oficial"}<span class="sr-only"> (se abre en una ventana nueva)</span></a>.
+      </>
+    )}
   </p>
-  <SolicitudForm client:only="react" anexo={anexo} municipio={b.municipio} escudoSrc={escudoSrc} nombre={nombre} email={user.email} />
+  <SolicitudForm
+    client:only="react"
+    anexo={anexo}
+    municipio={b.municipio}
+    escudoSrc={escudoSrc}
+    nombre={nombre}
+    email={user.email}
+    textos={textosAnexos(p, b)}
+    ficheros={{ i: docs.registro, iAut: docs.registroYAutorizacion, ii: docs.colaborador, aut: docs.autorizacion }}
+    sede={sede}
+    maxLetra={enLetra(p.max_cuidadores)}
+  />
 </Layout>

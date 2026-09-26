@@ -25,4 +25,11 @@ describe("textos de los avisos de colonias", () => {
     expect(n.url).toBeNull();
     expect(n.parrafos).toContain("Motivo: Se ha mudado");
   });
+
+  it("censo: la periodicidad viene del programa local", () => {
+    const n = noticeFor("colonia_censo", { colonia, rol: "responsable", periodo: "tres meses", fecha: new Date("2026-01-10T12:00:00Z") });
+    expect(n.parrafos[0]).toContain("se actualiza cada tres meses y el último es del 10 de enero de 2026");
+    expect(noticeFor("colonia_censo", { colonia, rol: "responsable" }).parrafos[0]).toContain("se actualiza periódicamente");
+    expect(n.url).toBe("/colonia/c1/censo");
+  });
 });

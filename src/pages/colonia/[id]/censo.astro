@@ -2,47 +2,71 @@
 import Layout from "../../../layouts/Layout.astro";
 import ColonyHeader from "../../../components/ColonyHeader.astro";
 import Notices from "../../../components/Notices.astro";
+import CensusHistory from "../../../components/CensusHistory.astro";
 import { ZodError } from "zod";
 import { loadColony } from "../../../lib/colony-page";
-import { addCensus, censusFromCats, ColonyError, listCats, listCensuses } from "../../../lib/colonies";
+import { addCensus, censusFromCats, censusMovementsFromCats, ColonyError, listCats, listCensuses, MOVIMIENTO_KEYS, MOVIMIENTOS } from "../../../lib/colonies";
+import { etiqueta, periodoTexto } from "../../../lib/programa-config";
 import { formatDate } from "../../../lib/util";
 
 const { db, colony, error: notFound } = await loadColony(Astro);
 if (notFound) return notFound;
+const programa = Astro.locals.programa;
+const modo = programa.censo_movimientos;
 let error: string | null = null;
+let avisos: string[] = [];
 let form: Record<string, string> | null = null;
 if (Astro.request.method === "POST") {
   const f = await Astro.request.formData();
   form = Object.fromEntries([...f.entries()].map(([k, v]) => [k, String(v)]));
   try {
-    await addCensus(db, colony!.id, Astro.locals.user!.id, form);
-    return Astro.redirect(`/colonia/${colony!.id}?censo=1`, 303);
+    const r = await addCensus(db, colony!.id, Astro.locals.user!.id, form, { modo, confirmar: form.confirmar === "1" });
+    if (r.guardado) return Astro.redirect(`/colonia/${colony!.id}?censo=1`, 303);
+    avisos = r.avisos;
   } catch (e) {
     error = e instanceof ZodError ? e.issues.map((i) => i.message).join(". ") : e instanceof ColonyError ? e.message : "No se pudo guardar el censo.";
   }
 }
 const [censuses, cats] = await Promise.all([listCensuses(db, colony!.id), listCats(db, colony!.id)]);
 const last = censuses[0];
-const fromCats = censusFromCats(cats);
+// Movimientos: solo si el municipio los pide y hay un censo anterior con el que comparar.
+const conMovimientos = modo !== "no" && Boolean(last);
 const useCats = Astro.url.searchParams.has("desde-fichas");
+const fromCats: Record<string, number> = { ...censusFromCats(cats), ...(last ? censusMovementsFromCats(cats, last.fecha) : {}) };
 const val = (k: string) =>
-  form?.[k] ?? String(useCats && k in fromCats ? (fromCats as Record<string, number>)[k] : ((last as Record<string, unknown> | undefined)?.[k] ?? 0));
+  form?.[k] ?? String(useCats && k in fromCats ? fromCats[k] : ((last as Record<string, unknown> | undefined)?.[k] ?? 0));
+// Los movimientos empiezan vacíos (no se copian del censo anterior).
+const mov = (k: string) => form?.[k] ?? (useCats && k in fromCats ? String(fromCats[k]) : "");
 const fields: [string, string][] = [
   ["hembrasEsterilizadas", "Hembras esterilizadas"],
   ["hembrasSinEsterilizar", "Hembras sin esterilizar"],
   ["machosCastrados", "Machos castrados"],
   ["machosSinCastrar", "Machos sin castrar"],
 ];
+const etCenso = etiqueta(programa, "censo");
 ---
 <Layout title={`Censo · ${colony!.nombre}`}>
   <ColonyHeader colony={colony!} />
   <h1>Actualizar el censo</h1>
   <Notices here={`/colonia/${colony!.id}/censo`} />
-  <p class="muted">Cuenta los gatos varios días y a distintas horas. El total aparecerá en tu carnet como gatos que atiendes.</p>
+  <p class="muted">
+    Cuenta los gatos varios días y a distintas horas. El total aparecerá en tu carnet como gatos que atiendes. El censo se actualiza cada
+    {" "}{periodoTexto(programa.censo_meses)}{etCenso && ` (${etCenso})`}.
+  </p>
   {error && <div class="alert bad" role="alert" id="censo-error" tabindex="-1" data-focus-on-load>{error}</div>}
+  {avisos.length > 0 && (
+    <div class="alert bad censo-aviso" role="alert" id="censo-aviso" tabindex="-1" data-focus-on-load>
+      <div>
+        <strong>El censo no cuadra con el anterior y los movimientos.</strong>
+        <ul class="mb-0">{avisos.map((a) => <li>{a}</li>)}</ul>
+        <p class="mb-0">Revisa los números. Si son correctos (por ejemplo, porque no sabes qué ha pasado con algún gato), puedes guardarlo igualmente y explicarlo en las observaciones.</p>
+      </div>
+    </div>
+  )}
   {cats.length > 0 && !useCats && (
     <p><a class="btn small ghost" href="?desde-fichas">Rellenar a partir de las {cats.filter((c) => c.estado === "en_colonia").length} fichas de gatos</a></p>
   )}
+  {useCats && <p class="muted text-sm">Números propuestos a partir de las fichas de los gatos. Revísalos antes de guardar.</p>}
   <form method="post" class="card">
     <fieldset class="card" style="box-shadow:none">
       <legend>Número de gatos</legend>
@@ -59,28 +83,44 @@ const fields: [string, string][] = [
         <div><label for="enfermos" class="mt-0">Enfermos</label><input id="enfermos" name="enfermos" type="number" inputmode="numeric" min="0" max="999" required value={val("enfermos")} /></div>
       </div>
     </fieldset>
+    {conMovimientos && (
+      <fieldset class="card censo-movimientos" style="box-shadow:none" aria-describedby="mov-help">
+        <legend>Movimientos desde el censo anterior{modo === "opcional" && <span class="muted"> (opcional)</span>}</legend>
+        <p class="muted text-sm mt-0" id="mov-help">
+          Del {formatDate(last!.fecha)} hasta hoy. {modo === "obligatorio" ? "Pon 0 donde no haya habido ninguno." : "Déjalos vacíos si no los sabes."}
+          {" "}Así se comprueba que el censo cuadra con el anterior.
+        </p>
+        {MOVIMIENTO_KEYS.map((m) => (
+          <fieldset class="movimiento">
+            <legend>{MOVIMIENTOS[m].label}</legend>
+            <div class="census-grid" style="margin:0">
+              {(["Hembras", "Machos"] as const).map((s) => (
+                <div>
+                  <label for={`${m}${s}`} class="mt-0">{s}</label>
+                  <input id={`${m}${s}`} name={`${m}${s}`} type="number" inputmode="numeric" min="0" max="999" required={modo === "obligatorio"} value={mov(`${m}${s}`)} />
+                </div>
+              ))}
+            </div>
+          </fieldset>
+        ))}
+      </fieldset>
+    )}
     <label for="observaciones">Observaciones <span class="muted">(opcional: síntomas de gatos enfermos, camadas, peligros en la zona…)</span></label>
     <textarea id="observaciones" name="observaciones" maxlength="2000">{form?.observaciones ?? ""}</textarea>
-    <button class="btn primary block" type="submit" style="margin-top:1rem">Guardar censo</button>
+    <div class="row" style="margin-top:1rem">
+      <button class="btn primary" type="submit">{avisos.length > 0 ? "Revisar de nuevo" : "Guardar censo"}</button>
+      {avisos.length > 0 && <button class="btn" type="submit" name="confirmar" value="1">Guardar igualmente</button>}
+    </div>
   </form>
   {censuses.length > 0 && (
     <section class="card">
       <h2 class="mt-0">Censos anteriores</h2>
-      <div class="table-scroll">
-        <table class="data responsive">
-          <thead><tr><th>Fecha</th><th>Total</th><th>Hembras (est./sin)</th><th>Machos (cast./sin)</th></tr></thead>
-          <tbody>
-            {censuses.map((c) => (
-              <tr>
-                <td class="primary-cell">{formatDate(c.fecha)}</td>
-                <td data-label="Total">{c.hembrasEsterilizadas + c.hembrasSinEsterilizar + c.machosCastrados + c.machosSinCastrar}</td>
-                <td data-label="Hembras">{c.hembrasEsterilizadas} / {c.hembrasSinEsterilizar}</td>
-                <td data-label="Machos">{c.machosCastrados} / {c.machosSinCastrar}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+      <CensusHistory censuses={censuses} />
     </section>
   )}
 </Layout>
+
+<style>
+  .censo-movimientos .movimiento { border: 0; padding: 0; margin: 0 0 0.8rem; }
+  .censo-movimientos .movimiento legend { font-weight: 600; padding: 0; margin-bottom: 0.2rem; }
+</style>

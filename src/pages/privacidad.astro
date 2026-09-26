@@ -1,6 +1,8 @@
 ---
 import Layout from "../layouts/Layout.astro";
 const b = Astro.locals.branding;
+const p = Astro.locals.programa;
+const formularios = [p.etiqueta_registro, p.etiqueta_colaborador].map((e) => e.trim()).filter(Boolean);
 ---
 <Layout title="Privacidad">
   <p class="eyebrow">Información legal</p>
@@ -21,7 +23,7 @@ const b = Astro.locals.branding;
       <li>
         <strong>Gestión de colonias felinas:</strong> las colonias que cuidas y tu papel en ellas (responsable o colaborador/a), los censos
         que declaras, las fichas de los gatos (con sus fotos), sus intervenciones veterinarias y las observaciones y fotos de seguimiento
-        que añadas. Sirven para el registro y seguimiento de las colonias que exige la ordenanza municipal.
+        que añadas. Sirven para el registro y seguimiento de las colonias que exige {p.normativa_corta}.
       </li>
       <li>
         <strong>Bajas como persona cuidadora:</strong> la explicación que escribes al dejar de colaborar, que puede incluir el nombre de la
@@ -38,7 +40,7 @@ const b = Astro.locals.branding;
       </li>
     </ul>
     <p>
-      <strong>Solicitudes de registro de colonia, de alta como colaborador/a (Anexos I y II) y autorización de la persona propietaria del terreno:</strong> cuando las rellenas en la aplicación,
+      <strong>Solicitudes de registro de colonia, de alta como colaborador/a{formularios.length > 0 && ` (${formularios.join(" y ")})`} y autorización de la persona propietaria del terreno:</strong> cuando las rellenas en la aplicación,
       el PDF se genera en tu propio dispositivo. Esos datos (NIF, dirección, teléfono, datos de otras personas cuidadoras, de la persona propietaria y de la colonia)
       no se envían a nuestros servidores ni se guardan; solo los recibe el Ayuntamiento cuando presentas la solicitud firmada. Si incluyes a
       otras personas, infórmales antes.
@@ -50,8 +52,8 @@ const b = Astro.locals.branding;
 
     <h2>Base jurídica</h2>
     <p>
-      El ejercicio de las competencias municipales de gestión de colonias felinas (Ley 7/2023, de 28 de marzo, y Ordenanza municipal
-      reguladora del plan de control y gestión ética de las colonias felinas urbanas) y tu consentimiento, que das al completar tu perfil.
+      El ejercicio de las competencias municipales de gestión de colonias felinas (Ley 7/2023, de 28 de marzo{p.normativa_nombre ? `, y ${p.normativa_nombre}` : ", y normativa municipal"}) y tu
+      consentimiento, que das al completar tu perfil.
     </p>
 
     <h2>Quién más interviene (encargados del tratamiento)</h2>

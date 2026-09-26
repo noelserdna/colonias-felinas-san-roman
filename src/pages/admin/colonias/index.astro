@@ -4,8 +4,12 @@ import AdminNav from "../../../components/AdminNav.astro";
 import { getDb } from "../../../lib/db";
 import { censusDue, listColoniesAdmin, recentBajas } from "../../../lib/colonies";
 import { formatDate } from "../../../lib/util";
+import { censoPeriodo, etiqueta } from "../../../lib/programa-config";
 
 const db = getDb();
+const programa = Astro.locals.programa;
+const periodo = censoPeriodo(programa);
+const now = new Date();
 const cols = await listColoniesAdmin(db);
 const bajas = await recentBajas(db, 10);
 const sinCuidadores = cols.filter((c) => c.estado === "sin_cuidadores");
@@ -23,7 +27,7 @@ const ESTADO = { activa: "Activa", sin_cuidadores: "Sin cuidadores", baja: "De b
       <span><strong>{sinCuidadores.length}</strong> {sinCuidadores.length === 1 ? "colonia se ha quedado" : "colonias se han quedado"} sin personas cuidadoras: {sinCuidadores.map((c) => `n.º ${c.numero} ${c.nombre}`).join(", ")}.</span>
     </div>
   )}
-  <p class="muted">Registra aquí las colonias cuya solicitud (Anexo I de la ordenanza) haya aprobado el Ayuntamiento tras la visita e informe técnico.</p>
+  <p class="muted">Registra aquí las colonias cuya solicitud de registro{etiqueta(programa, "registro") ? ` (${etiqueta(programa, "registro")})` : ""} haya aprobado el Ayuntamiento tras la visita e informe técnico.</p>
   <a class="btn primary" href="/admin/colonias/nueva">Registrar colonia</a>
   <div class="card table-scroll" style="margin-top:1rem">
     <table class="data responsive">
@@ -35,7 +39,7 @@ const ESTADO = { activa: "Activa", sin_cuidadores: "Sin cuidadores", baja: "De b
             <td class="primary-cell">n.º {c.numero} · {c.nombre}</td>
             <td data-label="Cuidadores"><span>{c.members.length ? c.members.map((m) => `${nombre(m)}${m.rol === "responsable" ? " (resp.)" : ""}`).join(", ") : "—"}{c.sinResponsable && <span class="badge bad"> sin responsable</span>}</span></td>
             <td data-label="Gatos">{c.total}</td>
-            <td data-label="Último censo"><span>{c.lastCensus ? formatDate(c.lastCensus.fecha) : "—"}{censusDue(c.lastCensus?.fecha ?? null) && c.estado !== "baja" && <span class="badge bad"> pendiente</span>}</span></td>
+            <td data-label="Último censo"><span>{c.lastCensus ? formatDate(c.lastCensus.fecha) : "—"}{censusDue(c.lastCensus?.fecha ?? null, now, periodo) && c.estado !== "baja" && <span class="badge bad"> pendiente</span>}</span></td>
             <td data-label="Estado"><span class:list={["badge", c.estado === "activa" ? "ok" : c.estado === "baja" ? "lock" : "bad"]}>{ESTADO[c.estado]}</span></td>
             <td class="actions"><a class="btn small" href={`/admin/colonias/${c.id}`} aria-label={`Gestionar colonia ${c.numero}`}>Gestionar</a></td>
           </tr>

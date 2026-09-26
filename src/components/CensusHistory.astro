@@ -1,0 +1,51 @@
+---
+// Historial de censos de una colonia, con los movimientos declarados (si los hay) en un desplegable.
+import { censusTotal, hasMovements, MOVIMIENTO_KEYS, MOVIMIENTOS } from "../lib/colonies";
+import { formatDate } from "../lib/util";
+import type { schema } from "../lib/db";
+
+type Props = { censuses: (typeof schema.colonyCensuses.$inferSelect)[]; detalle?: boolean };
+const { censuses, detalle = false } = Astro.props;
+---
+<div class="table-scroll">
+  <table class="data responsive">
+    <thead>
+      <tr>
+        <th>Fecha</th><th>Total</th><th>Hembras (est./sin)</th><th>Machos (cast./sin)</th>
+        {detalle && <><th>Adoptables</th><th>Enfermos</th></>}
+        <th>Movimientos</th>
+      </tr>
+    </thead>
+    <tbody>
+      {censuses.map((c) => (
+        <tr>
+          <td class="primary-cell">{formatDate(c.fecha)}</td>
+          <td data-label="Total">{censusTotal(c)}</td>
+          <td data-label="Hembras">{c.hembrasEsterilizadas} / {c.hembrasSinEsterilizar}</td>
+          <td data-label="Machos">{c.machosCastrados} / {c.machosSinCastrar}</td>
+          {detalle && <><td data-label="Adoptables">{c.adoptables}</td><td data-label="Enfermos">{c.enfermos}</td></>}
+          <td data-label="Movimientos">
+            {hasMovements(c) ? (
+              <details>
+                <summary>Ver movimientos<span class="sr-only"> del censo del {formatDate(c.fecha)}</span></summary>
+                <dl class="census-moves">
+                  {MOVIMIENTO_KEYS.map((m) => (
+                    <div><dt>{MOVIMIENTOS[m].label}</dt><dd>{c[`${m}Hembras`] ?? "—"} hembras · {c[`${m}Machos`] ?? "—"} machos</dd></div>
+                  ))}
+                </dl>
+              </details>
+            ) : <span class="muted">—</span>}
+            {c.observaciones && <p class="muted text-sm mb-0">{c.observaciones}</p>}
+          </td>
+        </tr>
+      ))}
+    </tbody>
+  </table>
+</div>
+
+<style>
+  .census-moves { margin: 0.4rem 0 0; font-size: 0.9rem; }
+  .census-moves div { display: flex; flex-wrap: wrap; gap: 0 0.5rem; }
+  .census-moves dt { font-weight: 600; }
+  .census-moves dd { margin: 0; }
+</style>

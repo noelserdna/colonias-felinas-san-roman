@@ -1,0 +1,82 @@
+---
+import Layout from "../../../layouts/Layout.astro";
+import AdminNav from "../../../components/AdminNav.astro";
+import { getDb } from "../../../lib/db";
+import { getPage, resetPage, savePage } from "../../../lib/pages";
+import { isPageSlug, PAGE_DEFS, PAGE_MAX_CHARS, splitSteps } from "../../../lib/pages-config";
+import { MARCADORES, programaVars, renderTemplate } from "../../../lib/programa-config";
+
+const slug = Astro.params.pagina;
+if (!isPageSlug(slug)) return new Response("No encontrado", { status: 404 });
+const def = PAGE_DEFS[slug];
+const db = getDb();
+let msg: string | null = null;
+if (Astro.request.method === "POST") {
+  const f = await Astro.request.formData();
+  if (f.get("action") === "reset") {
+    await resetPage(db, slug);
+    msg = def.opcional ? "Se ha vaciado el texto: ya no se muestra." : "Se ha restaurado el texto por defecto.";
+  } else {
+    await savePage(db, slug, String(f.get("texto") ?? ""));
+    msg = "Texto guardado.";
+  }
+}
+const page = await getPage(db, slug);
+const vars = programaVars(Astro.locals.programa, Astro.locals.branding);
+const rendered = renderTemplate(page.markdown, vars);
+const steps = def.pasos ? splitSteps(rendered).steps.length : null;
+// Marcadores que siguen sin sustituir (mal escritos o desconocidos).
+const sinSustituir = [...new Set(rendered.match(/\{\{[#^/]?\w+\}\}/g) ?? [])];
+---
+<Layout title={`${def.titulo} · Textos`} wide>
+  <p class="eyebrow"><a href="/admin/textos">Administración · Textos</a></p>
+  <h1>{def.titulo}</h1>
+  <AdminNav />
+  {msg && <div class="alert ok" role="status" tabindex="-1" data-focus-on-load>{msg}</div>}
+  <p class="muted">
+    {def.descripcion}{" "}
+    {page.custom ? "Ahora mismo se muestra un texto propio." : def.opcional ? "Ahora mismo está vacío." : "Ahora mismo se muestra el texto por defecto."}
+    {steps !== null && ` Tiene ${steps} ${steps === 1 ? "paso" : "pasos"}.`}
+  </p>
+  {sinSustituir.length > 0 && (
+    <div class="alert bad" role="status">Hay marcadores que no se reconocen y se verán tal cual: {sinSustituir.join(", ")}.</div>
+  )}
+  <form method="post" class="card">
+    <label for="texto">Contenido (Markdown)</label>
+    <textarea id="texto" name="texto" style="min-height:60vh;font-family:var(--mono)" maxlength={PAGE_MAX_CHARS} required={!def.opcional} aria-describedby="texto-help">{page.markdown}</textarea>
+    <small class="muted" id="texto-help">
+      {def.opcional ? "Déjalo vacío para no mostrarlo. " : ""}Hasta {PAGE_MAX_CHARS.toLocaleString("es-ES")} caracteres.
+    </small>
+    <div class="row" style="margin-top:1rem">
+      <button class="btn primary" type="submit">Guardar texto</button>
+      <a class="btn ghost" href={def.ver} target="_blank">Ver como cuidador/a<span class="sr-only"> (se abre en una ventana nueva)</span></a>
+    </div>
+  </form>
+  {page.custom && (
+    <form method="post" data-confirm>
+      <input type="hidden" name="action" value="reset" />
+      <button class="btn small ghost" type="submit">{def.opcional ? "Vaciar el texto" : "Restaurar el texto por defecto"}</button>
+    </form>
+  )}
+  <details class="card">
+    <summary class="admin-summary" style="padding:0"><strong>Marcadores disponibles</strong></summary>
+    <p class="muted text-sm">
+      <code>{"{{marcador}}"}</code> se sustituye por su valor. <code>{"{{#marcador}}…{{/marcador}}"}</code> muestra el texto solo si el
+      marcador tiene valor y <code>{"{{^marcador}}…{{/marcador}}"}</code>, solo si está vacío.
+    </p>
+    <div class="table-scroll">
+      <table class="data responsive">
+        <thead><tr><th>Marcador</th><th>Qué es</th><th>Valor actual</th></tr></thead>
+        <tbody>
+          {Object.entries(MARCADORES).map(([k, desc]) => (
+            <tr>
+              <td class="primary-cell"><code>{`{{${k}}}`}</code></td>
+              <td data-label="Qué es">{desc}</td>
+              <td data-label="Valor actual">{String(vars[k as keyof typeof vars] ?? "") || <span class="muted">(vacío)</span>}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  </details>
+</Layout>

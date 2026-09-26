@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { exampleAnswers, personaEmail, personaOf, RESPUESTA_FLOJA } from "../../src/lib/demo-personas";
+import { exampleAnswers, PERSONAS, personaEmail, personaOf, RESPUESTA_FLOJA } from "../../src/lib/demo-personas";
 
 const mc = (position: number, correctIndex: number, optionOrder: number[]) => ({
   position,
@@ -42,5 +42,12 @@ describe("respuestas de ejemplo", () => {
     expect(a["4"]).not.toBe(3);
     expect(a["5"]).toBe("Captura, esterilización y retorno.");
     expect(a["6"]).toBe(RESPUESTA_FLOJA);
+  });
+});
+
+describe("recorridos de la demo", () => {
+  it("no dan por hecho los nombres de los anexos de ninguna ordenanza", () => {
+    const textos = Object.values(PERSONAS).flatMap((p) => p.recorrido.map((r) => r.texto));
+    expect(textos.join(" ")).not.toMatch(/Anexo|ordenanza/i);
   });
 });
