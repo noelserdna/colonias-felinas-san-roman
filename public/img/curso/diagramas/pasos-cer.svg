@@ -1,0 +1,56 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 1014" width="800" height="1014" role="img" aria-labelledby="t d" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif">
+  <title id="t">Los seis pasos del CER</title>
+  <desc id="d">Pasos del método CER (captura, esterilización y retorno). 1 Planificar: censo de la colonia y cita con la clínica; la víspera se retira la comida, pero nunca el agua. 2 Capturar: jaula trampa que se tapa con una tela al cerrarse; etiquetar cada jaula con colonia, lugar y fecha. 3 En la clínica: leer el chip, esterilizar, marcar la oreja, poner microchip, vacunar y desparasitar. 4 Recuperar: en la jaula, tapado, en un sitio tranquilo, el tiempo que diga el veterinario. 5 Retornar: al mismo sitio donde se capturó, abriendo la jaula para que salga solo. 6 Seguir: anotarlo en el censo, vigilar que se recupere y estar atento a gatos nuevos sin marca. Elaboración propia, CC BY-SA 4.0.</desc>
+  <rect width="800" height="1014" fill="#ffffff"/>
+  <text x="400" y="46" text-anchor="middle" font-size="30" font-weight="700" fill="#2f6b4f">CER paso a paso</text>
+  <text x="400" y="78" text-anchor="middle" font-size="20" fill="#444">Captura, esterilización y retorno</text>
+  <path d="M60 144 L60 894" stroke="#2f6b4f" stroke-width="6" stroke-dasharray="2 10" stroke-linecap="round"/>
+  <g transform="translate(0,104)">
+    <rect x="96" y="0" width="674" height="134" rx="14" fill="#eaf3ee" stroke="#2f6b4f" stroke-width="2"/>
+    <circle cx="60" cy="40" r="28" fill="#2f6b4f"/><text x="60" y="50" text-anchor="middle" font-size="28" font-weight="700" fill="#fff">1</text>
+    <g transform="translate(116,35.0)"><rect x="-6" y="-6" width="76" height="76" rx="12" fill="#fff"/><rect x="10" y="6" width="44" height="54" rx="5" fill="#fff" stroke="#444" stroke-width="4"/><rect x="22" y="2" width="20" height="10" rx="3" fill="#444"/><path d="M18 26 L22 30 L28 22 M34 26 L46 26 M18 40 L22 44 L28 36 M34 40 L46 40" fill="none" stroke="#2f6b4f" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/></g>
+    <text x="212" y="42" font-size="24" font-weight="700" fill="#444">Planificar</text>
+    <text x="212" y="78" font-size="19" fill="#444">Censo de la colonia y cita con la clínica.</text>
+    <text x="212" y="108" font-size="19" fill="#444">La víspera se retira la comida. El agua, nunca.</text>
+  </g>
+  <g transform="translate(0,254)">
+    <rect x="96" y="0" width="674" height="134" rx="14" fill="#eaf3ee" stroke="#2f6b4f" stroke-width="2"/>
+    <circle cx="60" cy="40" r="28" fill="#2f6b4f"/><text x="60" y="50" text-anchor="middle" font-size="28" font-weight="700" fill="#fff">2</text>
+    <g transform="translate(116,35.0)"><rect x="-6" y="-6" width="76" height="76" rx="12" fill="#fff"/><rect x="2" y="16" width="60" height="38" rx="3" fill="#fff" stroke="#444" stroke-width="4"/><path d="M14 18 L14 52" stroke="#444" stroke-width="2.5"/><path d="M24 18 L24 52" stroke="#444" stroke-width="2.5"/><path d="M34 18 L34 52" stroke="#444" stroke-width="2.5"/><path d="M44 18 L44 52" stroke="#444" stroke-width="2.5"/><path d="M54 18 L54 52" stroke="#444" stroke-width="2.5"/><path d="M24 16 C 24 6, 40 6, 40 16" fill="none" stroke="#444" stroke-width="4"/><rect x="46" y="28" width="12" height="8" rx="2" fill="#a8691f"/></g>
+    <text x="212" y="42" font-size="24" font-weight="700" fill="#444">Capturar</text>
+    <text x="212" y="78" font-size="19" fill="#444">Jaula trampa; al cerrarse, taparla con una tela.</text>
+    <text x="212" y="108" font-size="19" fill="#444">Etiquetar cada jaula: colonia, lugar y fecha.</text>
+  </g>
+  <g transform="translate(0,404)">
+    <rect x="96" y="0" width="674" height="134" rx="14" fill="#fbf1e3" stroke="#a8691f" stroke-width="2"/>
+    <circle cx="60" cy="40" r="28" fill="#2f6b4f"/><text x="60" y="50" text-anchor="middle" font-size="28" font-weight="700" fill="#fff">3</text>
+    <g transform="translate(116,35.0)"><rect x="-6" y="-6" width="76" height="76" rx="12" fill="#fff"/><rect x="4" y="4" width="56" height="56" rx="12" fill="#2f6b4f"/><path d="M24 14 H40 V24 H50 V40 H40 V50 H24 V40 H14 V24 H24 Z" fill="#fff"/></g>
+    <text x="212" y="42" font-size="24" font-weight="700" fill="#444">En la clínica</text>
+    <text x="212" y="78" font-size="19" fill="#444">Leer el chip · esterilizar · marcar la oreja</text>
+    <text x="212" y="108" font-size="19" fill="#444">Microchip · vacunas · desparasitar</text>
+  </g>
+  <g transform="translate(0,554)">
+    <rect x="96" y="0" width="674" height="134" rx="14" fill="#eaf3ee" stroke="#2f6b4f" stroke-width="2"/>
+    <circle cx="60" cy="40" r="28" fill="#2f6b4f"/><text x="60" y="50" text-anchor="middle" font-size="28" font-weight="700" fill="#fff">4</text>
+    <g transform="translate(116,35.0)"><rect x="-6" y="-6" width="76" height="76" rx="12" fill="#fff"/><rect x="2" y="16" width="60" height="38" rx="3" fill="#fff" stroke="#444" stroke-width="4"/><path d="M14 18 L14 52" stroke="#444" stroke-width="2.5"/><path d="M24 18 L24 52" stroke="#444" stroke-width="2.5"/><path d="M34 18 L34 52" stroke="#444" stroke-width="2.5"/><path d="M44 18 L44 52" stroke="#444" stroke-width="2.5"/><path d="M54 18 L54 52" stroke="#444" stroke-width="2.5"/><path d="M24 16 C 24 6, 40 6, 40 16" fill="none" stroke="#444" stroke-width="4"/><path d="M0 18 C 10 6, 54 6, 64 18 L64 44 C 50 40, 14 40, 0 44 Z" fill="#a8691f"/><text x="46" y="4" font-size="14" font-weight="700" fill="#444">z z</text></g>
+    <text x="212" y="42" font-size="24" font-weight="700" fill="#444">Recuperar</text>
+    <text x="212" y="78" font-size="19" fill="#444">En la jaula, tapado, en un sitio tranquilo.</text>
+    <text x="212" y="108" font-size="19" fill="#444">El tiempo que diga el veterinario.</text>
+  </g>
+  <g transform="translate(0,704)">
+    <rect x="96" y="0" width="674" height="134" rx="14" fill="#eaf3ee" stroke="#2f6b4f" stroke-width="2"/>
+    <circle cx="60" cy="40" r="28" fill="#2f6b4f"/><text x="60" y="50" text-anchor="middle" font-size="28" font-weight="700" fill="#fff">5</text>
+    <g transform="translate(116,35.0)"><rect x="-6" y="-6" width="76" height="76" rx="12" fill="#fff"/><path d="M32 60 C 32 60, 8 36, 8 22 C 8 9, 19 0, 32 0 C 45 0, 56 9, 56 22 C 56 36, 32 60, 32 60 Z" fill="#2f6b4f"/><circle cx="32" cy="22" r="9" fill="#fff"/></g>
+    <text x="212" y="42" font-size="24" font-weight="700" fill="#444">Retornar</text>
+    <text x="212" y="78" font-size="19" fill="#444">Al mismo sitio donde se capturó.</text>
+    <text x="212" y="108" font-size="19" fill="#444">Abrir la jaula y dejar que salga solo.</text>
+  </g>
+  <g transform="translate(0,854)">
+    <rect x="96" y="0" width="674" height="134" rx="14" fill="#eaf3ee" stroke="#2f6b4f" stroke-width="2"/>
+    <circle cx="60" cy="40" r="28" fill="#2f6b4f"/><text x="60" y="50" text-anchor="middle" font-size="28" font-weight="700" fill="#fff">6</text>
+    <g transform="translate(116,35.0)"><rect x="-6" y="-6" width="76" height="76" rx="12" fill="#fff"/><circle cx="32" cy="32" r="27" fill="none" stroke="#2f6b4f" stroke-width="5" stroke-dasharray="120 20"/><path d="M52 6 L60 14 L48 18 Z" fill="#2f6b4f"/><path d="M14 32 C 20 22, 44 22, 50 32 C 44 42, 20 42, 14 32 Z" fill="#fff" stroke="#444" stroke-width="3"/><circle cx="32" cy="32" r="6" fill="#444"/></g>
+    <text x="212" y="42" font-size="24" font-weight="700" fill="#444">Seguir</text>
+    <text x="212" y="78" font-size="19" fill="#444">Anotarlo en el censo y vigilar que se recupere.</text>
+    <text x="212" y="108" font-size="19" fill="#444">Estar atento a gatos nuevos sin marca.</text>
+  </g>
+</svg>

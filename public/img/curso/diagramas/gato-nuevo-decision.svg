@@ -1,0 +1,74 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 1060" width="800" height="1060" role="img" aria-labelledby="t d" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif">
+  <title id="t">Qué hacer si aparece un gato nuevo</title>
+  <desc id="d">Árbol de decisión. Aparece un gato nuevo en la colonia. ¿Tiene la oreja marcada? Si la tiene, ya está esterilizado y probablemente viene de otra colonia gestionada: se anota y se avisa. Si no la tiene, se observa si se deja tocar, es decir, si es sociable, y se lee el microchip en la clínica. Con chip: tiene dueño, se le avisa y se devuelve. Sin chip y sociable: adopción. Sin chip y no sociable: CER y alta en la colonia. Siempre: avisar al ayuntamiento y anotarlo en el censo. Elaboración propia, CC BY-SA 4.0.</desc>
+  <defs>
+    <marker id="f" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 Z" fill="#444"/></marker>
+  </defs>
+  <rect width="800" height="1060" fill="#ffffff"/>
+  <text x="400" y="46" text-anchor="middle" font-size="30" font-weight="700" fill="#2f6b4f">Aparece un gato nuevo</text>
+  <text x="400" y="78" text-anchor="middle" font-size="20" fill="#444">Qué hacer paso a paso</text>
+
+  <g transform="translate(30,100)">
+    <rect width="740" height="70" rx="35" fill="#2f6b4f"/>
+    <text x="370" y="44" text-anchor="middle" font-size="22" font-weight="700" fill="#fff">Un gato que no estaba en el censo</text>
+  </g>
+  <path d="M230 172 L230 204" stroke="#444" stroke-width="4" marker-end="url(#f)"/>
+
+  <!-- P1 -->
+  <path d="M230 210 L420 290 L230 370 L40 290 Z" fill="#ffffff" stroke="#2f6b4f" stroke-width="3"/>
+  <text x="230" y="284" text-anchor="middle" font-size="22" font-weight="700" fill="#2f6b4f">1. ¿Tiene la oreja</text>
+  <text x="230" y="312" text-anchor="middle" font-size="22" font-weight="700" fill="#2f6b4f">marcada?</text>
+  <path d="M420 290 L470 290" stroke="#444" stroke-width="4" marker-end="url(#f)"/>
+  <text x="432" y="278" font-size="18" font-weight="700" fill="#2f6b4f">SÍ</text>
+  <g transform="translate(476,200)">
+    <rect width="294" height="180" rx="12" fill="#eaf3ee" stroke="#2f6b4f" stroke-width="2.5"/>
+    <text x="16" y="34" font-size="20" font-weight="700" fill="#2f6b4f">✓ Ya esterilizado</text>
+    <text x="16" y="66" text-anchor="start" font-size="18" fill="#444">Probablemente viene de</text><text x="16" y="91" text-anchor="start" font-size="18" fill="#444">otra colonia gestionada.</text><text x="16" y="116" text-anchor="start" font-size="18" fill="#444">Anótalo y avisa para</text><text x="16" y="141" text-anchor="start" font-size="18" fill="#444">saber de dónde es.</text>
+  </g>
+  <path d="M230 370 L230 414" stroke="#444" stroke-width="4" marker-end="url(#f)"/>
+  <text x="244" y="398" font-size="18" font-weight="700" fill="#b3261e">NO</text>
+
+  <!-- P2 -->
+  <g transform="translate(30,420)">
+    <rect width="740" height="100" rx="12" fill="#ffffff" stroke="#2f6b4f" stroke-width="2.5"/>
+    <text x="24" y="38" font-size="22" font-weight="700" fill="#2f6b4f">2. Observa: ¿se deja tocar? ¿Es sociable?</text>
+    <text x="24" y="72" font-size="19" fill="#444">Así se sabe cómo llevarlo a la clínica y qué destino tendrá.</text>
+  </g>
+  <path d="M400 522 L400 556" stroke="#444" stroke-width="4" marker-end="url(#f)"/>
+
+  <!-- P3 -->
+  <g transform="translate(30,562)">
+    <rect width="740" height="126" rx="12" fill="#ffffff" stroke="#2f6b4f" stroke-width="2.5"/>
+    <text x="24" y="38" font-size="22" font-weight="700" fill="#2f6b4f">3. Leer el microchip en la clínica</text>
+    <text x="24" y="72" font-size="19" fill="#444">El sociable, en transportín; el que no, con jaula trampa.</text>
+    <text x="24" y="102" font-size="19" fill="#444">¿Tiene chip?</text>
+  </g>
+
+  <path d="M400 690 L400 706 L145 706 L145 736" fill="none" stroke="#444" stroke-width="4" marker-end="url(#f)"/>
+  <g transform="translate(30,742)">
+    <rect width="230" height="170" rx="12" fill="#ffffff" stroke="#2f6b4f" stroke-width="2.5"/>
+    <rect width="230" height="50" rx="12" fill="#2f6b4f"/><rect y="30" width="230" height="20" fill="#2f6b4f"/>
+    <text x="115" y="33" text-anchor="middle" font-size="18" font-weight="700" fill="#fff">Con chip</text>
+    <text x="115" y="88" text-anchor="middle" font-size="20" font-weight="700" fill="#444">Tiene dueño.</text><text x="115" y="115" text-anchor="middle" font-size="20" fill="#444">Se le avisa</text><text x="115" y="142" text-anchor="middle" font-size="20" fill="#444">y se devuelve.</text>
+  </g>
+  <path d="M400 690 L400 706 L395 706 L395 736" fill="none" stroke="#444" stroke-width="4" marker-end="url(#f)"/>
+  <g transform="translate(280,742)">
+    <rect width="230" height="170" rx="12" fill="#ffffff" stroke="#2f6b4f" stroke-width="2.5"/>
+    <rect width="230" height="50" rx="12" fill="#2f6b4f"/><rect y="30" width="230" height="20" fill="#2f6b4f"/>
+    <text x="115" y="33" text-anchor="middle" font-size="18" font-weight="700" fill="#fff">Sin chip y sociable</text>
+    <text x="115" y="88" text-anchor="middle" font-size="20" font-weight="700" fill="#444">Adopción.</text><text x="115" y="115" text-anchor="middle" font-size="20" fill="#444">Esterilizado</text><text x="115" y="142" text-anchor="middle" font-size="20" fill="#444">antes de irse.</text>
+  </g>
+  <path d="M400 690 L400 706 L645 706 L645 736" fill="none" stroke="#444" stroke-width="4" marker-end="url(#f)"/>
+  <g transform="translate(530,742)">
+    <rect width="230" height="170" rx="12" fill="#ffffff" stroke="#8a5a17" stroke-width="2.5"/>
+    <rect width="230" height="50" rx="12" fill="#8a5a17"/><rect y="30" width="230" height="20" fill="#8a5a17"/>
+    <text x="115" y="33" text-anchor="middle" font-size="18" font-weight="700" fill="#fff">Sin chip, no sociable</text>
+    <text x="115" y="88" text-anchor="middle" font-size="20" font-weight="700" fill="#444">CER y alta</text><text x="115" y="115" text-anchor="middle" font-size="20" fill="#444">en la colonia.</text>
+  </g>
+
+  <g transform="translate(30,940)">
+    <rect width="740" height="96" rx="12" fill="#2f6b4f"/>
+    <text x="24" y="40" font-size="21" font-weight="700" fill="#fff">Siempre: avisa al ayuntamiento</text>
+    <text x="24" y="72" font-size="19" fill="#fff">y anótalo en el censo de la colonia.</text>
+  </g>
+</svg>

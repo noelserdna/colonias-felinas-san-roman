@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 834" width="800" height="834" role="img" aria-labelledby="t d" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif">
+  <title id="t">Marca en la oreja de los gatos esterilizados</title>
+  <desc id="d">Dos cabezas de gato vistas de frente con la punta de una oreja cortada en recto. Macho: se marca la oreja izquierda del gato, que al mirarlo de frente queda a tu derecha. Hembra: se marca la oreja derecha del gato, que al mirarlo de frente queda a tu izquierda. El corte se hace con el gato anestesiado durante la esterilización y se ve de lejos. Es la regla habitual en muchos municipios españoles; el lado lo fija cada programa y puede variar. Elaboración propia, CC BY-SA 4.0.</desc>
+  <defs>
+    <marker id="fa" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="4" markerHeight="4" orient="auto"><path d="M0 0 L10 5 L0 10 Z" fill="#a8691f"/></marker>
+  </defs>
+  <rect width="800" height="834" fill="#ffffff"/>
+  <text x="400" y="46" text-anchor="middle" font-size="30" font-weight="700" fill="#2f6b4f">La marca en la oreja</text>
+  <text x="400" y="78" text-anchor="middle" font-size="20" fill="#444">Corte recto de la punta: gato ya esterilizado</text>
+  <g transform="translate(20,104)">
+    <rect width="370" height="560" rx="14" fill="#ffffff" stroke="#2f6b4f" stroke-width="2.5"/>
+    <rect width="370" height="54" rx="14" fill="#2f6b4f"/><rect y="34" width="370" height="20" fill="#2f6b4f"/>
+    <text x="185" y="37" text-anchor="middle" font-size="25" font-weight="700" fill="#fff">MACHO</text>
+    <text x="185" y="92" text-anchor="middle" font-size="21" font-weight="700" fill="#444">Oreja IZQUIERDA del gato</text>
+    <text x="185" y="118" text-anchor="middle" font-size="18" fill="#444">a tu derecha si lo miras de frente</text>
+    <path d="M253 128 L253 150" stroke="#a8691f" stroke-width="4" marker-end="url(#fa)"/>
+    <g transform="translate(35,150)"><path d="M55 128 L70 20 L138 88 Z" fill="#d9d0bf" stroke="#444" stroke-width="3" stroke-linejoin="round"/><path d="M72 108 L78 50 L118 90 Z" fill="#e9b8b0"/><path d="M234 48 L230 20 L202 48" fill="none" stroke="#444" stroke-width="2" stroke-dasharray="5 4"/><path d="M245 128 L234 48 L202 48 L162 88 Z" fill="#d9d0bf" stroke="#444" stroke-width="3" stroke-linejoin="round"/><path d="M228 108 L224 60 L208 60 L182 90 Z" fill="#e9b8b0"/><path d="M194 48 L242 48" stroke="#a8691f" stroke-width="5" stroke-linecap="round"/><path d="M150 70 C 230 70, 268 120, 268 172 C 268 232, 214 268, 150 268 C 86 268, 32 232, 32 172 C 32 120, 70 70, 150 70 Z" fill="#d9d0bf" stroke="#444" stroke-width="3"/>
+      <path d="M92 150 C 100 136, 124 136, 130 150 C 124 162, 100 162, 92 150 Z" fill="#b7c46a" stroke="#444" stroke-width="2.5"/><ellipse cx="111" cy="150" rx="3.5" ry="10" fill="#222"/>
+      <path d="M170 150 C 176 136, 200 136, 208 150 C 200 162, 176 162, 170 150 Z" fill="#b7c46a" stroke="#444" stroke-width="2.5"/><ellipse cx="189" cy="150" rx="3.5" ry="10" fill="#222"/>
+      <path d="M138 188 L162 188 L150 202 Z" fill="#c98b8b" stroke="#444" stroke-width="2" stroke-linejoin="round"/>
+      <path d="M150 202 L150 214 M150 214 C 142 224, 130 222, 126 214 M150 214 C 158 224, 170 222, 174 214" fill="none" stroke="#444" stroke-width="2.5" stroke-linecap="round"/>
+      <path d="M118 200 L50 190 M118 208 L52 214 M182 200 L250 190 M182 208 L248 214" stroke="#444" stroke-width="1.8" stroke-linecap="round"/></g>
+    <text x="110" y="450" text-anchor="middle" font-size="18" fill="#444">su derecha</text>
+    <text x="260" y="450" text-anchor="middle" font-size="18" fill="#444">su izquierda</text>
+    <path d="M60 462 L160 462 M210 462 L310 462" stroke="#999" stroke-width="2"/>
+    <text x="185" y="502" text-anchor="middle" font-size="18" fill="#444">(gato mirándote de frente)</text>
+    <text x="185" y="534" text-anchor="middle" font-size="19" font-weight="700" fill="#2f6b4f">♂ Macho: oreja izquierda</text>
+  </g>
+  <g transform="translate(410,104)">
+    <rect width="370" height="560" rx="14" fill="#ffffff" stroke="#8a5a17" stroke-width="2.5"/>
+    <rect width="370" height="54" rx="14" fill="#8a5a17"/><rect y="34" width="370" height="20" fill="#8a5a17"/>
+    <text x="185" y="37" text-anchor="middle" font-size="25" font-weight="700" fill="#fff">HEMBRA</text>
+    <text x="185" y="92" text-anchor="middle" font-size="21" font-weight="700" fill="#444">Oreja DERECHA del gato</text>
+    <text x="185" y="118" text-anchor="middle" font-size="18" fill="#444">a tu izquierda si lo miras de frente</text>
+    <path d="M117 128 L117 150" stroke="#a8691f" stroke-width="4" marker-end="url(#fa)"/>
+    <g transform="translate(35,150)"><path d="M66 48 L70 20 L98 48" fill="none" stroke="#444" stroke-width="2" stroke-dasharray="5 4"/><path d="M55 128 L66 48 L98 48 L138 88 Z" fill="#d9d0bf" stroke="#444" stroke-width="3" stroke-linejoin="round"/><path d="M72 108 L76 60 L92 60 L118 90 Z" fill="#e9b8b0"/><path d="M58 48 L106 48" stroke="#a8691f" stroke-width="5" stroke-linecap="round"/><path d="M245 128 L230 20 L162 88 Z" fill="#d9d0bf" stroke="#444" stroke-width="3" stroke-linejoin="round"/><path d="M228 108 L222 50 L182 90 Z" fill="#e9b8b0"/><path d="M150 70 C 230 70, 268 120, 268 172 C 268 232, 214 268, 150 268 C 86 268, 32 232, 32 172 C 32 120, 70 70, 150 70 Z" fill="#d9d0bf" stroke="#444" stroke-width="3"/>
+      <path d="M92 150 C 100 136, 124 136, 130 150 C 124 162, 100 162, 92 150 Z" fill="#b7c46a" stroke="#444" stroke-width="2.5"/><ellipse cx="111" cy="150" rx="3.5" ry="10" fill="#222"/>
+      <path d="M170 150 C 176 136, 200 136, 208 150 C 200 162, 176 162, 170 150 Z" fill="#b7c46a" stroke="#444" stroke-width="2.5"/><ellipse cx="189" cy="150" rx="3.5" ry="10" fill="#222"/>
+      <path d="M138 188 L162 188 L150 202 Z" fill="#c98b8b" stroke="#444" stroke-width="2" stroke-linejoin="round"/>
+      <path d="M150 202 L150 214 M150 214 C 142 224, 130 222, 126 214 M150 214 C 158 224, 170 222, 174 214" fill="none" stroke="#444" stroke-width="2.5" stroke-linecap="round"/>
+      <path d="M118 200 L50 190 M118 208 L52 214 M182 200 L250 190 M182 208 L248 214" stroke="#444" stroke-width="1.8" stroke-linecap="round"/></g>
+    <text x="110" y="450" text-anchor="middle" font-size="18" fill="#444">su derecha</text>
+    <text x="260" y="450" text-anchor="middle" font-size="18" fill="#444">su izquierda</text>
+    <path d="M60 462 L160 462 M210 462 L310 462" stroke="#999" stroke-width="2"/>
+    <text x="185" y="502" text-anchor="middle" font-size="18" fill="#444">(gato mirándote de frente)</text>
+    <text x="185" y="534" text-anchor="middle" font-size="19" font-weight="700" fill="#8a5a17">♀ Hembra: oreja derecha</text>
+  </g>
+  <g transform="translate(20,682)">
+    <rect width="760" height="136" rx="12" fill="#fbf1e3" stroke="#a8691f" stroke-width="2"/>
+    <text x="22" y="36" font-size="19" fill="#444">El corte lo hace el veterinario, con el gato anestesiado,</text>
+    <text x="22" y="62" font-size="19" fill="#444">durante la esterilización. Se reconoce de lejos.</text>
+    <text x="22" y="96" font-size="19" fill="#444"><tspan font-weight="700">Regla habitual en muchos municipios.</tspan> El lado lo fija</text>
+    <text x="22" y="122" font-size="19" fill="#444">cada programa: en EE. UU., por ejemplo, izquierda para todos.</text>
+  </g>
+</svg>

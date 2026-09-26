@@ -1,0 +1,13 @@
+[
+  { "orden": 1, "slug": "gatos-comunitarios", "titulo": "Gatos comunitarios y colonias felinas", "peso": 1 },
+  { "orden": 2, "slug": "marco-legal", "titulo": "Qué dice la ley", "peso": 1 },
+  { "orden": 3, "slug": "programa-municipal", "titulo": "El programa municipal de colonias", "peso": 1 },
+  { "orden": 4, "slug": "conocer-al-gato", "titulo": "Conocer al gato: necesidades y comportamiento", "peso": 1 },
+  { "orden": 5, "slug": "reproduccion-y-gatitos", "titulo": "Reproducción, gatitos y socialización", "peso": 1 },
+  { "orden": 6, "slug": "alimentacion", "titulo": "Alimentación y puntos de comida", "peso": 1 },
+  { "orden": 7, "slug": "salud", "titulo": "La salud de la colonia", "peso": 1 },
+  { "orden": 8, "slug": "higiene-y-zoonosis", "titulo": "Higiene, bioseguridad y zoonosis", "peso": 1 },
+  { "orden": 9, "slug": "metodo-cer", "titulo": "El método CER paso a paso", "peso": 1 },
+  { "orden": 10, "slug": "identificacion-y-censo", "titulo": "Identificación, censo y seguimiento", "peso": 1 },
+  { "orden": 11, "slug": "convivencia", "titulo": "Convivencia y situaciones difíciles", "peso": 1 }
+]

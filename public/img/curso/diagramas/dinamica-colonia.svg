@@ -1,0 +1,104 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 800 1010" width="800" height="1010" role="img" aria-labelledby="t d" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif">
+  <title id="t">Dinámica de una colonia felina</title>
+  <desc id="d">Esquema con la colonia en el centro. Entradas que la hacen crecer: nacimientos, gatos que llegan de otras zonas, abandonos y extravíos. Salidas que la hacen disminuir: muertes, adopciones y gatos que se van. Nota: el CER frena los nacimientos; la adopción, el microchip y la vigilancia actúan sobre el resto. Elaboración propia, CC BY-SA 4.0.</desc>
+  <defs>
+    <symbol id="gato" viewBox="0 0 100 120">
+      <path d="M34 112 C 8 114, 2 92, 14 80" fill="none" stroke="currentColor" stroke-width="8" stroke-linecap="round"/>
+      <path d="M45 44 C 28 58, 22 92, 30 114 L 80 114 C 84 96, 80 64, 70 46 Z" fill="currentColor"/>
+      <circle cx="60" cy="32" r="19" fill="currentColor"/>
+      <path d="M43 26 L45 4 L58 15 Z M62 15 L75 4 L77 26 Z" fill="currentColor"/>
+    </symbol>
+    <marker id="flecha" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 Z" fill="#444"/>
+    </marker>
+  </defs>
+  <rect width="800" height="1010" fill="#ffffff"/>
+
+  <text x="400" y="48" text-anchor="middle" font-size="30" font-weight="700" fill="#2f6b4f">Dinámica de una colonia</text>
+  <text x="400" y="80" text-anchor="middle" font-size="20" fill="#444">Qué hace que crezca o que disminuya</text>
+
+  <!-- ENTRADAS -->
+  <text x="30" y="128" font-size="21" font-weight="700" fill="#2f6b4f">ENTRADAS (la colonia crece)</text>
+  <g font-size="22" fill="#444">
+    <g transform="translate(30,145)">
+      <rect width="360" height="84" rx="12" fill="#eaf3ee" stroke="#2f6b4f" stroke-width="2"/>
+      <circle cx="38" cy="42" r="22" fill="#2f6b4f"/><text x="38" y="51" text-anchor="middle" font-size="28" font-weight="700" fill="#fff">+</text>
+      <text x="74" y="36" font-weight="700">Nacimientos</text>
+      <text x="74" y="64" font-size="18">de hembras sin esterilizar</text>
+    </g>
+    <g transform="translate(410,145)">
+      <rect width="360" height="84" rx="12" fill="#eaf3ee" stroke="#2f6b4f" stroke-width="2"/>
+      <circle cx="38" cy="42" r="22" fill="#2f6b4f"/><text x="38" y="51" text-anchor="middle" font-size="28" font-weight="700" fill="#fff">+</text>
+      <text x="74" y="36" font-weight="700">Gatos que llegan</text>
+      <text x="74" y="64" font-size="18">desde otras zonas</text>
+    </g>
+    <g transform="translate(30,245)">
+      <rect width="360" height="84" rx="12" fill="#eaf3ee" stroke="#2f6b4f" stroke-width="2"/>
+      <circle cx="38" cy="42" r="22" fill="#2f6b4f"/><text x="38" y="51" text-anchor="middle" font-size="28" font-weight="700" fill="#fff">+</text>
+      <text x="74" y="36" font-weight="700">Abandonos</text>
+      <text x="74" y="64" font-size="18">gatos de casa dejados fuera</text>
+    </g>
+    <g transform="translate(410,245)">
+      <rect width="360" height="84" rx="12" fill="#eaf3ee" stroke="#2f6b4f" stroke-width="2"/>
+      <circle cx="38" cy="42" r="22" fill="#2f6b4f"/><text x="38" y="51" text-anchor="middle" font-size="28" font-weight="700" fill="#fff">+</text>
+      <text x="74" y="36" font-weight="700">Extravíos</text>
+      <text x="74" y="64" font-size="18">gatos perdidos sin chip</text>
+    </g>
+  </g>
+
+  <!-- flechas de entrada -->
+  <g stroke="#444" stroke-width="4" fill="none" marker-end="url(#flecha)">
+    <path d="M210 333 C 230 380, 290 405, 318 428"/>
+    <path d="M590 333 C 570 380, 510 405, 482 428"/>
+    <path d="M400 333 L 400 400"/>
+  </g>
+
+  <!-- COLONIA -->
+  <circle cx="400" cy="530" r="122" fill="#2f6b4f"/>
+  <circle cx="400" cy="530" r="110" fill="none" stroke="#ffffff" stroke-width="2" stroke-dasharray="6 6" opacity="0.6"/>
+  <g color="#ffffff">
+    <use href="#gato" xlink:href="#gato" x="318" y="440" width="62" height="74"/>
+    <use href="#gato" xlink:href="#gato" x="370" y="432" width="72" height="86"/>
+    <use href="#gato" xlink:href="#gato" x="430" y="450" width="54" height="64"/>
+  </g>
+  <text x="400" y="566" text-anchor="middle" font-size="30" font-weight="700" fill="#ffffff">COLONIA</text>
+  <text x="400" y="598" text-anchor="middle" font-size="19" fill="#ffffff">gatos del lugar</text>
+
+  <!-- flechas de salida -->
+  <g stroke="#444" stroke-width="4" fill="none" marker-end="url(#flecha)">
+    <path d="M318 632 C 250 660, 185 680, 170 720"/>
+    <path d="M400 654 L 400 718"/>
+    <path d="M482 632 C 550 660, 615 680, 630 720"/>
+  </g>
+
+  <!-- SALIDAS -->
+  <text x="30" y="706" font-size="21" font-weight="700" fill="#8a5a17">SALIDAS</text>
+  <g font-size="22" fill="#444" text-anchor="middle">
+    <g transform="translate(30,728)">
+      <rect width="240" height="124" rx="12" fill="#fbf1e3" stroke="#c7862b" stroke-width="2"/>
+      <circle cx="120" cy="32" r="20" fill="#a8691f"/><text x="120" y="42" font-size="30" font-weight="700" fill="#fff">−</text>
+      <text x="120" y="80" font-weight="700">Muertes</text>
+      <text x="120" y="106" font-size="18">enfermedad, tráfico</text>
+    </g>
+    <g transform="translate(280,728)">
+      <rect width="240" height="124" rx="12" fill="#fbf1e3" stroke="#c7862b" stroke-width="2"/>
+      <circle cx="120" cy="32" r="20" fill="#a8691f"/><text x="120" y="42" font-size="30" font-weight="700" fill="#fff">−</text>
+      <text x="120" y="80" font-weight="700">Adopciones</text>
+      <text x="120" y="106" font-size="18">gatos sociables</text>
+    </g>
+    <g transform="translate(530,728)">
+      <rect width="240" height="124" rx="12" fill="#fbf1e3" stroke="#c7862b" stroke-width="2"/>
+      <circle cx="120" cy="32" r="20" fill="#a8691f"/><text x="120" y="42" font-size="30" font-weight="700" fill="#fff">−</text>
+      <text x="120" y="80" font-weight="700">Gatos que se van</text>
+      <text x="120" y="106" font-size="18">a otras zonas</text>
+    </g>
+  </g>
+
+  <!-- NOTA -->
+  <g transform="translate(30,876)">
+    <rect width="740" height="112" rx="12" fill="#ffffff" stroke="#2f6b4f" stroke-width="2.5"/>
+    <text x="24" y="40" font-size="21" fill="#444"><tspan font-weight="700" fill="#2f6b4f">✓ El CER frena los nacimientos.</tspan></text>
+    <text x="24" y="72" font-size="21" fill="#444"><tspan font-weight="700" fill="#2f6b4f">✓ </tspan>La adopción, el microchip y la vigilancia actúan</text>
+    <text x="48" y="99" font-size="21" fill="#444">sobre el resto: abandonos, extravíos y gatos nuevos.</text>
+  </g>
+</svg>

@@ -1,0 +1,69 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 800 900" width="800" height="900" role="img" aria-labelledby="t d" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif">
+  <title id="t">Ciclo de la tenia del gato y la pulga</title>
+  <desc id="d">Ciclo de Dipylidium caninum en cinco pasos. 1: el gato tiene la tenia adulta en el intestino. 2: los segmentos salen con las heces y se ven como granos de arroz junto al ano o en la cama. 3: la larva de pulga, en el suelo o en la cama, se come los huevos de la tenia. 4: la pulga adulta crece con la tenia dentro y salta a un gato. 5: al acicalarse, el gato se traga la pulga y en unas tres semanas tiene una nueva tenia. Mensaje: tratar a la vez las pulgas y las tenias. Elaboración propia, CC BY-SA 4.0.</desc>
+  <defs>
+    <symbol id="gato" viewBox="0 0 100 120">
+      <path d="M34 112 C 8 114, 2 92, 14 80" fill="none" stroke="currentColor" stroke-width="8" stroke-linecap="round"/>
+      <path d="M45 44 C 28 58, 22 92, 30 114 L 80 114 C 84 96, 80 64, 70 46 Z" fill="currentColor"/>
+      <circle cx="60" cy="32" r="19" fill="currentColor"/>
+      <path d="M43 26 L45 4 L58 15 Z M62 15 L75 4 L77 26 Z" fill="currentColor"/>
+    </symbol>
+    <marker id="fa" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="4" markerHeight="4" orient="auto"><path d="M0 0 L10 5 L0 10 Z" fill="#a8691f"/></marker>
+    <marker id="fp" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M0 0 L10 5 L0 10 Z" fill="#444"/></marker>
+  </defs>
+  <rect width="800" height="900" fill="#ffffff"/>
+  <text x="400" y="46" text-anchor="middle" font-size="30" font-weight="700" fill="#2f6b4f">La tenia llega con la pulga</text>
+  <text x="400" y="78" text-anchor="middle" font-size="20" fill="#444">Ciclo de <tspan font-style="italic">Dipylidium caninum</tspan></text>
+  <path d="M540 252 A 285 285 0 0 1 605 302" fill="none" stroke="#a8691f" stroke-width="6" marker-end="url(#fa)"/><path d="M684 521 A 285 285 0 0 1 658 621" fill="none" stroke="#a8691f" stroke-width="6" marker-end="url(#fa)"/><path d="M428 784 A 285 285 0 0 1 372 784" fill="none" stroke="#a8691f" stroke-width="6" marker-end="url(#fa)"/><path d="M142 621 A 285 285 0 0 1 116 521" fill="none" stroke="#a8691f" stroke-width="6" marker-end="url(#fa)"/><path d="M195 302 A 285 285 0 0 1 260 252" fill="none" stroke="#a8691f" stroke-width="6" marker-end="url(#fa)"/>
+  <g transform="translate(275,120)">
+    <rect width="250" height="190" rx="14" fill="#ffffff" stroke="#2f6b4f" stroke-width="2.5"/>
+    <circle cx="26" cy="26" r="17" fill="#2f6b4f"/><text x="26" y="33" text-anchor="middle" font-size="20" font-weight="700" fill="#fff">1</text>
+    <g transform="translate(135.0,48)"><use href="#gato" xlink:href="#gato" x="-36" y="-44" width="60" height="72" color="#2f6b4f"/><g transform="translate(18,-10)"><path d="M0 0 C 10 -14, 22 14, 32 0 C 42 -14, 50 10, 58 -4" fill="none" stroke="#a8691f" stroke-width="7" stroke-linecap="round"/><path d="M8 -6 L8 4 M18 -2 L18 8 M28 -4 L28 6 M38 -8 L38 2 M48 -4 L48 6" stroke="#fff" stroke-width="1.5"/></g></g>
+    <text x="125.0" y="108" text-anchor="middle" font-size="21" font-weight="700" fill="#444">Gato con tenia</text>
+    <text x="125.0" y="134" text-anchor="middle" font-size="18" fill="#444">La tenia adulta vive</text>
+    <text x="125.0" y="157" text-anchor="middle" font-size="18" fill="#444">en su intestino.</text>
+  </g>
+  <g transform="translate(546,317)">
+    <rect width="250" height="190" rx="14" fill="#ffffff" stroke="#2f6b4f" stroke-width="2.5"/>
+    <circle cx="26" cy="26" r="17" fill="#2f6b4f"/><text x="26" y="33" text-anchor="middle" font-size="20" font-weight="700" fill="#fff">2</text>
+    <g transform="translate(135.0,48)"><ellipse cx="-40" cy="-6" rx="9" ry="4.5" transform="rotate(-20 -40 -6)" fill="#fff" stroke="#444" stroke-width="2.5"/><ellipse cx="-18" cy="-18" rx="9" ry="4.5" transform="rotate(15 -18 -18)" fill="#fff" stroke="#444" stroke-width="2.5"/><ellipse cx="4" cy="-4" rx="9" ry="4.5" transform="rotate(-35 4 -4)" fill="#fff" stroke="#444" stroke-width="2.5"/><ellipse cx="26" cy="-16" rx="9" ry="4.5" transform="rotate(10 26 -16)" fill="#fff" stroke="#444" stroke-width="2.5"/><ellipse cx="44" cy="0" rx="9" ry="4.5" transform="rotate(30 44 0)" fill="#fff" stroke="#444" stroke-width="2.5"/><ellipse cx="-24" cy="10" rx="9" ry="4.5" transform="rotate(5 -24 10)" fill="#fff" stroke="#444" stroke-width="2.5"/><ellipse cx="16" cy="14" rx="9" ry="4.5" transform="rotate(-10 16 14)" fill="#fff" stroke="#444" stroke-width="2.5"/></g>
+    <text x="125.0" y="108" text-anchor="middle" font-size="21" font-weight="700" fill="#444">Segmentos</text>
+    <text x="125.0" y="134" text-anchor="middle" font-size="18" fill="#444">Salen con las heces:</text>
+    <text x="125.0" y="157" text-anchor="middle" font-size="18" fill="#444">«granos de arroz» junto</text>
+    <text x="125.0" y="180" text-anchor="middle" font-size="18" fill="#444">al ano o en la cama.</text>
+  </g>
+  <g transform="translate(443,636)">
+    <rect width="250" height="190" rx="14" fill="#ffffff" stroke="#2f6b4f" stroke-width="2.5"/>
+    <circle cx="26" cy="26" r="17" fill="#2f6b4f"/><text x="26" y="33" text-anchor="middle" font-size="20" font-weight="700" fill="#fff">3</text>
+    <g transform="translate(135.0,48)"><g transform="translate(-50,-6)"><ellipse cx="8" cy="-6.0" rx="7" ry="9" fill="#f3ead8" stroke="#444" stroke-width="2"/><ellipse cx="19" cy="-4.5" rx="7" ry="9" fill="#f3ead8" stroke="#444" stroke-width="2"/><ellipse cx="30" cy="-3.0" rx="7" ry="9" fill="#f3ead8" stroke="#444" stroke-width="2"/><ellipse cx="41" cy="-1.5" rx="7" ry="9" fill="#f3ead8" stroke="#444" stroke-width="2"/><ellipse cx="52" cy="0.0" rx="7" ry="9" fill="#f3ead8" stroke="#444" stroke-width="2"/><ellipse cx="63" cy="-1.5" rx="7" ry="9" fill="#f3ead8" stroke="#444" stroke-width="2"/><ellipse cx="74" cy="-3.0" rx="7" ry="9" fill="#f3ead8" stroke="#444" stroke-width="2"/><ellipse cx="85" cy="-4.5" rx="7" ry="9" fill="#f3ead8" stroke="#444" stroke-width="2"/><ellipse cx="96" cy="-6.0" rx="7" ry="9" fill="#f3ead8" stroke="#444" stroke-width="2"/><circle cx="101" cy="-6" r="7" fill="#a8691f"/></g></g>
+    <text x="125.0" y="108" text-anchor="middle" font-size="21" font-weight="700" fill="#444">Larva de pulga</text>
+    <text x="125.0" y="134" text-anchor="middle" font-size="18" fill="#444">En el suelo o la cama,</text>
+    <text x="125.0" y="157" text-anchor="middle" font-size="18" fill="#444">se come los huevos</text>
+    <text x="125.0" y="180" text-anchor="middle" font-size="18" fill="#444">de la tenia.</text>
+  </g>
+  <g transform="translate(107,636)">
+    <rect width="250" height="190" rx="14" fill="#ffffff" stroke="#2f6b4f" stroke-width="2.5"/>
+    <circle cx="26" cy="26" r="17" fill="#2f6b4f"/><text x="26" y="33" text-anchor="middle" font-size="20" font-weight="700" fill="#fff">4</text>
+    <g transform="translate(135.0,48)"><g transform="translate(-10,-4)"><ellipse cx="0" cy="0" rx="26" ry="18" fill="#7a4a1c"/><circle cx="26" cy="-4" r="9" fill="#7a4a1c"/><path d="M-6 14 L-18 34 L-34 30 M6 14 L4 32 M16 12 L22 30" fill="none" stroke="#7a4a1c" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><path d="M-26 -4 L-34 -16 M30 -12 L40 -20" stroke="#7a4a1c" stroke-width="3" stroke-linecap="round"/></g></g>
+    <text x="125.0" y="108" text-anchor="middle" font-size="21" font-weight="700" fill="#444">Pulga adulta</text>
+    <text x="125.0" y="134" text-anchor="middle" font-size="18" fill="#444">Crece llevando la</text>
+    <text x="125.0" y="157" text-anchor="middle" font-size="18" fill="#444">tenia dentro y salta</text>
+    <text x="125.0" y="180" text-anchor="middle" font-size="18" fill="#444">a un gato.</text>
+  </g>
+  <g transform="translate(4,317)">
+    <rect width="250" height="190" rx="14" fill="#ffffff" stroke="#2f6b4f" stroke-width="2.5"/>
+    <circle cx="26" cy="26" r="17" fill="#2f6b4f"/><text x="26" y="33" text-anchor="middle" font-size="20" font-weight="700" fill="#fff">5</text>
+    <g transform="translate(135.0,48)"><use href="#gato" xlink:href="#gato" x="-60" y="-44" width="60" height="72" color="#2f6b4f"/><ellipse cx="30" cy="-4" rx="10" ry="7" fill="#7a4a1c"/><circle cx="41" cy="-6" r="4" fill="#7a4a1c"/><path d="M22 -10 C 12 -26, -4 -26, -10 -20" fill="none" stroke="#444" stroke-width="3" marker-end="url(#fp)"/></g>
+    <text x="125.0" y="108" text-anchor="middle" font-size="21" font-weight="700" fill="#444">Se la traga</text>
+    <text x="125.0" y="134" text-anchor="middle" font-size="18" fill="#444">Al acicalarse, el gato</text>
+    <text x="125.0" y="157" text-anchor="middle" font-size="18" fill="#444">se come la pulga. En</text>
+    <text x="125.0" y="180" text-anchor="middle" font-size="18" fill="#444">~3 semanas, nueva tenia.</text>
+  </g>
+  <circle cx="400" cy="500" r="118" fill="#2f6b4f"/>
+  <text x="400" y="466" text-anchor="middle" font-size="22" font-weight="700" fill="#fff">Trata pulgas</text>
+  <text x="400" y="494" text-anchor="middle" font-size="22" font-weight="700" fill="#fff">y tenias</text>
+  <text x="400" y="522" text-anchor="middle" font-size="22" font-weight="700" fill="#fff">a la vez</text>
+  <text x="400" y="554" text-anchor="middle" font-size="17" fill="#fff">si no, vuelve</text>
+  <text x="400" y="576" text-anchor="middle" font-size="17" fill="#fff">a empezar</text>
+  <text x="400" y="878" text-anchor="middle" font-size="18" fill="#444">Solo productos para gatos que indique el veterinario (nunca de perro).</text>
+</svg>

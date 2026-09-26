@@ -1,0 +1,89 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 800 1016" width="800" height="1016" role="img" aria-labelledby="t d" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif">
+  <title id="t">Espectro de socialización del gato</title>
+  <desc id="d">Cinco grados, de menos a más socializado, con señales que se pueden observar y el destino habitual. No socializado: se esconde o huye; CER y retorno. Tímido: tolera a distancia; CER y retorno. Semisocializado: se acerca a quien le da de comer pero no se deja tocar; CER y retorno. Sociable: se deja tocar; adopción. Doméstico: busca a la gente, puede ser un gato perdido o abandonado; leer el chip o adopción. Nota: los gatitos se socializan mejor entre las 2 y las 7 semanas; con más de 4 meses sin contacto con personas, CER. Elaboración propia, CC BY-SA 4.0.</desc>
+  <defs>
+    <symbol id="gato" viewBox="0 0 100 120">
+      <path d="M34 112 C 8 114, 2 92, 14 80" fill="none" stroke="currentColor" stroke-width="8" stroke-linecap="round"/>
+      <path d="M45 44 C 28 58, 22 92, 30 114 L 80 114 C 84 96, 80 64, 70 46 Z" fill="currentColor"/>
+      <circle cx="60" cy="32" r="19" fill="currentColor"/>
+      <path d="M43 26 L45 4 L58 15 Z M62 15 L75 4 L77 26 Z" fill="currentColor"/>
+    </symbol>
+    <linearGradient id="grad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#2f6b4f"/>
+      <stop offset="1" stop-color="#8a5a17"/>
+    </linearGradient>
+  </defs>
+  <rect width="800" height="1016" fill="#ffffff"/>
+  <text x="400" y="48" text-anchor="middle" font-size="30" font-weight="700" fill="#2f6b4f">¿Cuánto trato tiene con la gente?</text>
+  <text x="400" y="80" text-anchor="middle" font-size="20" fill="#444">Señales que puedes observar y qué se hace con cada gato</text>
+  <text x="30" y="128" font-size="18" fill="#444">Menos socializado</text>
+  <text x="770" y="128" text-anchor="end" font-size="18" fill="#444">Hasta dónde se acerca a ti</text>
+
+  <path d="M34 150 L82 150 L82 800 L58 826 L34 800 Z" fill="url(#grad)"/>
+  <text transform="translate(64 495) rotate(90)" text-anchor="middle" font-size="20" font-weight="700" fill="#fff">MÁS SOCIABLE</text>
+
+  <g transform="translate(96,150)">
+    <rect width="674" height="124" rx="12" fill="#eaf3ee" stroke="#2f6b4f" stroke-width="2"/>
+    <g fill="#444"><circle cx="30" cy="34" r="11"/><path d="M14 58 Q14 48 30 48 Q46 48 46 58 L44 100 L16 100 Z"/></g>
+    <line x1="46" y1="102" x2="169" y2="102" stroke="#999" stroke-width="2" stroke-dasharray="4 4"/>
+    <use href="#gato" xlink:href="#gato" x="119" y="49" width="44" height="53" color="#2f6b4f"/>
+    <text x="178" y="38" font-size="22" font-weight="700" fill="#444">No socializado</text>
+    <text x="178" y="72" font-size="19" fill="#444">Se esconde o huye en cuanto te ve.</text>
+    <text x="178" y="100" font-size="19" fill="#444">Solo come cuando te has ido.</text>
+    <rect x="484" y="14" width="176" height="36" rx="18" fill="#2f6b4f"/>
+    <text x="572" y="39" text-anchor="middle" font-size="18" font-weight="700" fill="#fff">→ CER y retorno</text>
+  </g>
+  <g transform="translate(96,288)">
+    <rect width="674" height="124" rx="12" fill="#eaf3ee" stroke="#2f6b4f" stroke-width="2"/>
+    <g fill="#444"><circle cx="30" cy="34" r="11"/><path d="M14 58 Q14 48 30 48 Q46 48 46 58 L44 100 L16 100 Z"/></g>
+    <line x1="46" y1="102" x2="150" y2="102" stroke="#999" stroke-width="2" stroke-dasharray="4 4"/>
+    <use href="#gato" xlink:href="#gato" transform="matrix(-1 0 0 1 244 0)" x="100" y="49" width="44" height="53" color="#2f6b4f"/>
+    <text x="178" y="38" font-size="22" font-weight="700" fill="#444">Tímido</text>
+    <text x="178" y="72" font-size="19" fill="#444">Te tolera a distancia, a unos metros.</text>
+    <text x="178" y="100" font-size="19" fill="#444">Si te acercas, se aparta.</text>
+    <rect x="484" y="14" width="176" height="36" rx="18" fill="#2f6b4f"/>
+    <text x="572" y="39" text-anchor="middle" font-size="18" font-weight="700" fill="#fff">→ CER y retorno</text>
+  </g>
+  <g transform="translate(96,426)">
+    <rect width="674" height="124" rx="12" fill="#eaf3ee" stroke="#2f6b4f" stroke-width="2"/>
+    <g fill="#444"><circle cx="30" cy="34" r="11"/><path d="M14 58 Q14 48 30 48 Q46 48 46 58 L44 100 L16 100 Z"/></g>
+    <line x1="46" y1="102" x2="126" y2="102" stroke="#999" stroke-width="2" stroke-dasharray="4 4"/>
+    <use href="#gato" xlink:href="#gato" transform="matrix(-1 0 0 1 196 0)" x="76" y="49" width="44" height="53" color="#2f6b4f"/>
+    <text x="178" y="38" font-size="22" font-weight="700" fill="#444">Semisocializado</text>
+    <text x="178" y="72" font-size="19" fill="#444">Se acerca a quien le da de comer,</text>
+    <text x="178" y="100" font-size="19" fill="#444">pero no se deja tocar.</text>
+    <rect x="484" y="14" width="176" height="36" rx="18" fill="#2f6b4f"/>
+    <text x="572" y="39" text-anchor="middle" font-size="18" font-weight="700" fill="#fff">→ CER y retorno</text>
+  </g>
+  <g transform="translate(96,564)">
+    <rect width="674" height="124" rx="12" fill="#fbf1e3" stroke="#a8691f" stroke-width="2"/>
+    <g fill="#444"><circle cx="30" cy="34" r="11"/><path d="M14 58 Q14 48 30 48 Q46 48 46 58 L44 100 L16 100 Z"/></g>
+    <line x1="46" y1="102" x2="100" y2="102" stroke="#999" stroke-width="2" stroke-dasharray="4 4"/>
+    <use href="#gato" xlink:href="#gato" transform="matrix(-1 0 0 1 144 0)" x="50" y="49" width="44" height="53" color="#2f6b4f"/>
+    <text x="178" y="38" font-size="22" font-weight="700" fill="#444">Sociable</text>
+    <text x="178" y="72" font-size="19" fill="#444">Se deja tocar y acariciar;</text>
+    <text x="178" y="100" font-size="19" fill="#444">se frota contra las piernas.</text>
+    <rect x="484" y="14" width="176" height="36" rx="18" fill="#a8691f"/>
+    <text x="572" y="39" text-anchor="middle" font-size="18" font-weight="700" fill="#fff">→ Adopción</text>
+  </g>
+  <g transform="translate(96,702)">
+    <rect width="674" height="124" rx="12" fill="#fbf1e3" stroke="#a8691f" stroke-width="2"/>
+    <g fill="#444"><circle cx="30" cy="34" r="11"/><path d="M14 58 Q14 48 30 48 Q46 48 46 58 L44 100 L16 100 Z"/></g>
+    <line x1="46" y1="102" x2="86" y2="102" stroke="#999" stroke-width="2" stroke-dasharray="4 4"/>
+    <use href="#gato" xlink:href="#gato" transform="matrix(-1 0 0 1 116 0)" x="36" y="49" width="44" height="53" color="#2f6b4f"/>
+    <text x="178" y="38" font-size="22" font-weight="700" fill="#444">Doméstico</text>
+    <text x="178" y="72" font-size="19" fill="#444">Busca a la gente; puede ser un gato</text>
+    <text x="178" y="100" font-size="19" fill="#444">perdido o abandonado.</text>
+    <rect x="484" y="14" width="176" height="36" rx="18" fill="#a8691f"/>
+    <text x="572" y="39" text-anchor="middle" font-size="18" font-weight="700" fill="#fff">→ Chip o adopción</text>
+  </g>
+
+  <text x="30" y="852" font-size="18" fill="#444">Más socializado</text>
+  <g transform="translate(30,870)">
+    <rect width="740" height="130" rx="12" fill="#ffffff" stroke="#444" stroke-width="2"/>
+    <text x="22" y="36" font-size="19" fill="#444"><tspan font-weight="700">Gatitos:</tspan> se socializan mejor entre las 2 y las 7 semanas.</text>
+    <text x="22" y="64" font-size="19" fill="#444">Con más de 4 meses y sin contacto con personas: CER.</text>
+    <text x="22" y="92" font-size="19" fill="#444">Un gato asustado en una jaula puede parecer no</text>
+    <text x="22" y="116" font-size="19" fill="#444">socializado: obsérvalo varios días antes de decidir.</text>
+  </g>
+</svg>

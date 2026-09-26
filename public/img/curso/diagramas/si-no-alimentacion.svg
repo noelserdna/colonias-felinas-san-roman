@@ -1,0 +1,60 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 866" width="800" height="866" role="img" aria-labelledby="t d" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif">
+  <title id="t">Qué sí y qué no dar de comer</title>
+  <desc id="d">Dos columnas. Sí: pienso seco completo para gatos, que es la base; agua limpia siempre, cambiada cada día; horario fijo, en el mismo sitio y a la misma hora; recoger en unos 30 minutos lo que sobre; comederos limpios. No: leche; restos de comida, sobras, huesos o raspas; carne o pescado crudos; comida de perro; dejar comida en el suelo, que atrae plagas y ensucia. Nota: la comida húmeda solo para medicar, para capturar o si lo indica el veterinario. Elaboración propia, CC BY-SA 4.0.</desc>
+  <rect width="800" height="866" fill="#ffffff"/>
+  <text x="400" y="48" text-anchor="middle" font-size="30" font-weight="700" fill="#2f6b4f">Comida en la colonia</text>
+  <text x="400" y="80" text-anchor="middle" font-size="20" fill="#444">Qué sí y qué no</text>
+  <g transform="translate(20,100)">
+    <rect width="370" height="636" rx="14" fill="#eaf3ee" stroke="#2f6b4f" stroke-width="2.5"/>
+    <rect width="370" height="64" rx="14" fill="#2f6b4f"/><rect y="44" width="370" height="20" fill="#2f6b4f"/>
+    <text x="185" y="44" text-anchor="middle" font-size="30" font-weight="700" fill="#fff">✓ SÍ</text>
+    <g transform="translate(16,90)"><rect x="-6" y="-6" width="80" height="80" rx="12" fill="#fff"/><g transform="translate(2,2)"><path d="M4 36 L60 36 C 58 54, 46 60, 32 60 C 18 60, 6 54, 4 36 Z" fill="#444"/><circle cx="16" cy="31" r="5" fill="#a8691f"/><circle cx="27" cy="29" r="5" fill="#a8691f"/><circle cx="38" cy="31" r="5" fill="#a8691f"/><circle cx="48" cy="31" r="5" fill="#a8691f"/><circle cx="22" cy="23" r="5" fill="#a8691f"/><circle cx="33" cy="21" r="5" fill="#a8691f"/><circle cx="43" cy="24" r="5" fill="#a8691f"/></g><circle cx="62" cy="8" r="13" fill="#2f6b4f"/><text x="62" y="15" text-anchor="middle" font-size="19" font-weight="700" fill="#fff">✓</text></g>
+    <text x="104" y="124" font-size="20" font-weight="700" fill="#444">Pienso seco completo</text>
+    <text x="104" y="152" font-size="18" fill="#444">para gatos: es la base</text>
+    <line x1="16" y1="184" x2="354" y2="184" stroke="#2f6b4f" stroke-opacity="0.3" stroke-width="1.5"/>
+    <g transform="translate(16,200)"><rect x="-6" y="-6" width="80" height="80" rx="12" fill="#fff"/><g transform="translate(2,2)"><path d="M4 36 L60 36 C 58 54, 46 60, 32 60 C 18 60, 6 54, 4 36 Z" fill="#444"/><path d="M32 4 C 24 16, 20 22, 20 27 C 20 34, 26 38, 32 38 C 38 38, 44 34, 44 27 C 44 22, 40 16, 32 4 Z" fill="#3b7fb0"/></g><circle cx="62" cy="8" r="13" fill="#2f6b4f"/><text x="62" y="15" text-anchor="middle" font-size="19" font-weight="700" fill="#fff">✓</text></g>
+    <text x="104" y="234" font-size="20" font-weight="700" fill="#444">Agua limpia siempre</text>
+    <text x="104" y="262" font-size="18" fill="#444">cambiada cada día</text>
+    <line x1="16" y1="294" x2="354" y2="294" stroke="#2f6b4f" stroke-opacity="0.3" stroke-width="1.5"/>
+    <g transform="translate(16,310)"><rect x="-6" y="-6" width="80" height="80" rx="12" fill="#fff"/><g transform="translate(2,2)"><circle cx="32" cy="32" r="27" fill="#fff" stroke="#444" stroke-width="5"/><path d="M32 14 L32 32 L45 40" fill="none" stroke="#444" stroke-width="5" stroke-linecap="round"/></g><circle cx="62" cy="8" r="13" fill="#2f6b4f"/><text x="62" y="15" text-anchor="middle" font-size="19" font-weight="700" fill="#fff">✓</text></g>
+    <text x="104" y="344" font-size="20" font-weight="700" fill="#444">Horario fijo</text>
+    <text x="104" y="372" font-size="18" fill="#444">mismo sitio y misma hora</text>
+    <line x1="16" y1="404" x2="354" y2="404" stroke="#2f6b4f" stroke-opacity="0.3" stroke-width="1.5"/>
+    <g transform="translate(16,420)"><rect x="-6" y="-6" width="80" height="80" rx="12" fill="#fff"/><g transform="translate(2,2)"><circle cx="32" cy="32" r="27" fill="#fff" stroke="#444" stroke-width="5"/><path d="M32 32 L32 8 A 24 24 0 0 1 32 56 Z" fill="#a8691f"/></g><circle cx="62" cy="8" r="13" fill="#2f6b4f"/><text x="62" y="15" text-anchor="middle" font-size="19" font-weight="700" fill="#fff">✓</text></g>
+    <text x="104" y="454" font-size="20" font-weight="700" fill="#444">Recoger en ~30 min</text>
+    <text x="104" y="482" font-size="18" fill="#444">lo que sobre, se retira</text>
+    <line x1="16" y1="514" x2="354" y2="514" stroke="#2f6b4f" stroke-opacity="0.3" stroke-width="1.5"/>
+    <g transform="translate(16,530)"><rect x="-6" y="-6" width="80" height="80" rx="12" fill="#fff"/><g transform="translate(2,2)"><path d="M4 36 L60 36 C 58 54, 46 60, 32 60 C 18 60, 6 54, 4 36 Z" fill="#444"/><path d="M14 8 L14 24 M6 16 L22 16 M46 4 L46 18 M39 11 L53 11" stroke="#a8691f" stroke-width="4" stroke-linecap="round"/></g><circle cx="62" cy="8" r="13" fill="#2f6b4f"/><text x="62" y="15" text-anchor="middle" font-size="19" font-weight="700" fill="#fff">✓</text></g>
+    <text x="104" y="564" font-size="20" font-weight="700" fill="#444">Comederos limpios</text>
+    <text x="104" y="592" font-size="18" fill="#444">lavados a menudo</text>
+  </g>
+  <g transform="translate(410,100)">
+    <rect width="370" height="636" rx="14" fill="#fdecea" stroke="#b3261e" stroke-width="2.5"/>
+    <rect width="370" height="64" rx="14" fill="#b3261e"/><rect y="44" width="370" height="20" fill="#b3261e"/>
+    <text x="185" y="44" text-anchor="middle" font-size="30" font-weight="700" fill="#fff">✗ NO</text>
+    <g transform="translate(16,90)"><rect x="-6" y="-6" width="80" height="80" rx="12" fill="#fff"/><g transform="translate(2,2)"><path d="M16 20 L26 6 L42 6 L50 20 L50 60 L16 60 Z" fill="#fff" stroke="#444" stroke-width="4" stroke-linejoin="round"/><path d="M16 20 L50 20" stroke="#444" stroke-width="4"/><path d="M20 34 L46 34 L46 50 L20 50 Z" fill="#3b7fb0" opacity="0.35"/><text x="33" y="47" text-anchor="middle" font-size="12" font-weight="700" fill="#444">LECHE</text></g><circle cx="62" cy="8" r="13" fill="#b3261e"/><text x="62" y="15" text-anchor="middle" font-size="19" font-weight="700" fill="#fff">✗</text></g>
+    <text x="104" y="124" font-size="20" font-weight="700" fill="#444">Leche</text>
+    <text x="104" y="152" font-size="18" fill="#444">les sienta mal</text>
+    <line x1="16" y1="184" x2="354" y2="184" stroke="#b3261e" stroke-opacity="0.3" stroke-width="1.5"/>
+    <g transform="translate(16,200)"><rect x="-6" y="-6" width="80" height="80" rx="12" fill="#fff"/><g transform="translate(2,2)"><ellipse cx="32" cy="44" rx="30" ry="12" fill="#fff" stroke="#444" stroke-width="4"/><path d="M12 40 L50 40 M20 34 L20 46 M28 33 L28 47 M36 33 L36 47 M44 34 L44 46" stroke="#444" stroke-width="3" stroke-linecap="round"/><path d="M50 40 L58 34 L58 46 Z" fill="#444"/><circle cx="12" cy="40" r="4" fill="#444"/></g><circle cx="62" cy="8" r="13" fill="#b3261e"/><text x="62" y="15" text-anchor="middle" font-size="19" font-weight="700" fill="#fff">✗</text></g>
+    <text x="104" y="234" font-size="20" font-weight="700" fill="#444">Restos de comida</text>
+    <text x="104" y="262" font-size="18" fill="#444">sobras, huesos, raspas</text>
+    <line x1="16" y1="294" x2="354" y2="294" stroke="#b3261e" stroke-opacity="0.3" stroke-width="1.5"/>
+    <g transform="translate(16,310)"><rect x="-6" y="-6" width="80" height="80" rx="12" fill="#fff"/><g transform="translate(2,2)"><path d="M4 32 C 16 14, 42 14, 52 32 C 42 50, 16 50, 4 32 Z" fill="#c9676f"/><path d="M50 32 L62 20 L62 44 Z" fill="#c9676f"/><circle cx="16" cy="29" r="3" fill="#fff"/><path d="M26 22 C 30 28, 30 36, 26 42" fill="none" stroke="#fff" stroke-width="2"/></g><circle cx="62" cy="8" r="13" fill="#b3261e"/><text x="62" y="15" text-anchor="middle" font-size="19" font-weight="700" fill="#fff">✗</text></g>
+    <text x="104" y="344" font-size="20" font-weight="700" fill="#444">Carne o pescado crudos</text>
+    <text x="104" y="372" font-size="18" fill="#444">riesgo de parásitos</text>
+    <line x1="16" y1="404" x2="354" y2="404" stroke="#b3261e" stroke-opacity="0.3" stroke-width="1.5"/>
+    <g transform="translate(16,420)"><rect x="-6" y="-6" width="80" height="80" rx="12" fill="#fff"/><g transform="translate(2,2)"><path d="M4 36 L60 36 C 58 54, 46 60, 32 60 C 18 60, 6 54, 4 36 Z" fill="#444"/><path d="M16 26 L48 26" stroke="#fff" stroke-width="7" stroke-linecap="round"/><circle cx="15" cy="22" r="5" fill="#fff" stroke="#444" stroke-width="2"/><circle cx="15" cy="30" r="5" fill="#fff" stroke="#444" stroke-width="2"/><circle cx="49" cy="22" r="5" fill="#fff" stroke="#444" stroke-width="2"/><circle cx="49" cy="30" r="5" fill="#fff" stroke="#444" stroke-width="2"/><path d="M15 26 L49 26" stroke="#fff" stroke-width="8"/><path d="M15 22.5 L49 22.5 M15 29.5 L49 29.5" stroke="#444" stroke-width="2"/><text x="32" y="53" text-anchor="middle" font-size="12" font-weight="700" fill="#fff">PERRO</text></g><circle cx="62" cy="8" r="13" fill="#b3261e"/><text x="62" y="15" text-anchor="middle" font-size="19" font-weight="700" fill="#fff">✗</text></g>
+    <text x="104" y="454" font-size="20" font-weight="700" fill="#444">Comida de perro</text>
+    <text x="104" y="482" font-size="18" fill="#444">no cubre lo que necesitan</text>
+    <line x1="16" y1="514" x2="354" y2="514" stroke="#b3261e" stroke-opacity="0.3" stroke-width="1.5"/>
+    <g transform="translate(16,530)"><rect x="-6" y="-6" width="80" height="80" rx="12" fill="#fff"/><g transform="translate(2,2)"><path d="M2 52 L62 52" stroke="#444" stroke-width="4"/><circle cx="12" cy="46" r="4.5" fill="#a8691f"/><circle cx="22" cy="47" r="4.5" fill="#a8691f"/><circle cx="30" cy="45" r="4.5" fill="#a8691f"/><circle cx="40" cy="47" r="4.5" fill="#a8691f"/><circle cx="26" cy="39" r="4.5" fill="#a8691f"/><ellipse cx="48" cy="44" rx="3" ry="2" fill="#444"/><ellipse cx="52" cy="44" rx="2.5" ry="2" fill="#444"/><ellipse cx="54" cy="36" rx="3" ry="2" fill="#444"/><ellipse cx="58" cy="36" rx="2.5" ry="2" fill="#444"/><ellipse cx="46" cy="30" rx="3" ry="2" fill="#444"/><ellipse cx="50" cy="30" rx="2.5" ry="2" fill="#444"/></g><circle cx="62" cy="8" r="13" fill="#b3261e"/><text x="62" y="15" text-anchor="middle" font-size="19" font-weight="700" fill="#fff">✗</text></g>
+    <text x="104" y="564" font-size="20" font-weight="700" fill="#444">Comida en el suelo</text>
+    <text x="104" y="592" font-size="18" fill="#444">atrae plagas y ensucia</text>
+  </g>
+  <g transform="translate(20,756)">
+    <rect width="760" height="90" rx="12" fill="#fbf1e3" stroke="#a8691f" stroke-width="2"/>
+    <text x="22" y="38" font-size="19" fill="#444"><tspan font-weight="700">Comida húmeda:</tspan> solo para medicar, para capturar</text>
+    <text x="22" y="66" font-size="19" fill="#444">o si lo indica el veterinario.</text>
+  </g>
+</svg>
