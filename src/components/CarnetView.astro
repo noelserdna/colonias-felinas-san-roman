@@ -3,7 +3,7 @@ import { isDemo } from "../lib/demo";
 // Carnet (anverso/reverso, reloj en directo y giro). Se usa en /carnet y como pantalla principal.
 import Icon from "./Icon.astro";
 import { getDb } from "../lib/db";
-import { carnetStatus, getLatestCarnet } from "../lib/carnet";
+import { carnetStatus, esIndefinido, getLatestCarnet } from "../lib/carnet";
 import { formatDate } from "../lib/util";
 import { getUserColonies } from "../lib/colonies";
 
@@ -40,7 +40,11 @@ const demo = isDemo();
             <dl class="c-fields">
               <div class="c-field-num"><dt class="c-label">Nº de carnet</dt><dd class="c-number">{carnet.numero}</dd></div>
               <div><dt class="c-label">Emisión</dt><dd>{formatDate(carnet.issuedAt)}</dd></div>
-              <div><dt class="c-label">Válido hasta</dt><dd>{formatDate(carnet.expiresAt)}</dd></div>
+              {esIndefinido(carnet.expiresAt) ? (
+                <div><dt class="c-label">Validez</dt><dd>Sin caducidad</dd></div>
+              ) : (
+                <div><dt class="c-label">Válido hasta</dt><dd>{formatDate(carnet.expiresAt)}</dd></div>
+              )}
             </dl>
             {colonias.length > 0 && (
               <ul class="carnet-colonias" aria-label="Colonias que atiende">

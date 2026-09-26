@@ -558,6 +558,16 @@ test("alta de colonia, censo, fichas, carnet y baja validada con JEV", async ({ 
     await page.locator("summary", { hasText: "Ver movimientos" }).first().click();
     await expect(page.locator(".census-moves").first()).toContainText("Nacidos en la colonia");
   }
+  // Cada censo del historial se descarga en PDF (por si el ayuntamiento lo pide en papel); sin sesión, no.
+  await page.goto("/colonia");
+  await page.getByRole("link", { name: "Actualizar el censo" }).click();
+  const [descarga] = await Promise.all([page.waitForEvent("download"), page.getByRole("link", { name: /Descargar el censo en PDF/ }).first().click()]);
+  expect(descarga.suggestedFilename()).toMatch(/censo-colonia-\d+-\d{4}-\d{2}-\d{2}\.pdf$/);
+  const pdfPath = new URL(descarga.url()).pathname;
+  expect((await admin.request.get(pdfPath)).headers()["content-type"]).toBe("application/pdf");
+  const anonimo = await (await browser.newContext()).request.get(pdfPath, { maxRedirects: 0 });
+  expect(anonimo.status()).toBeGreaterThanOrEqual(300);
+  expect(anonimo.headers()["content-type"] ?? "").not.toContain("pdf");
   await page.goto("/carnet");
   await expect(page.locator(".carnet.front .carnet-colonias")).toContainText(`${nombreColonia} · 9 gatos`);
 
@@ -590,6 +600,46 @@ test("alta de colonia, censo, fichas, carnet y baja validada con JEV", async ({ 
   await admin.getByLabel(/Dar de baja la colonia/).check();
   await admin.getByRole("button", { name: "Guardar", exact: true }).click();
   await expect(admin.getByText("Datos guardados.")).toBeVisible();
+});
+
+test("carnet sin caducidad: ajuste vacío, renovación y aplicar la vigencia a los vigentes", async ({ browser }) => {
+  const stamp = Date.now();
+  const email = `vigencia-${stamp}@example.org`;
+  const page = await (await browser.newContext()).newPage();
+  await login(page, email);
+  darCarnet(email, "Vera", `Vigencia ${stamp}`);
+  await page.goto("/carnet");
+  await expect(page.locator(".carnet.front .c-fields")).toContainText("Válido hasta");
+
+  const admin = await (await browser.newContext()).newPage();
+  await login(admin, ADMIN);
+  await admin.goto("/admin/ajustes");
+  const original = await admin.getByLabel(/Validez del carnet/).inputValue();
+  await admin.getByLabel(/Validez del carnet/).fill("");
+  await admin.getByRole("button", { name: "Guardar ajustes" }).click();
+  await expect(admin.getByText("Ajustes guardados")).toBeVisible();
+  try {
+    await expect(admin.getByLabel(/Validez del carnet/)).toHaveValue("");
+    // Aplicar a los vigentes pide confirmación en la propia página (aquí se cancela para no cambiar
+    // todos los carnets de la base local).
+    await admin.goto("/admin/carnets");
+    await admin.getByRole("button", { name: "Aplicar esta vigencia a los carnets vigentes" }).click();
+    await expect(admin.locator("#vigencia-confirmar")).toContainText(/no caducar/);
+    await admin.locator("#vigencia-confirmar").getByRole("link", { name: "Cancelar" }).click();
+    await expect(admin.locator("#vigencia-confirmar")).toHaveCount(0);
+    // Con vigencia indefinida, renovar deja el carnet sin caducidad (igual que un carnet nuevo).
+    const fila = () => admin.locator("tr", { hasText: `Vigencia ${stamp}` });
+    await fila().getByRole("button", { name: "Renovar" }).click();
+    await expect(fila()).toContainText("Sin caducidad");
+    await expect(fila().getByRole("button", { name: "Renovar" })).toHaveCount(0);
+    await page.goto("/carnet");
+    await expect(page.locator(".carnet.front .c-fields")).toContainText("Sin caducidad");
+    await expect(page.locator(".front .c-live")).toContainText("Vigente");
+  } finally {
+    await admin.goto("/admin/ajustes");
+    await admin.getByLabel(/Validez del carnet/).fill(original);
+    await admin.getByRole("button", { name: "Guardar ajustes" }).click();
+  }
 });
 
 test("fotos y observaciones de los gatos, y relevo automático de la persona responsable", async ({ browser }) => {

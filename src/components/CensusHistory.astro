@@ -1,11 +1,12 @@
 ---
-// Historial de censos de una colonia, con los movimientos declarados (si los hay) en un desplegable.
+// Historial de censos de una colonia, con los movimientos declarados (si los hay) en un desplegable
+// y la descarga de cada censo en PDF (por si el ayuntamiento lo pide en papel).
 import { censusTotal, hasMovements, MOVIMIENTO_KEYS, MOVIMIENTOS } from "../lib/colonies";
 import { formatDate } from "../lib/util";
 import type { schema } from "../lib/db";
 
-type Props = { censuses: (typeof schema.colonyCensuses.$inferSelect)[]; detalle?: boolean };
-const { censuses, detalle = false } = Astro.props;
+type Props = { censuses: (typeof schema.colonyCensuses.$inferSelect)[]; colonyId: string; detalle?: boolean };
+const { censuses, colonyId, detalle = false } = Astro.props;
 ---
 <div class="table-scroll">
   <table class="data responsive">
@@ -14,6 +15,7 @@ const { censuses, detalle = false } = Astro.props;
         <th>Fecha</th><th>Total</th><th>Hembras (est./sin)</th><th>Machos (cast./sin)</th>
         {detalle && <><th>Adoptables</th><th>Enfermos</th></>}
         <th>Movimientos</th>
+        <th>PDF</th>
       </tr>
     </thead>
     <tbody>
@@ -36,6 +38,11 @@ const { censuses, detalle = false } = Astro.props;
               </details>
             ) : <span class="muted">—</span>}
             {c.observaciones && <p class="muted text-sm mb-0">{c.observaciones}</p>}
+          </td>
+          <td data-label="PDF">
+            <a class="btn small ghost" href={`/colonia/${colonyId}/censo/${c.id}.pdf`} download data-astro-reload>
+              Descargar el censo en PDF<span class="sr-only"> del {formatDate(c.fecha)}</span>
+            </a>
           </td>
         </tr>
       ))}

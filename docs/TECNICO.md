@@ -51,7 +51,18 @@ panel. San Román (ordenanza del BOP de Toledo n.º 122, de 28/06/2024) es una *
   *nullable* en `colony_censuses`), `validateCensus` (un descuadre es un aviso con «Guardar igualmente», no un error),
   `censusMovementsFromCats` (propuesta a partir de las fichas, con `colony_cats.estado_desde`) y el estado de gato
   `devuelto` (a su responsable legal).
-- **Ajustes**: `carnet_prefix` (por defecto `CF`) y `carnet_aviso_dias` (aviso de caducidad; se repite 15 días después).
+- **Ajustes**: `carnet_prefix` (por defecto `CF`), `carnet_validity_months` (0 o vacío = **indefinido**, el valor por
+  defecto: el carnet vale mientras se colabora y se retira revocándolo) y `carnet_aviso_dias` (aviso de caducidad; se
+  repite 15 días después; no afecta a los indefinidos).
+- **Carnet sin caducidad** (`src/lib/carnet-vigencia.ts`, puro): se guarda con la fecha centinela `SIN_CADUCIDAD`
+  (31/12/9999) en `carnets.expires_at`, que sigue siendo NOT NULL; así todas las consultas `expires_at > ahora` siguen
+  valiendo. `esIndefinido`, `caducidad(desde, meses)` y `textoCaducidad` («Sin caducidad» en la UI). En
+  *Administración → Carnets*, «Aplicar esta vigencia a los carnets vigentes» (con confirmación en la página,
+  `planVigencia`) recalcula la caducidad de los no revocados y sin caducar desde su fecha de emisión.
+- **Censo en PDF** (`censoPdf` en `anexos-pdf.ts`, datos con `censoPdfDatos` de `colonies.ts`):
+  `/colonia/<id>/censo/<censoId>.pdf`, solo para quien cuida la colonia o el ayuntamiento (`loadColony`). Título con
+  `etiqueta_censo` (p. ej. «Anexo V»), periodo desde el censo anterior, tabla por sexo con los movimientos («—» si no
+  se declararon), esterilizados, adoptables, enfermos, observaciones y firma. Botón en cada fila del historial.
 - **Precargas** `seed/local/<slug>/` + `node scripts/build-local.mjs <slug> [--sobrescribir]` → `seed/local/<slug>.sql`
   (ignorado por git), idempotente (`ON CONFLICT DO NOTHING`). La de San Román: `npm run db:local:sanroman:local`
   (`:remote` / `:demo` para producción y demo; orden de despliegue: migraciones → precarga → deploy). El suplemento
@@ -120,7 +131,8 @@ UTC se envían los recordatorios de censo y de carnet.
   app instalada. Al cerrar sesión se cancelan en ese dispositivo.
 - **Número en el icono** (Badging API): avisos sin leer.
 - **Recordatorios** (cron diario 08:00 UTC, `src/lib/reminders.ts`): censo de más de seis meses a la persona
-  responsable (no se repite en 30 días) y carnet que caduca en 30 días (no se repite en 45).
+  responsable (no se repite en 30 días) y carnet que caduca en 30 días (no se repite en 45; los carnets sin
+  caducidad nunca lo reciben).
 
 Claves VAPID: `node scripts/vapid-keys.mjs` genera el par; la pública va en `VAPID_PUBLIC_KEY`
 (`wrangler.jsonc`) y la privada, como JSON, en el secreto `VAPID_PRIVATE_KEY` (y en `.dev.vars` en local).

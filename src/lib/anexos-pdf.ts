@@ -1,5 +1,5 @@
-// Genera las solicitudes de registro de colonia y de alta como colaborador/a, y la autorización de la
-// persona propietaria del terreno, en blanco o rellenas. Los textos que dependen de la normativa de cada
+// Genera las solicitudes de registro de colonia y de alta como colaborador/a, la autorización de la
+// persona propietaria del terreno (en blanco o rellenas) y el censo de una colonia para presentarlo en papel. Los textos que dependen de la normativa de cada
 // municipio (nombres de los anexos, órgano, pie…) llegan en `textos` (Administración → Programa local).
 // Módulo puro (sin dependencias de Cloudflare): se usa en el navegador, en el servidor y en scripts de Node.
 import { PDFDocument, rgb, StandardFonts, type PDFFont, type PDFPage, type PDFImage } from "pdf-lib";
@@ -49,6 +49,8 @@ export type AnexoTextos = {
   /** Nombre oficial de cada formulario (p. ej. «Anexo I»). Vacío = sin nombre oficial. */
   etiquetaRegistro: string;
   etiquetaColaborador: string;
+  /** Nombre oficial del censo de la colonia (p. ej. «Anexo V»). Vacío = sin nombre oficial. */
+  etiquetaCenso: string;
   tituloRegistro: string;
   tituloColaborador: string;
   /** Párrafo final del registro (qué hará el Ayuntamiento con la solicitud). */
@@ -71,6 +73,7 @@ export const DEFAULT_TEXTOS: AnexoTextos = {
   rgpdBase: "Ley 7/2023 y normativa municipal",
   etiquetaRegistro: "",
   etiquetaColaborador: "",
+  etiquetaCenso: "",
   tituloRegistro: "Solicitud para registrar una nueva colonia de gatos urbanos",
   tituloColaborador: "Solicitud de alta como persona colaboradora del programa de colonias felinas",
   registroResolucion:
@@ -197,11 +200,11 @@ function firma(c: Ctx, lugar?: string, fecha?: Date | null, quien = "El/La solic
   c.y -= 30;
 }
 
-function proteccionDatos(c: Ctx, pie = c.t.pie) {
+function proteccionDatos(c: Ctx, pie = c.t.pie, finalidad = "tramitar esta solicitud y gestionar el registro de colonias felinas y de personas cuidadoras") {
   const size = 7.5;
   const t =
-    `Protección de datos: el responsable del tratamiento es el Ayuntamiento de ${c.municipio}. Los datos se tratan para tramitar esta solicitud y ` +
-    `gestionar el registro de colonias felinas y de personas cuidadoras, en ejercicio de las competencias municipales (${c.t.rgpdBase}). ` +
+    `Protección de datos: el responsable del tratamiento es el Ayuntamiento de ${c.municipio}. Los datos se tratan para ${finalidad}, ` +
+    `en ejercicio de las competencias municipales (${c.t.rgpdBase}). ` +
     "Puede ejercer sus derechos de acceso, rectificación, supresión, oposición, limitación y portabilidad ante el Ayuntamiento.";
   const lines = wrap(t, c.font, size, W);
   let y = M + lines.length * (size + 2);
@@ -424,6 +427,123 @@ export async function autorizacionPropietario(opts: Opts<AutorizacionData>): Pro
     c,
     `Modelo orientativo de la autorización expresa de la persona propietaria${ref ? ` que exige el ${ref}` : ""}${cita ? ` (${cita})` : ""}. No es un formulario oficial.`,
   );
+  return c.doc.save();
+}
+
+/** Recuento por sexo; null = no declarado (se imprime «—»). */
+export type PorSexo = { machos: number | null; hembras: number | null };
+
+export type CensoPdfData = {
+  colonia: { numero: number; nombre: string; direccion?: string };
+  /** Fecha de este censo y del anterior (null si es el primero). */
+  fecha: Date;
+  fechaAnterior: Date | null;
+  /** Persona que hizo el censo (firma). */
+  persona?: string;
+  /** Gatos en el censo anterior (null si es el primero). */
+  anterior: PorSexo | null;
+  /** Movimientos desde el censo anterior, en el orden en que se imprimen. */
+  movimientos: (PorSexo & { label: string; entrada: boolean })[];
+  actual: { machos: number; hembras: number };
+  esterilizadosAnterior: PorSexo | null;
+  esterilizadosActual: { machos: number; hembras: number };
+  adoptables: number;
+  enfermos: number;
+  observaciones?: string | null;
+  lugar?: string;
+};
+
+/**
+ * El día de España al que corresponde un instante, como fecha local (el Worker va en UTC: un censo
+ * guardado a las 00:30 en Madrid es del día anterior en UTC).
+ */
+export function diaEnEspana(d: Date): Date {
+  const [y, m, day] = new Intl.DateTimeFormat("en-CA", { timeZone: "Europe/Madrid", year: "numeric", month: "2-digit", day: "2-digit" })
+    .format(d)
+    .split("-")
+    .map(Number);
+  return new Date(y, m - 1, day);
+}
+
+const fechaCorta = (instante: Date) => {
+  const d = diaEnEspana(instante);
+  return `${String(d.getDate()).padStart(2, "0")}/${String(d.getMonth() + 1).padStart(2, "0")}/${d.getFullYear()}`;
+};
+
+/** Título del censo: «Anexo V: Censo de gatos de la colonia» o solo el título, según haya nombre oficial. */
+export function tituloCenso(etiquetaCenso: string) {
+  return conEtiqueta(etiquetaCenso, "Censo de gatos de la colonia");
+}
+
+/**
+ * Censo de una colonia en una página, como el censo en papel de algunas ordenanzas (en San Román, el
+ * Anexo V): periodo, recuento por sexo con altas y bajas desde el censo anterior, esterilizados,
+ * adoptables, enfermos, observaciones y firma. Lo que no se declaró sale como «—».
+ */
+export async function censoPdf(opts: Opts<CensoPdfData> & { data: CensoPdfData }): Promise<Uint8Array> {
+  const d = opts.data;
+  const t = { ...DEFAULT_TEXTOS, ...opts.textos };
+  const titulo = tituloCenso(t.etiquetaCenso);
+  const c = await newDoc(opts.municipio, opts.escudoPng, `${conEtiqueta(t.etiquetaCenso, "Censo de gatos de la colonia", " · ")} n.º ${d.colonia.numero} · ${fechaCorta(d.fecha)}`, t);
+  header(c, titulo.toUpperCase());
+
+  heading(c, "DATOS DE LA COLONIA");
+  field(c, "N.º de colonia:", String(d.colonia.numero), M, 150);
+  field(c, "Nombre:", d.colonia.nombre, M + 165, W - 165);
+  c.y -= 22;
+  field(c, "Dirección:", d.colonia.direccion);
+  c.y -= 22;
+  const periodo = d.fechaAnterior ? `Del ${fechaCorta(d.fechaAnterior)} al ${fechaCorta(d.fecha)}` : `Primer censo de la colonia (${fechaCorta(d.fecha)})`;
+  field(c, "Periodo:", periodo, M, 300);
+  field(c, "Fecha del censo:", fechaCorta(d.fecha), M + 315, W - 315);
+  c.y -= 22;
+  field(c, "Censo realizado por:", d.persona);
+  c.y -= 14;
+
+  heading(c, "NÚMERO DE GATOS POR SEXO");
+  const num = (n: number | null | undefined) => (n == null ? "—" : String(n));
+  const suma = (x: PorSexo | null) => (x && x.machos != null && x.hembras != null ? x.machos + x.hembras : null);
+  const cw = 72; // ancho de cada columna numérica
+  const cols = [M + W - 3 * cw, M + W - 2 * cw, M + W - cw];
+  const celdas = (vals: string[], y: number, font = c.font) =>
+    vals.forEach((v, i) => {
+      const s = toWinAnsi(v);
+      text(c, s, cols[i] + cw - 10 - font.widthOfTextAtSize(s, 10), y, 10, font);
+    });
+  (["MACHOS", "HEMBRAS", "TOTAL"] as const).forEach((h, i) => text(c, h, cols[i] + cw - 10 - c.bold.widthOfTextAtSize(h, 8), c.y, 8, c.bold, MUTED));
+  c.y -= 16;
+  const fila = (label: string, x: PorSexo | null, opts: { bold?: boolean; raya?: boolean } = {}) => {
+    const font = opts.bold ? c.bold : c.font;
+    if (opts.raya) c.page.drawLine({ start: { x: M, y: c.y + 12 }, end: { x: M + W, y: c.y + 12 }, thickness: 0.8, color: LINE });
+    text(c, fit(label, font, 10, cols[0] - M - 8), M + 4, c.y, 10, font);
+    celdas([num(x?.machos), num(x?.hembras), num(suma(x))], c.y, font);
+    c.page.drawLine({ start: { x: M, y: c.y - 5 }, end: { x: M + W, y: c.y - 5 }, thickness: 0.4, color: rgb(0.8, 0.82, 0.81) });
+    c.y -= 17;
+  };
+  fila(d.fechaAnterior ? `Censo anterior (${fechaCorta(d.fechaAnterior)})` : "Censo anterior", d.anterior, { bold: true });
+  for (const m of d.movimientos) fila(`${m.entrada ? "(+)" : "(-)"} ${m.label}`, m);
+  fila(`Total en este censo (${fechaCorta(d.fecha)})`, d.actual, { bold: true, raya: true });
+  c.y -= 6;
+  fila("Esterilizados/castrados en el censo anterior", d.esterilizadosAnterior);
+  fila("Esterilizados/castrados en este censo", d.esterilizadosActual);
+  c.y -= 4;
+
+  heading(c, "OTROS DATOS");
+  field(c, "Gatos adoptables (abandonados o cachorros):", String(d.adoptables), M, 270);
+  field(c, "Gatos enfermos:", String(d.enfermos), M + 285, W - 285);
+  c.y -= 24;
+  text(c, "Observaciones:", M, c.y, 9.5, c.bold);
+  c.y -= 16;
+  // Hueco fijo de 5 líneas: si no cabe todo, se corta con «…» para que el censo quepa en una página.
+  const obs = d.observaciones?.trim() ? d.observaciones.trim().split(/\n+/).flatMap((p) => wrap(p, c.font, 10, W - 4)) : [];
+  for (let i = 0; i < 5; i++) {
+    c.page.drawLine({ start: { x: M, y: c.y - 2 }, end: { x: M + W, y: c.y - 2 }, thickness: 0.6, color: LINE });
+    const linea = i === 4 && obs.length > 5 ? fit(obs.slice(4).join(" "), c.font, 10, W - 4) : obs[i];
+    if (linea) text(c, linea, M + 3, c.y + 0.5, 10, c.font, FILL);
+    c.y -= 17;
+  }
+  firma(c, d.lugar, diaEnEspana(d.fecha), d.persona?.trim() || "La persona responsable de la colonia");
+  proteccionDatos(c, t.pie, "gestionar el registro de colonias felinas y su censo");
   return c.doc.save();
 }
 

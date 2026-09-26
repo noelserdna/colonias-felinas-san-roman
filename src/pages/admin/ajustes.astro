@@ -322,7 +322,18 @@ const noteRole = (section: string) => (note(section)?.ok ? "status" : "alert");
         {keys.map((k) => (
           <div>
             <label for={k}>{SETTINGS_LABELS[k]}</label>
-            <input id={k} name={k} type={typeof s[k] === "number" ? "number" : "text"} step={step[k] ?? "1"} value={String(s[k])} required style="max-width:14rem" />
+            {k === "carnet_validity_months" ? (
+              <>
+                <input id={k} name={k} type="number" min="0" max="240" step="1" value={s[k] > 0 ? String(s[k]) : ""} placeholder="Indefinido" style="max-width:14rem" aria-describedby="validez-help" />
+                <small class="muted" id="validez-help">
+                  Vacío (o 0): el carnet no caduca; vale mientras la persona colabora y se retira revocándolo en <a href="/admin/carnets">Carnets</a>.
+                  Con un número de meses, caduca y se renueva repitiendo el examen final. Afecta a los carnets nuevos; para cambiar los
+                  que ya están vigentes, usa «Aplicar esta vigencia a los carnets vigentes» en <a href="/admin/carnets#vigencia">Carnets</a>.
+                </small>
+              </>
+            ) : (
+              <input id={k} name={k} type={typeof s[k] === "number" ? "number" : "text"} step={step[k] ?? "1"} value={String(s[k])} required style="max-width:14rem" />
+            )}
           </div>
         ))}
         {title === "Dificultad de las preguntas" && (

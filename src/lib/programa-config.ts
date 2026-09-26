@@ -4,7 +4,7 @@
 // Módulo puro (solo zod): lo usan las páginas, los tests y scripts/build-local.mjs. Por eso los imports
 // internos llevan la extensión .ts.
 import { z } from "zod";
-import { DEFAULT_TEXTOS, type AnexoTextos } from "./anexos-pdf.ts";
+import { DEFAULT_TEXTOS, diaEnEspana, type AnexoTextos } from "./anexos-pdf.ts";
 import { isWinAnsi, nonWinAnsiChars } from "./winansi.ts";
 
 const blankToEmpty = (v: unknown) => (typeof v === "string" ? v.trim() : v == null ? "" : v);
@@ -296,6 +296,14 @@ export function docsPdf(p: Programa) {
   };
 }
 
+/** Nombre del censo en PDF: «anexo-v-censo-colonia-3-2026-06-30.pdf» (sin nombre oficial, sin prefijo). */
+export function censoPdfNombre(p: Programa, numero: number, fecha: Date): string {
+  const pre = etiqueta(p, "censo") ? `${slug(etiqueta(p, "censo"))}-` : "";
+  const f = diaEnEspana(fecha);
+  const dia = `${f.getFullYear()}-${String(f.getMonth() + 1).padStart(2, "0")}-${String(f.getDate()).padStart(2, "0")}`;
+  return `${pre}censo-colonia-${numero}-${dia}.pdf`;
+}
+
 /** Textos de los PDF de las solicitudes, ya resueltos para este municipio. */
 export function textosAnexos(p: Programa, b: BrandingBasico): AnexoTextos {
   const vars = programaVars(p, b);
@@ -306,6 +314,7 @@ export function textosAnexos(p: Programa, b: BrandingBasico): AnexoTextos {
     rgpdBase: p.pdf_rgpd_base,
     etiquetaRegistro: p.etiqueta_registro,
     etiquetaColaborador: p.etiqueta_colaborador,
+    etiquetaCenso: p.etiqueta_censo,
     tituloRegistro: p.pdf_titulo_registro,
     tituloColaborador: p.pdf_titulo_colaborador,
     registroResolucion: renderTemplate(p.pdf_registro_resolucion, vars),

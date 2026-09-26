@@ -1,31 +1,50 @@
 ---
 import Layout from "../../layouts/Layout.astro";
 import AdminNav from "../../components/AdminNav.astro";
-import { desc, eq } from "drizzle-orm";
+import { and, desc, eq, gt, isNull } from "drizzle-orm";
 import { getDb, schema } from "../../lib/db";
-import { addMonths, carnetStatus } from "../../lib/carnet";
+import { caducidad, carnetStatus, esIndefinido, planVigencia, SIN_CADUCIDAD, textoCaducidad } from "../../lib/carnet-vigencia";
 import { getSettings } from "../../lib/settings";
 import { formatDate } from "../../lib/util";
 
 const db = getDb();
+const s = await getSettings(db);
+const indefinido = s.carnet_validity_months <= 0;
+const vigenciaTexto = indefinido ? "sin caducidad (indefinido)" : `${s.carnet_validity_months} ${s.carnet_validity_months === 1 ? "mes" : "meses"} desde la emisión`;
+// Paso de confirmación de «Aplicar esta vigencia a los carnets vigentes» (en la propia página, sin confirm()).
+let confirmar = false;
+let msg: string | null = null;
 if (Astro.request.method === "POST") {
   const f = await Astro.request.formData();
   const id = String(f.get("id"));
   const action = f.get("action");
   if (action === "revoke") await db.update(schema.carnets).set({ revokedAt: new Date() }).where(eq(schema.carnets.id, id));
   if (action === "restore") await db.update(schema.carnets).set({ revokedAt: null }).where(eq(schema.carnets.id, id));
-  if (action === "renew") {
-    const s = await getSettings(db);
-    await db.update(schema.carnets).set({ expiresAt: addMonths(new Date(), s.carnet_validity_months), revokedAt: null }).where(eq(schema.carnets.id, id));
+  if (action === "renew") await db.update(schema.carnets).set({ expiresAt: caducidad(new Date(), s.carnet_validity_months), revokedAt: null }).where(eq(schema.carnets.id, id));
+  if (action === "vigencia") confirmar = true;
+  if (action === "vigencia-aplicar") {
+    // Se recalcula aquí con los ajustes de este momento, no con lo que se mostró al confirmar.
+    const now = new Date();
+    const vigentes = await db.query.carnets.findMany({ where: and(isNull(schema.carnets.revokedAt), gt(schema.carnets.expiresAt, now)) });
+    const cambios = planVigencia(vigentes, s.carnet_validity_months, now);
+    if (indefinido) {
+      if (cambios.length) await db.update(schema.carnets).set({ expiresAt: SIN_CADUCIDAD }).where(and(isNull(schema.carnets.revokedAt), gt(schema.carnets.expiresAt, now)));
+    } else if (cambios.length) {
+      await db.batch(cambios.map((c) => db.update(schema.carnets).set({ expiresAt: c.despues }).where(eq(schema.carnets.id, c.id))) as [any, ...any[]]);
+    }
+    msg = cambios.length ? `Vigencia aplicada a ${cambios.length} ${cambios.length === 1 ? "carnet" : "carnets"}.` : "No había ningún carnet vigente que cambiar.";
   }
-  return Astro.redirect("/admin/carnets", 303);
+  if (!confirmar && !msg) return Astro.redirect("/admin/carnets", 303);
 }
 const carnets = await db.query.carnets.findMany({ orderBy: desc(schema.carnets.issuedAt) });
+const plan = confirmar ? planVigencia(carnets, s.carnet_validity_months) : [];
+const caducarian = plan.filter((c) => c.quedaCaducado).length;
 ---
 <Layout title="Carnets" wide>
   <p class="eyebrow">Administración</p>
   <h1>Carnets</h1>
   <AdminNav />
+  {msg && <div class="alert ok" role="status" tabindex="-1" data-focus-on-load>{msg}</div>}
   <div class="card table-scroll">
     <table class="data responsive">
       <thead><tr><th>Carnet</th><th>Emisión</th><th>Caducidad</th><th>Estado</th><th>Acciones</th></tr></thead>
@@ -36,7 +55,7 @@ const carnets = await db.query.carnets.findMany({ orderBy: desc(schema.carnets.i
             <tr>
               <td class="primary-cell"><span>{c.numero} · <a href={`/admin/usuarios/${c.userId}`}>{c.nombre} {c.apellidos}</a></span></td>
               <td data-label="Emisión">{formatDate(c.issuedAt)}</td>
-              <td data-label="Caducidad">{formatDate(c.expiresAt)}</td>
+              <td data-label="Caducidad">{textoCaducidad(c.expiresAt, formatDate)}</td>
               <td data-label="Estado"><span class:list={["badge", st === "vigente" ? "ok" : "bad"]}>{st}</span></td>
               <td class="actions" data-label="Acciones">
                 <form method="post" class="row">
@@ -46,7 +65,7 @@ const carnets = await db.query.carnets.findMany({ orderBy: desc(schema.carnets.i
                   ) : (
                     <button class="btn small danger" name="action" value="revoke">Revocar</button>
                   )}
-                  <button class="btn small" name="action" value="renew">Renovar</button>
+                  {!(st === "vigente" && esIndefinido(c.expiresAt) && indefinido) && <button class="btn small" name="action" value="renew">Renovar</button>}
                 </form>
               </td>
             </tr>
@@ -55,5 +74,46 @@ const carnets = await db.query.carnets.findMany({ orderBy: desc(schema.carnets.i
       </tbody>
     </table>
   </div>
-  <p class="muted">Renovar amplía la caducidad desde hoy según los ajustes. Revocar invalida el carnet inmediatamente en el móvil del titular (al volver a conectarse).</p>
+  <p class="muted">
+    Renovar amplía la caducidad desde hoy según los ajustes (con vigencia indefinida, el carnet pasa a no caducar). Revocar invalida el carnet
+    inmediatamente en el móvil del titular (al volver a conectarse): es lo que hay que hacer cuando una persona deja de colaborar.
+  </p>
+
+  <section class="card" id="vigencia">
+    <h2 class="mt-0">Vigencia de los carnets</h2>
+    <p class="mt-0">
+      Vigencia actual en los <a href="/admin/ajustes#carnet_validity_months">ajustes</a>: <strong>{vigenciaTexto}</strong>. Se aplica a los carnets
+      nuevos y a las renovaciones. Los carnets ya emitidos conservan su caducidad hasta que la apliques aquí.
+    </p>
+    {confirmar ? (
+      <div class="alert info" role="alert" id="vigencia-confirmar" tabindex="-1" data-focus-on-load>
+        <div>
+          {plan.length === 0 ? (
+            <p class="mt-0 mb-0">Todos los carnets vigentes ya tienen esta vigencia. No hay nada que cambiar.</p>
+          ) : (
+            <>
+              <p class="mt-0">
+                <strong>{plan.length} {plan.length === 1 ? "carnet vigente cambiará" : "carnets vigentes cambiarán"}</strong> de caducidad
+                {indefinido ? (plan.length === 1 ? " y pasará a no caducar." : " y pasarán a no caducar.") : `: se calculará desde su fecha de emisión (${s.carnet_validity_months} meses).`}
+                {" "}Los revocados y los ya caducados no se tocan.
+              </p>
+              {caducarian > 0 && (
+                <p><strong>Atención:</strong> {caducarian} {caducarian === 1 ? "carnet quedará caducado" : "carnets quedarán caducados"} al aplicarla, porque se emitieron hace más de {s.carnet_validity_months} meses.</p>
+              )}
+              <form method="post" class="row">
+                <input type="hidden" name="action" value="vigencia-aplicar" />
+                <button class="btn primary" type="submit">Sí, aplicar a {plan.length} {plan.length === 1 ? "carnet" : "carnets"}</button>
+                <a class="btn ghost" href="/admin/carnets">Cancelar</a>
+              </form>
+            </>
+          )}
+        </div>
+      </div>
+    ) : (
+      <form method="post">
+        <input type="hidden" name="action" value="vigencia" />
+        <button class="btn" type="submit">Aplicar esta vigencia a los carnets vigentes</button>
+      </form>
+    )}
+  </section>
 </Layout>

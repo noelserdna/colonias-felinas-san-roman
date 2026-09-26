@@ -1,8 +1,9 @@
 import { describe, expect, it } from "vitest";
 import { PDFDocument } from "pdf-lib";
-import { anexoI, anexoII, autorizacionPropietario, DEFAULT_TEXTOS, unirPdfs } from "../../src/lib/anexos-pdf";
+import { anexoI, anexoII, autorizacionPropietario, censoPdf, DEFAULT_TEXTOS, diaEnEspana, tituloCenso, unirPdfs } from "../../src/lib/anexos-pdf";
+import { censoPdfDatos } from "../../src/lib/colonies";
 import { readFileSync } from "node:fs";
-import { parsePrograma, textosAnexos } from "../../src/lib/programa-config";
+import { censoPdfNombre, parsePrograma, textosAnexos } from "../../src/lib/programa-config";
 
 const textosSanRoman = textosAnexos(parsePrograma(JSON.parse(readFileSync("seed/local/san-roman-de-los-montes/programa.json", "utf8"))), {
   municipio: "San Román de los Montes",
@@ -100,5 +101,56 @@ describe("enlaces de documentos", () => {
   it("rechaza esquemas peligrosos y URLs sin protocolo", () => {
     for (const url of ["javascript:alert(1)", "data:text/html,x", "//evil.example/x", "ftp://x/y", "docs/x.pdf"])
       expect(documentInput.safeParse({ ...base, url }).success, url).toBe(false);
+  });
+});
+
+describe("censo en PDF", () => {
+  const recuento = { hembrasEsterilizadas: 3, hembrasSinEsterilizar: 2, machosCastrados: 1, machosSinCastrar: 1, adoptables: 1, enfermos: 0 };
+  const sinMov = { fecha: new Date(2026, 0, 10), observaciones: null, ...recuento };
+  const conMov = {
+    ...recuento,
+    fecha: new Date(2026, 5, 30),
+    hembrasEsterilizadas: 4,
+    observaciones: "Una camada nueva junto al contenedor.",
+    nacidosHembras: 1, nacidosMachos: 0, nuevosHembras: 0, nuevosMachos: 0, fallecidosHembras: 0, fallecidosMachos: 0,
+    adoptadosHembras: 0, adoptadosMachos: 0, devueltosHembras: 0, devueltosMachos: 0, otrasSalidasHembras: 0, otrasSalidasMachos: 0,
+  };
+  const extra = { colonia: { numero: 3, nombre: "Parque", direccion: "C/ Real, 1" }, persona: "María Pérez", lugar: "Villanueva" };
+
+  it("los datos salen del censo y del anterior; sin movimientos, vacíos", () => {
+    const d = censoPdfDatos(conMov, sinMov, extra);
+    expect(d.anterior).toEqual({ machos: 2, hembras: 5 });
+    expect(d.actual).toEqual({ machos: 2, hembras: 6 });
+    expect(d.esterilizadosAnterior).toEqual({ machos: 1, hembras: 3 });
+    expect(d.esterilizadosActual).toEqual({ machos: 1, hembras: 4 });
+    expect(d.movimientos[0]).toMatchObject({ label: "Nacidos en la colonia", entrada: true, hembras: 1, machos: 0 });
+    expect(d.fechaAnterior).toEqual(sinMov.fecha);
+    const primero = censoPdfDatos(sinMov, null, extra);
+    expect(primero.anterior).toBeNull();
+    expect(primero.movimientos).toHaveLength(6);
+    expect(primero.movimientos.every((m) => m.machos === null && m.hembras === null)).toBe(true);
+  });
+
+  it("una página A4, con el nombre oficial en el título si lo hay", async () => {
+    const doc = await PDFDocument.load(await censoPdf({ municipio: "San Román de los Montes", textos: textosSanRoman, data: censoPdfDatos(conMov, sinMov, extra) }));
+    expect(doc.getPageCount()).toBe(1);
+    expect(doc.getTitle()).toMatch(/^Anexo V · Censo de gatos de la colonia n\.º 3 · 30\/06\/2026$/);
+    const neutro = await PDFDocument.load(await censoPdf({ municipio: "Villanueva", data: censoPdfDatos(sinMov, null, extra) }));
+    expect(neutro.getTitle()).not.toMatch(/Anexo/);
+    expect(tituloCenso("")).toBe("Censo de gatos de la colonia");
+    expect(tituloCenso("Anexo V")).toBe("Anexo V: Censo de gatos de la colonia");
+  });
+
+  it("observaciones largas y caracteres raros no lo sacan de una página", async () => {
+    const data = censoPdfDatos({ ...conMov, observaciones: "Gata ≥ 2 años 🐱 «Nube».\n".repeat(80) }, sinMov, { ...extra, persona: "Íñigo 🐾" });
+    expect((await PDFDocument.load(await censoPdf({ municipio: "Villanueva", data }))).getPageCount()).toBe(1);
+  });
+
+  it("nombre del archivo y día en España", () => {
+    const p = parsePrograma(JSON.parse(readFileSync("seed/local/san-roman-de-los-montes/programa.json", "utf8")));
+    expect(censoPdfNombre(p, 3, new Date(2026, 5, 30, 12))).toBe("anexo-v-censo-colonia-3-2026-06-30.pdf");
+    expect(censoPdfNombre(parsePrograma({}), 3, new Date(2026, 5, 30, 12))).toBe("censo-colonia-3-2026-06-30.pdf");
+    // 23:30 UTC del 30 de junio ya es 1 de julio en Madrid.
+    expect(diaEnEspana(new Date(Date.UTC(2026, 5, 30, 23, 30)))).toEqual(new Date(2026, 6, 1));
   });
 });

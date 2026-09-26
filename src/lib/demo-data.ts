@@ -7,7 +7,7 @@ import * as schema from "./db/schema";
 import { censusPeriodStart, createColony } from "./colonies";
 import { getPrograma } from "./programa";
 import type { Programa } from "./programa-config";
-import { issueCarnet, addMonths } from "./carnet";
+import { issueCarnet, caducidad } from "./carnet";
 import { getSettings } from "./settings";
 import { getAttemptForUser, startFinalExam, submitAttempt } from "./exam";
 import { notifyColony } from "./notices";
@@ -96,7 +96,7 @@ async function carnetFor(db: DB, userId: string, issued?: Date) {
   const s = await getSettings(db);
   const c = await issueCarnet(db, userId, null, s);
   if (issued) {
-    await db.update(schema.carnets).set({ issuedAt: issued, expiresAt: addMonths(issued, s.carnet_validity_months) }).where(eq(schema.carnets.id, c.id));
+    await db.update(schema.carnets).set({ issuedAt: issued, expiresAt: caducidad(issued, s.carnet_validity_months) }).where(eq(schema.carnets.id, c.id));
   }
   return c;
 }

@@ -115,7 +115,7 @@ const etCenso = etiqueta(programa, "censo");
   {censuses.length > 0 && (
     <section class="card">
       <h2 class="mt-0">Censos anteriores</h2>
-      <CensusHistory censuses={censuses} />
+      <CensusHistory censuses={censuses} colonyId={colony!.id} />
     </section>
   )}
 </Layout>

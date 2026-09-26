@@ -13,9 +13,11 @@ export const settingsSchema = z
     jev_pass_score: z.number().min(0).max(3),
     // Probabilidad a partir de la cual se considera que la respuesta no contesta o intenta manipular.
     jev_flag_threshold: z.number().min(0).max(1),
-    carnet_validity_months: z.number().int().min(1).max(240),
+    // Meses de validez del carnet. 0 = indefinido (vale mientras se colabora; se retira al revocarlo).
+    carnet_validity_months: z.number().int().min(0).max(240),
     carnet_prefix: z.string().trim().min(1).max(20),
     // Días de antelación del aviso de caducidad del carnet (se repite 15 días después si sigue sin renovar).
+    // No se usa con carnets indefinidos.
     carnet_aviso_dias: z.number().int().min(1).max(180),
     magic_link_ttl_min: z.number().int().min(5).max(1440),
     final_min_per_unit: z.number().int().min(0).max(10),
@@ -42,7 +44,7 @@ export const DEFAULT_SETTINGS: Settings = {
   final_pass_pct: 70,
   jev_pass_score: 2,
   jev_flag_threshold: 0.7,
-  carnet_validity_months: 24,
+  carnet_validity_months: 0,
   carnet_prefix: "CF",
   carnet_aviso_dias: 30,
   magic_link_ttl_min: 15,
@@ -60,7 +62,7 @@ export const SETTINGS_LABELS: Record<keyof Settings, string> = {
   final_pass_pct: "Aprobado en examen final (%)",
   jev_pass_score: "Puntuación JEV mínima para dar por buena una respuesta escrita (0–3)",
   jev_flag_threshold: "Umbral JEV de respuesta no válida / manipulación (0–1)",
-  carnet_validity_months: "Validez del carnet (meses)",
+  carnet_validity_months: "Validez del carnet (meses; vacío = indefinido)",
   carnet_prefix: "Prefijo del número de carnet",
   carnet_aviso_dias: "Aviso de caducidad del carnet (días antes)",
   magic_link_ttl_min: "Caducidad del enlace de acceso (minutos)",

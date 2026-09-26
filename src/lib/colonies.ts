@@ -3,6 +3,7 @@ import { z } from "zod";
 import type { DB } from "./db";
 import * as schema from "./db/schema";
 import { uuid } from "./util";
+import type { CensoPdfData } from "./anexos-pdf";
 
 export class ColonyError extends Error {
   constructor(message: string, public status = 400) {
@@ -122,6 +123,39 @@ type ConMovimientos = Partial<Record<MovimientoCampo, number | null>>;
 /** ¿Declara algún movimiento? */
 export function hasMovements(c: ConMovimientos): boolean {
   return MOVIMIENTO_CAMPOS.some((k) => c[k] != null);
+}
+
+type CensoGuardado = Recuento & ConMovimientos & { fecha: Date; adoptables: number; enfermos: number; observaciones?: string | null };
+
+/**
+ * Datos del censo en PDF a partir de un censo guardado y el anterior (null si es el primero).
+ * Si el censo no declara movimientos, salen vacíos («—» en el PDF).
+ */
+export function censoPdfDatos(
+  c: CensoGuardado,
+  anterior: CensoGuardado | null,
+  extra: Pick<CensoPdfData, "colonia" | "persona" | "lugar">,
+): CensoPdfData {
+  const est = (x: Recuento) => ({ machos: x.machosCastrados, hembras: x.hembrasEsterilizadas });
+  const sexo = (x: Recuento) => ({ machos: x.machosCastrados + x.machosSinCastrar, hembras: x.hembrasEsterilizadas + x.hembrasSinEsterilizar });
+  return {
+    ...extra,
+    fecha: c.fecha,
+    fechaAnterior: anterior?.fecha ?? null,
+    anterior: anterior ? sexo(anterior) : null,
+    movimientos: MOVIMIENTO_KEYS.map((m) => ({
+      label: MOVIMIENTOS[m].label,
+      entrada: MOVIMIENTOS[m].entrada,
+      machos: c[`${m}Machos`] ?? null,
+      hembras: c[`${m}Hembras`] ?? null,
+    })),
+    actual: sexo(c),
+    esterilizadosAnterior: anterior ? est(anterior) : null,
+    esterilizadosActual: est(c),
+    adoptables: c.adoptables,
+    enfermos: c.enfermos,
+    observaciones: c.observaciones ?? null,
+  };
 }
 
 /**

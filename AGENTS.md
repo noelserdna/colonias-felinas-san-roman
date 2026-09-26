@@ -142,7 +142,10 @@ npm run deploy             # compila y publica; muestra la dirección https://�
   (`{{municipio}}`, `{{sede_tramite}}`, `{{censo_periodo}}`…; la lista está en el propio editor). Los textos por
   defecto son genéricos y ya usan los datos del programa local.
 - **Documentos**: añadir la ordenanza, la sede electrónica y lo que el municipio quiera enlazar.
-- **Ajustes → Carnet y acceso**: prefijo del número de carnet (por defecto `CF`) y aviso de caducidad.
+- **Ajustes → Carnet y acceso**: prefijo del número de carnet (por defecto `CF`), validez del carnet (vacío =
+  **indefinido**, el valor por defecto: vale mientras se colabora y se retira revocándolo; con meses, caduca y se
+  renueva repitiendo el examen final) y aviso de caducidad. Pregunta al ayuntamiento qué dice su ordenanza. Si cambia
+  la validez con carnets ya emitidos, usa *Carnets → Aplicar esta vigencia a los carnets vigentes*.
 - Opcional, para instalar varias veces el mismo municipio: crea `seed/local/<slug>/` como la de San Román
   (`programa.json`, `branding.json`, `settings.json`, `*.md`, `documents.json`) y aplícala con
   `node scripts/build-local.mjs <slug> && npx wrangler d1 execute <bd> --remote --file=seed/local/<slug>.sql`. Solo

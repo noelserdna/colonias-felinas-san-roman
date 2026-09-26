@@ -3,15 +3,12 @@ import type { DB } from "./db";
 import { schema } from "./db";
 import type { Settings } from "./settings";
 import { uuid } from "./util";
+import { caducidad } from "./carnet-vigencia";
+
+export { addMonths, caducidad, carnetStatus, esIndefinido, SIN_CADUCIDAD, textoCaducidad } from "./carnet-vigencia";
 
 export function carnetNumber(prefix: string, year: number, seq: number): string {
   return `${prefix}-${year}-${String(seq).padStart(4, "0")}`;
-}
-
-export function addMonths(d: Date, months: number): Date {
-  const r = new Date(d);
-  r.setMonth(r.getMonth() + months);
-  return r;
 }
 
 export async function getActiveCarnet(db: DB, userId: string, now = new Date()) {
@@ -47,14 +44,9 @@ export async function issueCarnet(db: DB, userId: string, attemptId: string | nu
     nombre: user.nombre,
     apellidos: user.apellidos,
     issuedAt: now,
-    expiresAt: addMonths(now, s.carnet_validity_months),
+    expiresAt: caducidad(now, s.carnet_validity_months),
     attemptId,
   };
   await db.insert(schema.carnets).values(row);
   return { ...row, revokedAt: null };
-}
-
-export function carnetStatus(c: { revokedAt: Date | null; expiresAt: Date }, now = new Date()): "vigente" | "caducado" | "revocado" {
-  if (c.revokedAt) return "revocado";
-  return c.expiresAt.getTime() > now.getTime() ? "vigente" : "caducado";
 }

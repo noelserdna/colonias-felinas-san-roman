@@ -110,7 +110,7 @@ const nombre = (u: { nombre: string | null; apellidos: string | null; email: str
 
   <section class="card">
     <h2 class="mt-0">Censos</h2>
-    {censuses.length === 0 ? <p class="muted">Sin censos.</p> : <CensusHistory censuses={censuses} detalle />}
+    {censuses.length === 0 ? <p class="muted">Sin censos.</p> : <CensusHistory censuses={censuses} colonyId={id} detalle />}
   </section>
 
   <section class="card">

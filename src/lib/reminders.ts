@@ -51,7 +51,8 @@ export async function runReminders(db: DB, ctx: Ctx, now = new Date()) {
     return avisadosCenso.has(`${r.id}|${n.url}`) ? [] : [{ user: r, kind: "colonia_censo" as const, n }];
   });
 
-  // --- Carnet: vigente y que caduca en los próximos `carnet_aviso_dias` días.
+  // --- Carnet: vigente y que caduca en los próximos `carnet_aviso_dias` días. Los indefinidos (fecha
+  // centinela SIN_CADUCIDAD) nunca entran en la ventana, así que no reciben este aviso.
   const aviso = settings.carnet_aviso_dias;
   const carnets = await db
     .select({ id: schema.users.id, email: schema.users.email, nombre: schema.users.nombre, expiresAt: schema.carnets.expiresAt })
